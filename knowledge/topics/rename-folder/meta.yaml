@@ -1,0 +1,20 @@
+id: rename-folder
+title: Rename a folder
+
+type: howto
+command: mv
+
+aliases:
+  - rename folder
+  - rename directory
+  - change folder name
+  - change directory name
+
+keywords:
+  - rename
+  - folder
+  - directory
+  - name
+
+related:
+  - mv

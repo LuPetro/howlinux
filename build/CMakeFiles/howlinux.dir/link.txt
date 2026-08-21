@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/howlinux.dir/src/main.cpp.o CMakeFiles/howlinux.dir/src/knowledge.cpp.o CMakeFiles/howlinux.dir/src/search.cpp.o CMakeFiles/howlinux.dir/src/render.cpp.o -o howlinux  -lyaml-cpp 

@@ -1,0 +1,18 @@
+id: chmod-755
+title: Make a file executable (chmod 755)
+
+type: howto
+command: chmod
+
+aliases:
+  - chmod 755
+  - make file executable
+
+keywords:
+  - chmod
+  - 755
+  - executable
+  - permission
+
+related:
+  - chmod

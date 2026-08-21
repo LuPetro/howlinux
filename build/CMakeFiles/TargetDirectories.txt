@@ -1,0 +1,3 @@
+/home/lukam/howlinux/build/CMakeFiles/howlinux.dir
+/home/lukam/howlinux/build/CMakeFiles/edit_cache.dir
+/home/lukam/howlinux/build/CMakeFiles/rebuild_cache.dir

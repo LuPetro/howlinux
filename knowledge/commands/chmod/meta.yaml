@@ -1,0 +1,17 @@
+id: chmod
+title: chmod - change file permissions
+
+type: command
+command: chmod
+
+aliases:
+  - chmod
+
+keywords:
+  - chmod
+  - permission
+  - permissions
+  - rights
+
+related:
+  - chmod-755

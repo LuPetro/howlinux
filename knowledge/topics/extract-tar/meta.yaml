@@ -1,0 +1,18 @@
+id: extract-tar
+title: Extract a tar.gz archive
+
+type: howto
+command: tar
+
+aliases:
+  - extract tar.gz
+  - unpack tar.gz
+
+keywords:
+  - tar
+  - gz
+  - extract
+  - unpack
+  - archive
+
+related: []

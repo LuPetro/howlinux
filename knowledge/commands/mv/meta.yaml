@@ -1,0 +1,16 @@
+id: mv
+title: mv - move / rename files and folders
+
+type: command
+command: mv
+
+aliases:
+  - mv
+
+keywords:
+  - mv
+  - move
+  - rename
+
+related:
+  - rename-folder
