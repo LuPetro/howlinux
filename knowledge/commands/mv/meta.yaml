@@ -14,3 +14,7 @@ keywords:
 
 related:
   - rename-folder
+
+intent:
+  - explain
+  - command

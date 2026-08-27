@@ -15,3 +15,7 @@ keywords:
 
 related:
   - chmod-755
+
+intent:
+  - explain
+  - command

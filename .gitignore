@@ -1,0 +1,18 @@
+# CMake build trees and generated files
+/build*/
+/_build*/
+/cmake-build-*/
+/Testing/
+
+# Compiler and editor artifacts
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.exe
+*.swp
+*~
+
+# Generated index files (reserved for a future release)
+*.idx

@@ -1,56 +1,52 @@
-#include "knowledge.hpp"
-#include "search.hpp"
-#include "render.hpp"
+#include "app.hpp"
+#include "cli.hpp"
 
+#include <exception>
+#include <filesystem>
 #include <iostream>
-#include <sstream>
+#include <string>
+#include <vector>
 
 int main(int argc, char** argv) {
-    // Alle Argumente zu einem String zusammenfügen.
-    // "howlinux rename folder" -> argv = ["howlinux", "rename", "folder"]
-    // -> query = "rename folder"
-    std::ostringstream queryStream;
-    for (int i = 1; i < argc; ++i) {
-        if (i > 1) queryStream << " ";
-        queryStream << argv[i];
-    }
-    std::string query = queryStream.str();
-
-    if (query.empty()) {
-        std::cout << "Usage: howlinux <query>\n";
-        std::cout << "Example: howlinux rename folder\n";
-        return 0;
+    std::vector<std::string> arguments;
+    arguments.reserve(argc > 1 ? static_cast<std::size_t>(argc - 1) : 0);
+    for (int index = 1; index < argc; ++index) {
+        arguments.emplace_back(argv[index]);
     }
 
-    // Knowledge Base laden. "knowledge" wird relativ zum aktuellen
-    // Arbeitsverzeichnis gesucht -> howlinux muss aus dem Projekt-Root
-    // gestartet werden (oder du kopierst den knowledge Ordner neben das Binary).
-    KnowledgeBase kb;
-    kb.load("knowledge");
-
-    if (kb.entries().empty()) {
-        std::cerr << "Warning: No knowledge entries found."
-                     "Make sure the 'knowledge/' folder "
-                     "is located in the current directory.\n";
+    try {
+        std::error_code error;
+        auto current_directory = std::filesystem::current_path(error);
+        if (error) {
+            const auto parsed = howlinux::parseCommandLine(arguments);
+            if (parsed.ok && (parsed.options.command == howlinux::CliCommand::help ||
+                              parsed.options.command == howlinux::CliCommand::version)) {
+                return howlinux::runApplication(arguments,
+                                                argc > 0 ? argv[0] : "howlinux",
+                                                ".",
+                                                std::cout,
+                                                std::cerr);
+            }
+            std::cerr << "Configuration error: cannot determine current directory: "
+                      << error.message() << '\n';
+            return 3;
+        }
+        std::error_code executable_error;
+        auto executable_path =
+            std::filesystem::read_symlink("/proc/self/exe", executable_error);
+        if (executable_error || executable_path.empty()) {
+            executable_path = argc > 0 ? argv[0] : "howlinux";
+        }
+        return howlinux::runApplication(arguments,
+                                        executable_path,
+                                        current_directory,
+                                        std::cout,
+                                        std::cerr);
+    } catch (const std::exception& exception) {
+        std::cerr << "Fatal error: " << exception.what() << '\n';
+        return 3;
+    } catch (...) {
+        std::cerr << "Fatal error: unknown exception\n";
+        return 3;
     }
-
-    SearchEngine engine(kb);
-    auto results = engine.search(query);
-
-    if (results.empty()) {
-        Renderer::renderNoMatch(query);
-        return 0;
-    }
-
-    // Score threshold for a "confident" match.
-    // Everything below it is shown only as a suggestion instead of an answer.
-    constexpr double STRONG_MATCH = 45.0;
-
-    if (results.front().score >= STRONG_MATCH) {
-        Renderer::renderEntry(*results.front().entry, kb);
-    } else {
-        Renderer::renderSuggestions(query, results);
-    }
-
-    return 0;
 }

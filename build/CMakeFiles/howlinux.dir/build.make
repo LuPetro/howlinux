@@ -83,65 +83,18 @@ CMakeFiles/howlinux.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/howlinux.dir/src/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lukam/howlinux/src/main.cpp -o CMakeFiles/howlinux.dir/src/main.cpp.s
 
-CMakeFiles/howlinux.dir/src/knowledge.cpp.o: CMakeFiles/howlinux.dir/flags.make
-CMakeFiles/howlinux.dir/src/knowledge.cpp.o: /home/lukam/howlinux/src/knowledge.cpp
-CMakeFiles/howlinux.dir/src/knowledge.cpp.o: CMakeFiles/howlinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/lukam/howlinux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/howlinux.dir/src/knowledge.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/howlinux.dir/src/knowledge.cpp.o -MF CMakeFiles/howlinux.dir/src/knowledge.cpp.o.d -o CMakeFiles/howlinux.dir/src/knowledge.cpp.o -c /home/lukam/howlinux/src/knowledge.cpp
-
-CMakeFiles/howlinux.dir/src/knowledge.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/howlinux.dir/src/knowledge.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lukam/howlinux/src/knowledge.cpp > CMakeFiles/howlinux.dir/src/knowledge.cpp.i
-
-CMakeFiles/howlinux.dir/src/knowledge.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/howlinux.dir/src/knowledge.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lukam/howlinux/src/knowledge.cpp -o CMakeFiles/howlinux.dir/src/knowledge.cpp.s
-
-CMakeFiles/howlinux.dir/src/search.cpp.o: CMakeFiles/howlinux.dir/flags.make
-CMakeFiles/howlinux.dir/src/search.cpp.o: /home/lukam/howlinux/src/search.cpp
-CMakeFiles/howlinux.dir/src/search.cpp.o: CMakeFiles/howlinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/lukam/howlinux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/howlinux.dir/src/search.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/howlinux.dir/src/search.cpp.o -MF CMakeFiles/howlinux.dir/src/search.cpp.o.d -o CMakeFiles/howlinux.dir/src/search.cpp.o -c /home/lukam/howlinux/src/search.cpp
-
-CMakeFiles/howlinux.dir/src/search.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/howlinux.dir/src/search.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lukam/howlinux/src/search.cpp > CMakeFiles/howlinux.dir/src/search.cpp.i
-
-CMakeFiles/howlinux.dir/src/search.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/howlinux.dir/src/search.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lukam/howlinux/src/search.cpp -o CMakeFiles/howlinux.dir/src/search.cpp.s
-
-CMakeFiles/howlinux.dir/src/render.cpp.o: CMakeFiles/howlinux.dir/flags.make
-CMakeFiles/howlinux.dir/src/render.cpp.o: /home/lukam/howlinux/src/render.cpp
-CMakeFiles/howlinux.dir/src/render.cpp.o: CMakeFiles/howlinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/lukam/howlinux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/howlinux.dir/src/render.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/howlinux.dir/src/render.cpp.o -MF CMakeFiles/howlinux.dir/src/render.cpp.o.d -o CMakeFiles/howlinux.dir/src/render.cpp.o -c /home/lukam/howlinux/src/render.cpp
-
-CMakeFiles/howlinux.dir/src/render.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/howlinux.dir/src/render.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lukam/howlinux/src/render.cpp > CMakeFiles/howlinux.dir/src/render.cpp.i
-
-CMakeFiles/howlinux.dir/src/render.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/howlinux.dir/src/render.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lukam/howlinux/src/render.cpp -o CMakeFiles/howlinux.dir/src/render.cpp.s
-
 # Object files for target howlinux
 howlinux_OBJECTS = \
-"CMakeFiles/howlinux.dir/src/main.cpp.o" \
-"CMakeFiles/howlinux.dir/src/knowledge.cpp.o" \
-"CMakeFiles/howlinux.dir/src/search.cpp.o" \
-"CMakeFiles/howlinux.dir/src/render.cpp.o"
+"CMakeFiles/howlinux.dir/src/main.cpp.o"
 
 # External object files for target howlinux
 howlinux_EXTERNAL_OBJECTS =
 
 howlinux: CMakeFiles/howlinux.dir/src/main.cpp.o
-howlinux: CMakeFiles/howlinux.dir/src/knowledge.cpp.o
-howlinux: CMakeFiles/howlinux.dir/src/search.cpp.o
-howlinux: CMakeFiles/howlinux.dir/src/render.cpp.o
 howlinux: CMakeFiles/howlinux.dir/build.make
+howlinux: libhowlinux_core.a
 howlinux: CMakeFiles/howlinux.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/lukam/howlinux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable howlinux"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/lukam/howlinux/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable howlinux"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/howlinux.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
