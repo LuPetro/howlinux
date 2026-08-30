@@ -1,0 +1,7 @@
+complete -c howlinux -s h -l help -d 'Show help'
+complete -c howlinux -s V -l version -d 'Show version'
+complete -c howlinux -l knowledge -r -a '(__fish_complete_directories)' -d 'Knowledge directory'
+complete -c howlinux -l limit -r -d 'Maximum number of results'
+complete -c howlinux -l explain -d 'Show ranking explanation'
+complete -c howlinux -l json -d 'Emit JSON'
+complete -c howlinux -n '__fish_use_subcommand' -a 'search list show validate'

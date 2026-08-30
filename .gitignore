@@ -3,6 +3,7 @@
 /_build*/
 /cmake-build-*/
 /Testing/
+/build-*/
 
 # Compiler and editor artifacts
 *.o

@@ -16,3 +16,10 @@ endif()
 
 add_test(NAME howlinux.v1 COMMAND howlinux_tests)
 set_tests_properties(howlinux.v1 PROPERTIES TIMEOUT 30)
+
+add_test(
+    NAME howlinux.smoke
+    COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/smoke.sh
+            $<TARGET_FILE:howlinux> ${PROJECT_SOURCE_DIR}/knowledge
+)
+set_tests_properties(howlinux.smoke PROPERTIES TIMEOUT 30)

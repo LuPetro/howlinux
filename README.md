@@ -40,6 +40,39 @@ sudo apt install -y build-essential cmake libyaml-cpp-dev
 Benötigt werden ein C++20-Compiler, CMake ab 3.16 und `yaml-cpp`. Zur Laufzeit
 bestehen keine Netzwerk- oder Datenbankabhängigkeiten.
 
+## Einfache Installation unter Linux
+
+Auf Ubuntu oder Debian:
+
+```bash
+sudo apt update
+sudo apt install -y build-essential cmake libyaml-cpp-dev git
+git clone https://github.com/LuPetro/howlinux.git
+cd howlinux
+./scripts/install.sh
+```
+
+Das Skript baut, testet und installiert standardmäßig nach
+`~/.local/bin/howlinux`. Ein anderer Installationspfad kann über
+`HOWLINUX_PREFIX` gesetzt werden:
+
+```bash
+HOWLINUX_PREFIX=/usr/local ./scripts/install.sh
+```
+
+Eine Installation aus einem CMake-Build kann mit diesem Befehl entfernt
+werden:
+
+```bash
+cmake --build build-install --target uninstall
+```
+
+Alternativ kann ein Release-Archiv aus dem GitHub-Reiter **Releases** geladen
+und nach `/usr/local` oder `~/.local` entpackt werden. Shell-Completions und
+die Manpage werden ebenfalls installiert. Änderungen laufen über Pull
+Requests; die Review-Einstellungen stehen in
+[CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Bauen und testen
 
 Debug-Build:
