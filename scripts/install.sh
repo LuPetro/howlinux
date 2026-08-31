@@ -5,6 +5,11 @@ project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 prefix="${HOWLINUX_PREFIX:-${HOME}/.local}"
 build_dir="${HOWLINUX_BUILD_DIR:-${project_dir}/build-install}"
 
+if [[ "$prefix" != /* ]]; then
+  echo "HOWLINUX_PREFIX must be an absolute path: $prefix" >&2
+  exit 2
+fi
+
 for tool in cmake c++; do
   command -v "$tool" >/dev/null 2>&1 || {
     echo "Missing required tool: $tool" >&2
@@ -24,7 +29,15 @@ cmake --build "$build_dir" --parallel
 ctest --test-dir "$build_dir" --output-on-failure
 cmake --install "$build_dir"
 
-echo "Installed howlinux to $prefix/bin/howlinux"
+installed_binary="${prefix}/bin/howlinux"
+if [[ ! -x "$installed_binary" ]]; then
+  echo "Installation failed: $installed_binary is not executable." >&2
+  exit 1
+fi
+"$installed_binary" validate >/dev/null
+
+echo "Installed and validated howlinux at $installed_binary"
 if [[ ":${PATH}:" != *":${prefix}/bin:"* ]]; then
-  echo "Add ${prefix}/bin to PATH if the command is not found."
+  echo "The install directory is not in PATH for this shell."
+  echo "Run: export PATH=\"${prefix}/bin:\$PATH\""
 fi

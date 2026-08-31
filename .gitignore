@@ -4,6 +4,15 @@
 /cmake-build-*/
 /Testing/
 /build-*/
+/CMakeCache.txt
+/CMakeFiles/
+/Makefile
+/cmake_install.cmake
+/CPackConfig.cmake
+/CPackSourceConfig.cmake
+/_CPack_Packages/
+/install_manifest.txt
+/*.tar.gz
 
 # Compiler and editor artifacts
 *.o

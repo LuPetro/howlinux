@@ -25,6 +25,20 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(yaml-cpp REQUIRED)
 
+option(
+    HOWLINUX_STATIC_YAML_CPP
+    "Link yaml-cpp statically so release archives do not depend on its ABI version"
+    ON
+)
+
+if(TARGET yaml-cpp::yaml-cpp)
+    set(HOWLINUX_YAML_CPP_TARGET yaml-cpp::yaml-cpp)
+elseif(TARGET yaml-cpp)
+    set(HOWLINUX_YAML_CPP_TARGET yaml-cpp)
+else()
+    message(FATAL_ERROR "The yaml-cpp package did not provide a CMake target")
+endif()
+
 add_library(howlinux_core
     src/app.cpp
     src/cli.cpp
@@ -37,7 +51,32 @@ add_library(howlinux_core
 )
 
 target_include_directories(howlinux_core PUBLIC include)
-target_link_libraries(howlinux_core PUBLIC yaml-cpp)
+if(HOWLINUX_STATIC_YAML_CPP)
+    set(HOWLINUX_SAVED_LIBRARY_SUFFIXES "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    find_library(HOWLINUX_YAML_CPP_STATIC_LIBRARY NAMES yaml-cpp)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES "${HOWLINUX_SAVED_LIBRARY_SUFFIXES}")
+
+    if(NOT HOWLINUX_YAML_CPP_STATIC_LIBRARY)
+        message(FATAL_ERROR
+            "HOWLINUX_STATIC_YAML_CPP is ON, but libyaml-cpp.a was not found")
+    endif()
+
+    get_target_property(
+        HOWLINUX_YAML_CPP_INCLUDE_DIRECTORIES
+        ${HOWLINUX_YAML_CPP_TARGET}
+        INTERFACE_INCLUDE_DIRECTORIES
+    )
+    if(HOWLINUX_YAML_CPP_INCLUDE_DIRECTORIES)
+        target_include_directories(
+            howlinux_core SYSTEM PUBLIC ${HOWLINUX_YAML_CPP_INCLUDE_DIRECTORIES}
+        )
+    endif()
+    target_link_libraries(howlinux_core PUBLIC ${HOWLINUX_YAML_CPP_STATIC_LIBRARY})
+    target_compile_definitions(howlinux_core PUBLIC YAML_CPP_STATIC_DEFINE)
+else()
+    target_link_libraries(howlinux_core PUBLIC ${HOWLINUX_YAML_CPP_TARGET})
+endif()
 target_compile_definitions(
     howlinux_core
     PUBLIC
@@ -69,6 +108,7 @@ endif()
 install(TARGETS howlinux RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY knowledge/ DESTINATION ${CMAKE_INSTALL_DATADIR}/howlinux/knowledge)
 install(FILES README.md requirements.md CONTRIBUTING.md SECURITY.md LICENSE
+              THIRD_PARTY_NOTICES.md
         DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(DIRECTORY docs/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/docs)
 
@@ -88,4 +128,8 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Deterministic offline Linux knowledge CLI
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_GENERATOR "TGZ")
 set(CPACK_PACKAGE_FILE_NAME "howlinux-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+# The archive is meant to be extracted directly into a prefix such as
+# ~/.local. Keep bin/ and share/ at its root so no extra directory prevents
+# the binary from landing in the user's PATH.
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
 include(CPack)

@@ -9,7 +9,9 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-24.04
+    # Build on the oldest supported Ubuntu so the dynamically linked archive
+    # also runs on newer supported releases.
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -21,10 +23,24 @@ jobs:
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --parallel
           ctest --test-dir build --output-on-failure
+          test "$(build/howlinux --version)" = "howlinux ${GITHUB_REF_NAME#v}"
+          if ldd build/howlinux | grep -q libyaml-cpp; then
+            echo "Release binary must not depend on a yaml-cpp ABI version" >&2
+            exit 1
+          fi
       - name: Package
-        run: cmake --build build --target package
+        run: |
+          cmake --build build --target package
+          mkdir -p "$RUNNER_TEMP/howlinux-release"
+          tar -xzf build/howlinux-*.tar.gz -C "$RUNNER_TEMP/howlinux-release"
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/howlinux-release/bin/howlinux" validate
+          cd "$GITHUB_WORKSPACE/build"
+          sha256sum howlinux-*.tar.gz > SHA256SUMS
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: build/*.tar.gz
+          files: |
+            build/*.tar.gz
+            build/SHA256SUMS

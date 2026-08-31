@@ -155,6 +155,16 @@ HL_TEST(cli_resolves_explicit_executable_relative_and_cwd_paths) {
                       binary_directory / "knowledge"));
 
     std::filesystem::remove(binary_directory / "knowledge");
+    const auto installed_knowledge =
+        binary_directory.parent_path() / kInstallDataDirectory / "howlinux" /
+        "knowledge";
+    std::filesystem::create_directories(installed_knowledge);
+    const auto installed_relative =
+        resolveKnowledgePath(defaults, binary, current);
+    HL_REQUIRE_EQ(installed_relative,
+                  std::filesystem::weakly_canonical(installed_knowledge));
+
+    std::filesystem::remove(installed_knowledge);
     const auto cwd_relative = resolveKnowledgePath(defaults, binary, current);
     HL_REQUIRE_EQ(cwd_relative,
                   std::filesystem::weakly_canonical(current / "knowledge"));

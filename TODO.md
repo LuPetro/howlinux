@@ -1,10 +1,17 @@
 # TODO – howlinux
 
+## Offene Release-Schritte auf GitHub
+
+- [ ] V1-Änderungen nach `master` mergen oder pushen und alle CI-Jobs abwarten.
+- [ ] Branch-Protection für `master` und private Security-Meldungen aktivieren.
+- [ ] Repository-Beschreibung und Topics (`linux`, `cli`, `cpp`, `offline`) setzen.
+- [ ] Nach grüner CI den Tag `v1.0.0` erstellen; der Release-Workflow veröffentlicht Archiv und Prüfsumme.
+
 ## Technische V1 abschließen
 
-- [ ] Bash-/WSL-Umgebung reparieren und prüfen, dass `howlinux` aus Bash, WSL und PowerShell gestartet werden kann.
-- [ ] Fehler in `/home/lukam/.profile` beheben: `DOTNET_ROOT` korrekt setzen.
-- [ ] Profil mit `bash -n ~/.profile` prüfen und anschließend neu laden.
+- [x] Bash-/WSL-Umgebung reparieren und prüfen, dass `howlinux` aus Bash, WSL und PowerShell gestartet werden kann.
+- [x] Fehler in `/home/lukam/.profile` beheben: `DOTNET_ROOT` korrekt setzen.
+- [x] Profil mit `bash -n ~/.profile` prüfen und anschließend neu laden.
 - [x] Clean-Install in ein leeres Verzeichnis testen.
 - [x] Installiertes Binary ohne Repository-Arbeitsverzeichnis starten.
 - [x] Automatisierte Smoke-Tests für die wichtigsten CLI-Aufrufe ergänzen.
@@ -19,9 +26,9 @@
 - [x] Installation und Start des installierten Binaries in CI prüfen.
 - [x] Reproduzierbares Release-Archiv erstellen.
 - [x] Release-Struktur mit `bin/howlinux`, `share/howlinux/knowledge` und Dokumentation prüfen.
-- [ ] Release-Version auf `1.0.0` festlegen und Git-Tag erstellen.
+- [x] Release-Version auf `1.0.0` festlegen.
 - [x] Installations- und Deinstallationsanleitung dokumentieren.
-- [ ] Prüfen, ob eine Debian-Paketierung benötigt wird.
+- [x] Debian-Paketierung für V1 als nicht erforderlich einstufen; das TGZ-Archiv ist der erste Distributionsweg.
 
 ## Bedienung und Distribution
 
@@ -29,17 +36,20 @@
 - [x] Zsh-Completion ergänzen.
 - [x] Fish-Completion ergänzen.
 - [x] Manpage ergänzen.
-- [ ] Optionales Release-Skript wie `release.sh` ergänzen.
+- [x] Separates `release.sh` für V1 als nicht erforderlich einstufen; der getaggte GitHub-Workflow übernimmt den Release.
 - [x] Dokumentieren, wie `--knowledge` und `HOWLINUX_KNOWLEDGE` verwendet werden.
 - [x] Dokumentieren, wie das Programm aus Bash, WSL und PowerShell gestartet wird.
 
-## Knowledge-Qualität und Werkzeuge
+## Knowledge-Qualität und spätere Werkzeuge
 
-- [ ] Knowledge-Linter für CI vorbereiten.
+Die offenen Punkte in diesem Abschnitt sind Verbesserungen nach V1 und keine
+Blocker für den ersten Release.
+
+- [x] Knowledge-Validierung mit `howlinux validate` implementieren und über die Smoke-Tests in CI ausführen.
 - [ ] Doppelte oder sehr ähnliche Aliase erkennen.
 - [ ] Zu allgemeine Keywords erkennen.
 - [ ] Unbenutzte Concepts erkennen.
-- [ ] Veraltete oder fehlende `related`-Referenzen prüfen.
+- [x] Veraltete oder fehlende `related`-Referenzen beim Laden prüfen.
 - [ ] Markdown-Link- und Codeblock-Prüfung optional ergänzen.
 - [ ] Ranking-Evaluation mit erwarteten Top-Ergebnissen aufbauen.
 - [ ] Positive, mehrdeutige und negative Queries aufnehmen.

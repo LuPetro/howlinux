@@ -20,16 +20,16 @@ generated authoritative answers.
 
 ## Review policy
 
-The default branch is protected. Pull requests require approval from the
+The default branch should be protected. Pull requests require approval from the
 repository owner, @LuPetro, and passing CI before merging. Contributors should
 not push directly to the default branch.
 
 Repository administrators must enable these settings under GitHub:
 
-1. Settings → Branches → Add branch protection rule for `main`.
+1. Settings → Branches → Add branch protection rule for `master`.
 2. Require a pull request before merging.
 3. Require approvals (at least 1).
-4. Require status checks: `build-and-test`.
+4. Require all four `Ubuntu … / …` checks from the `CI` workflow.
 5. Require branches to be up to date before merging.
 6. Restrict who can push to the protected branch, if desired.
 

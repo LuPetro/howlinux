@@ -37,8 +37,10 @@ sudo apt update
 sudo apt install -y build-essential cmake libyaml-cpp-dev
 ```
 
-Benötigt werden ein C++20-Compiler, CMake ab 3.16 und `yaml-cpp`. Zur Laufzeit
-bestehen keine Netzwerk- oder Datenbankabhängigkeiten.
+Zum Bauen werden ein C++20-Compiler, CMake ab 3.16 und die
+`yaml-cpp`-Entwicklungsdateien benötigt. Das Release-Binary bindet `yaml-cpp`
+statisch ein und benötigt deshalb keine bestimmte `libyaml-cpp`-ABI zur
+Laufzeit. Es bestehen keine Netzwerk- oder Datenbankabhängigkeiten.
 
 ## Einfache Installation unter Linux
 
@@ -57,7 +59,25 @@ Das Skript baut, testet und installiert standardmäßig nach
 `HOWLINUX_PREFIX` gesetzt werden:
 
 ```bash
-HOWLINUX_PREFIX=/usr/local ./scripts/install.sh
+HOWLINUX_PREFIX="$HOME/opt/howlinux" ./scripts/install.sh
+```
+
+`HOWLINUX_PREFIX` muss ein absoluter Pfad sein. Falls `howlinux` direkt nach
+der Installation noch nicht gefunden wird, ergänze den `PATH` der aktuellen
+Shell und prüfe die Installation:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+howlinux --version
+howlinux validate
+```
+
+Für neue Login-Shells enthält eine normale Ubuntu-/Debian-`~/.profile` bereits
+`$HOME/.local/bin`, sobald das Verzeichnis existiert. Prüfe ein angepasstes
+Profil bei Problemen zuerst auf Syntaxfehler:
+
+```bash
+bash -n "$HOME/.profile"
 ```
 
 Eine Installation aus einem CMake-Build kann mit diesem Befehl entfernt
@@ -67,11 +87,30 @@ werden:
 cmake --build build-install --target uninstall
 ```
 
-Alternativ kann ein Release-Archiv aus dem GitHub-Reiter **Releases** geladen
-und nach `/usr/local` oder `~/.local` entpackt werden. Shell-Completions und
-die Manpage werden ebenfalls installiert. Änderungen laufen über Pull
-Requests; die Review-Einstellungen stehen in
+Alternativ kann ein Release-Archiv aus dem GitHub-Reiter **Releases** direkt
+in einen Prefix entpackt werden:
+
+```bash
+mkdir -p "$HOME/.local"
+tar -xzf howlinux-1.0.0-Linux-x86_64.tar.gz -C "$HOME/.local"
+"$HOME/.local/bin/howlinux" validate
+```
+
+Das Archiv enthält `bin/` und `share/` direkt an seiner Wurzel. Shell-
+Completions und die Manpage werden ebenfalls installiert. Änderungen laufen
+über Pull Requests; die Review-Einstellungen stehen in
 [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### Aufruf aus WSL und PowerShell
+
+In einer WSL-Shell wird `howlinux` nach dem Setzen des `PATH` direkt gestartet.
+Aus PowerShell kann eine WSL-Login-Shell verwendet werden, damit `~/.profile`
+geladen wird:
+
+```powershell
+wsl.exe -d Ubuntu -- bash -lc "howlinux --version"
+wsl.exe -d Ubuntu -- bash -lc "howlinux 'what does chmod 755 mean'"
+```
 
 ## Bauen und testen
 

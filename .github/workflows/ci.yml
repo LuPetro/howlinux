@@ -31,6 +31,6 @@ jobs:
       - name: Install smoke test
         run: |
           cmake --install build --prefix "$RUNNER_TEMP/howlinux"
+          cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/howlinux/bin/howlinux" list
           "$RUNNER_TEMP/howlinux/bin/howlinux" validate
-
