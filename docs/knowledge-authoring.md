@@ -1,80 +1,70 @@
-# Knowledge für howlinux pflegen
+# Authoring knowledge for howlinux
 
-Diese Anleitung beschreibt den täglichen Ablauf zum Anlegen, Prüfen und
-Verbessern von Knowledge-Einträgen. Ein neuer Eintrag besteht ausschließlich
-aus YAML- und Markdown-Dateien. Eine Änderung am C++-Code oder ein erneuter
-Build ist nicht erforderlich.
+This guide covers the everyday workflow for adding and reviewing knowledge
+entries. An entry consists only of YAML metadata and Markdown content; adding
+one does not require a C++ change or rebuild.
 
-howlinux generiert keine Antworttexte. Das Programm sucht den passendsten
-geprüften Eintrag und gibt dessen Inhalt aus. Deshalb sind fachliche
-Korrektheit, realistische Suchformulierungen und eine saubere Validierung
-wichtiger als möglichst viel Text.
+howlinux never generates answer text. Accuracy, realistic search phrases, and
+careful validation therefore matter more than content volume.
 
-> **Sicherheitsgrundsatz:** Inhalte dürfen Shell-Befehle erklären und zeigen,
-> aber howlinux führt sie niemals aus. Destruktive Befehle müssen im Text
-> deutlich gekennzeichnet werden.
+> **Safety rule:** Entries may explain and show shell commands, but howlinux
+> never runs them. Put a clear warning immediately before a destructive or
+> irreversible command.
 
-## 1. Aufbau der Knowledge Base
+## 1. Layout
 
-Das Standardverzeichnis heißt knowledge. Jeder Eintrag liegt in einer
-Kategorie und besitzt genau zwei Dateien:
-
-~~~text
+```text
 knowledge/
-├── concepts.yaml
-├── commands/
-│   └── mv/
-│       ├── meta.yaml
-│       └── content.md
-└── topics/
-    └── rename-folder/
-        ├── meta.yaml
-        └── content.md
-~~~
+|-- concepts.yaml
+|-- commands/
+|   `-- mv/
+|       |-- meta.yaml
+|       `-- content.md
+`-- topics/
+    `-- rename-folder/
+        |-- meta.yaml
+        `-- content.md
+```
 
-- commands ist für Referenzen zu einzelnen Kommandos gedacht.
-- topics ist für Anleitungen und erklärende Themen gedacht.
-- Weitere Kategorien sind technisch möglich. Neue Kategorien sollten jedoch
-  nur mit einer bewusst festgelegten Taxonomie eingeführt werden.
-- Die Entry-ID muss in der gesamten Knowledge Base eindeutig sein.
-- Der Verzeichnisname und das Feld id sollten identisch sein.
-- concepts.yaml enthält globale Synonyme und ist kein Entry.
+- `commands/` contains individual command references.
+- `topics/` contains task-oriented guides and explanations.
+- Other categories are supported, but introduce them only with a deliberate
+  taxonomy.
+- Entry IDs are unique across the entire knowledge base.
+- The directory name and `id` should match.
+- `concepts.yaml` contains global equivalents and is not an entry.
 
-Ein anderes Knowledge-Verzeichnis wird über --knowledge ausgewählt:
+Select another knowledge directory with `--knowledge`:
 
-~~~bash
-./build/howlinux --knowledge /pfad/zur/knowledge "rename a directory"
-./build/howlinux validate /pfad/zur/knowledge
-~~~
+```bash
+./build/howlinux --knowledge /absolute/path/to/knowledge "rename a directory"
+./build/howlinux validate /absolute/path/to/knowledge
+```
 
-## 2. Einen Eintrag anlegen
+## 2. Create an entry
 
-### Schritt 1: Kategorie und ID wählen
+### Choose a category and ID
 
-Wähle eine kurze, dauerhafte und sprechende ID. Empfohlen sind
-ASCII-Kleinbuchstaben, Zahlen und Bindestriche:
+Use a short, stable, descriptive ID containing lowercase ASCII letters,
+numbers, and hyphens:
 
-~~~text
+```text
 rename-folder
 chmod-755
 extract-tar
-~~~
+```
 
-Vermeide wechselnde Versionsnummern, Marketingbegriffe und unnötige
-Abkürzungen. Andere Einträge können die ID über related referenzieren; eine
-spätere Umbenennung ist deshalb eine inkompatible Inhaltsänderung.
+Avoid version numbers, marketing terms, and unnecessary abbreviations. Other
+entries may refer to the ID through `related`, so renaming an ID is an
+incompatible content change.
 
-Lege anschließend das Verzeichnis an, zum Beispiel:
-
-~~~bash
+```bash
 mkdir -p knowledge/topics/rename-folder
-~~~
+```
 
-### Schritt 2: meta.yaml schreiben
+### Write `meta.yaml`
 
-Ein praxistauglicher Eintrag sieht so aus:
-
-~~~yaml
+```yaml
 id: rename-folder
 title: Rename a folder
 type: howto
@@ -105,357 +95,188 @@ tags:
   - filesystem
 examples:
   - mv -- old-name new-name
-~~~
+```
 
-### Felder im Überblick
-
-| Feld | Status | Format | Bedeutung |
+| Field | Status | Format | Purpose |
 | --- | --- | --- | --- |
-| id | erforderlich | String | Knowledge-weit eindeutige, stabile ID |
-| title | erforderlich | String | Kurzer, verständlicher Ausgabetitel |
-| type | erforderlich | String | Üblicherweise command oder howto |
-| command | optional | String | Hauptkommando des Eintrags, sofern vorhanden |
-| aliases | optional, dringend empfohlen | Liste von Strings | Reale Suchformulierungen und feste Phrasen |
-| keywords | optional, empfohlen | Liste von Strings | Fachlich starke Suchbegriffe, Flags und Kommandos |
-| related | optional | Liste von IDs | Verweise auf vorhandene, verwandte Entries |
-| intent | optional | Liste von Strings | Passende Query-Arten, etwa how_to oder explain |
-| difficulty | optional | String | Beispielsweise beginner, intermediate oder advanced |
-| platforms | optional | Liste von Strings | Getestete oder relevante Plattformen |
-| tags | optional | Liste von Strings | Redaktionelle Gruppierung |
-| examples | optional | Liste von Strings | Kurze Beispielbefehle für Metadaten/Tools |
+| `id` | required | string | Globally unique, stable identifier |
+| `title` | required | string | Short, clear display title |
+| `type` | required | string | Normally `command` or `howto` |
+| `command` | optional | string | Primary command, when applicable |
+| `aliases` | recommended | string list | Realistic search phrases |
+| `keywords` | recommended | string list | Distinctive terms, flags, and commands |
+| `related` | optional | ID list | Existing related entries |
+| `intent` | optional | string list | Query types such as `how_to` or `explain` |
+| `difficulty` | optional | string | For example `beginner` or `advanced` |
+| `platforms` | optional | string list | Tested or relevant platforms |
+| `tags` | optional | string list | Editorial grouping |
+| `examples` | optional | string list | Short examples for metadata/tools |
 
-Fehlende optionale Listen werden wie leere Listen behandelt. Bestehende
-Entries ohne intent bleiben gültig. Verwende keine frei erfundenen Felder:
-Unbekannte Felder werden bei der Validierung als Warnung gemeldet, bleiben
-aber für die Suche folgenlos.
+Missing optional lists behave as empty lists. Unknown fields produce a
+validation warning and do not affect search.
 
-YAML-Hinweise:
+YAML rules:
 
-- Speichere meta.yaml und content.md als UTF-8; content.md muss eine reguläre,
-  nicht leere Datei sein. Symlinks werden vom Loader aus Sicherheitsgründen
-  abgelehnt.
-- Verwende Leerzeichen, keine Tabs.
-- Werte mit Doppelpunkten, führenden Sonderzeichen oder YAML-ähnlichen
-  Wahrheitswerten sollten in Anführungszeichen stehen.
-- aliases, keywords, related, intent, platforms, tags und examples sind Listen.
-- Eine related-Angabe enthält Entry-IDs, keine Titel und keine Dateipfade.
-- Wiederhole denselben Alias oder dasselbe Keyword nicht künstlich. Doppelte
-  Tokens verbessern das Ranking nicht kontrolliert.
+- Save YAML and Markdown as UTF-8.
+- Use spaces, never tabs.
+- Quote values with colons, leading special characters, or YAML-like boolean
+  words.
+- Every list field must actually be a list of strings.
+- `related` contains IDs, not titles or paths.
+- Do not repeat aliases or keywords to manipulate ranking.
+- `meta.yaml` and `content.md` must be regular files; symlinks are rejected.
 
-### Schritt 3: content.md schreiben
+### Write `content.md`
 
-content.md ist die geprüfte Antwort. Die Datei darf Überschriften, Listen,
-Inline-Code und Shell-Codeblöcke enthalten. Ihr fachlicher Inhalt wird beim
-Rendern nicht umgeschrieben.
+The Markdown file is the reviewed answer and may contain headings, lists,
+inline code, and fenced code blocks. A useful order is:
 
-Eine bewährte Reihenfolge ist:
+1. Short explanation
+2. General syntax
+3. Simple verified example
+4. Important variants or flags
+5. Common mistakes, prerequisites, and safety warnings
+6. Related entries
 
-1. kurze Erklärung des Kommandos oder Konzepts;
-2. allgemeine Syntax;
-3. ein einfaches, geprüftes Beispiel;
-4. wichtige Varianten oder Flags;
-5. typische Fehler, Voraussetzungen und Sicherheitswarnungen;
-6. verwandte Entries.
+Example:
 
-Beispiel:
-
-~~~~markdown
+````markdown
 # Rename a folder
 
-The mv command can rename a folder by moving it to a new path.
+The `mv` command can rename a folder by moving it to a new path.
 
 ## Syntax
 
-~~~bash
+```bash
 mv -- OLD_NAME NEW_NAME
-~~~
+```
 
 ## Example
 
-~~~bash
+```bash
 mv -- "old project" "new project"
-~~~
+```
 
-Existing destination paths can change the behavior of mv. Check the target
+An existing destination can change `mv` behavior. Inspect the destination
 before running the command.
 
 ## Related
 
-- mv
-~~~~
+- `mv`
+````
 
-Beachte beim Schreiben:
+For every entry:
 
-- Prüfe jeden Befehl in einer sicheren Testumgebung.
-- Kennzeichne Platzhalter deutlich, zum Beispiel OLD_NAME und NEW_NAME.
-- Quote Dateinamen mit Leerzeichen korrekt.
-- Erkläre notwendige Rechte, Distributionen, Versionen oder installierte
-  Pakete.
-- Markiere irreversible oder destruktive Auswirkungen unmittelbar vor dem
-  betreffenden Befehl.
-- Empfiehl sudo nicht pauschal.
-- Kopiere keine ungeprüften Einzeiler aus fremden Quellen.
-- Füge keine Geheimnisse, echten Tokens, privaten Hostnamen oder
-  personenbezogenen Daten in Beispiele ein.
-- Metadaten unter examples ersetzen keine verständlichen Beispiele in
-  content.md.
+- verify commands in a safe test environment;
+- use obvious placeholders such as `OLD_NAME` and `NEW_NAME`;
+- quote file names containing spaces;
+- state required privileges, packages, versions, and platform limitations;
+- warn immediately before destructive or irreversible effects;
+- do not recommend `sudo` by default;
+- do not copy unverified one-liners from external sources;
+- never include secrets, real tokens, private hostnames, personal paths, or
+  personal data;
+- provide understandable examples in the content, not only in metadata.
 
-## 3. Gute Aliase schreiben
+## 3. Aliases, keywords, type, and intent
 
-Aliase sind Formulierungen, die Menschen tatsächlich als Query eingeben. Jeder
-Entry sollte mindestens drei unterschiedliche, realistische Formulierungen
-abdecken.
+Aliases should be phrases a person would genuinely type. Aim for at least
+three meaningfully different phrases. Avoid generic phrases such as `linux
+help`, stopword-only variants, and many nearly identical sentences. Exact
+aliases are a strong ranking signal, so an overly broad alias can suppress the
+correct entry.
 
-Gut:
+Keywords should distinguish the entry: its primary action, object, command,
+important flags, file formats, permission modes, or established technical
+terms. Avoid complete questions and generic words such as `help`, `linux`, or
+`command` unless they truly distinguish the entry.
 
-~~~yaml
-aliases:
-  - rename a folder
-  - change the name of a directory
-  - give a directory a different name
-~~~
+`type` describes the entry: normally `command` for a command reference and
+`howto` for a task or explanation. `intent` describes suitable query types:
+`explain`, `how_to`, `why`, `command`, or `general`. Intent is a ranking signal,
+not a filter.
 
-Schlecht:
+## 4. Concepts and synonyms
 
-~~~yaml
-aliases:
-  - linux help
-  - help me
-  - folder
-  - rename folder
-  - rename the folder
-  - rename a folder please
-~~~
+Put globally equivalent language in `knowledge/concepts.yaml`:
 
-Vermeide:
-
-- sehr allgemeine Phrasen, die zu vielen Entries passen;
-- reine Stopword-Varianten;
-- zehn nahezu identische Sätze;
-- globale Synonyme, die besser in concepts.yaml gepflegt werden;
-- Aliase für Sachverhalte, die der Entry inhaltlich nicht beantwortet.
-
-Ein exakter Alias ist ein besonders starkes Ranking-Signal. Ein zu allgemeiner
-Alias kann deshalb korrekte Entries verdrängen.
-
-## 4. Gute Keywords wählen
-
-Keywords sind kurze, fachlich wichtige Begriffe. Geeignet sind:
-
-- das Hauptverb oder die Hauptaktion;
-- das betroffene Objekt;
-- das Linux-Kommando;
-- relevante Flags, Dateiformate oder Zahlen;
-- etablierte Fachbegriffe.
-
-Beispiel:
-
-~~~yaml
-keywords:
-  - extract
-  - archive
-  - tar
-  - tar.gz
-~~~
-
-Nicht geeignet sind vollständige Fragen, Stopwords und Begriffe wie help,
-linux oder command, wenn sie den Entry nicht von anderen Entries unterscheiden.
-
-## 5. Intent und Typ sinnvoll verwenden
-
-type beschreibt die Art des Knowledge-Eintrags. Bestehende und übliche Werte
-sind:
-
-- command für eine Kommandoreferenz;
-- howto für eine konkrete Anleitung oder Erklärung.
-
-intent beschreibt, für welche Query-Art der Entry besonders passend ist. Die
-gängigen Werte entsprechen den erkannten Query-Typen in Kleinschreibung:
-
-- explain
-- how_to
-- why
-- command
-- general
-
-Intent ist ein Ranking-Signal und kein Filter. Trage nur Werte ein, die der
-Inhalt wirklich beantwortet. Ein fehlendes intent ist zulässig.
-
-## 6. Globale Concepts und Synonyme
-
-Global gültige Synonyme gehören nach knowledge/concepts.yaml:
-
-~~~yaml
+```yaml
 concepts:
   folder:
     - folder
     - directory
     - dir
-  delete:
-    - delete
-    - remove
-    - erase
-  rename:
-    - rename
-    - change name
-    - give another name
   permissions:
     - permission
     - permissions
     - rights
     - access rights
-~~~
+```
 
-Der Schlüssel einer Gruppe ist der kanonische Begriff. Die Liste darf einzelne
-Wörter und Mehrwort-Phrasen enthalten. Der kanonische Begriff sollte der
-Klarheit halber ebenfalls in seiner Liste stehen.
+Use the canonical term as the key and include it in its list for clarity.
+Only group expressions that are genuinely interchangeable in the Linux
+context. An expression may appear in one group only; canonical names must be
+unique; groups must not define each other recursively. Entry-specific wording
+belongs in local aliases instead.
 
-Regeln:
+## 5. Validate search behavior
 
-- Ein Ausdruck darf nicht mehreren Concept-Gruppen zugeordnet werden.
-- Kanonische Namen müssen eindeutig sein.
-- Verwende keine Gruppen, die sich gegenseitig als Synonym definieren.
-- Fasse nur Begriffe zusammen, die im Linux-Kontext tatsächlich austauschbar
-  sind.
-- Spezifische Formulierungen bleiben lokale Aliase; nur global gültige
-  Synonyme gehören in concepts.yaml.
-- Eine fehlende concepts.yaml ist erlaubt, reduziert aber die
-  Synonymerkennung.
+Run the complete validator after every knowledge change:
 
-Concepts wirken auf Query und Entry-Metadaten. Die Originalbegriffe bleiben
-trotzdem erhalten. Eine Änderung an concepts.yaml kann daher das Ranking
-mehrerer Entries beeinflussen und muss mit mehreren Queries geprüft werden.
-
-## 7. Validieren und Suchverhalten prüfen
-
-### Gesamte Knowledge Base validieren
-
-~~~bash
+```bash
 ./build/howlinux validate knowledge
-echo $?
-~~~
+./build/howlinux --json validate knowledge
+```
 
-Oder für einen anderen Pfad:
+Then test several query forms:
 
-~~~bash
-./build/howlinux validate /pfad/zur/knowledge
-~~~
+```bash
+./build/howlinux --explain "rename a directory"
+./build/howlinux --explain "how can I change a folder name"
+./build/howlinux --explain "mv"
+./build/howlinux --explain "renmae fodler"
+./build/howlinux --explain "an unrelated question"
+```
 
-Die Validierung sollte ohne Warnungen abgeschlossen werden. Sie prüft unter
-anderem fehlende Dateien, ungültiges YAML, Feldtypen, doppelte IDs und
-fehlerhafte Concept-Definitionen. Ein kaputter Entry wird von der Runtime
-übersprungen, darf aber nicht bewusst in der Knowledge Base verbleiben.
+Include an exact alias, natural phrase, command-oriented query, restrained typo,
+ambiguous query, and unrelated query. Inspect component scores and ensure the
+right result is confident only when justified. Use `--` for leading flags:
 
-### Mehrere Query-Arten testen
-
-Prüfe mindestens:
-
-1. einen direkten Alias;
-2. eine natürlich formulierte Frage;
-3. eine Formulierung mit globalem Synonym;
-4. das Hauptkommando oder ein wichtiges Flag;
-5. einen plausiblen Tippfehler;
-6. eine irrelevante Query als Negativtest.
-
-~~~bash
-./build/howlinux "rename folder"
-./build/howlinux "how can i change the name of a directory"
-./build/howlinux "mv"
-./build/howlinux --explain "change the directory name"
-./build/howlinux --json "rename a folder"
-~~~
-
---explain zeigt Alias-, Phrase-, Token-/IDF-, Concept-, Command-, Keyword-,
-Titel-, Intent- und Fuzzy-Anteile sowie die konkreten Matchgründe. Nutze diese Ausgabe, um
-Ursachen zu korrigieren; erhöhe nicht wahllos die Zahl ähnlicher Aliase.
-
-### Queries mit führenden Bindestrichen
-
--- beendet die Auswertung von CLI-Optionen. Alle folgenden Argumente gehören
-zur Query. Das ist besonders bei Flags erforderlich:
-
-~~~bash
+```bash
 ./build/howlinux -- "--recursive"
-./build/howlinux --knowledge knowledge -- "what does --recursive mean"
-~~~
+```
 
-Ohne den Trenner könnte ein Query-Token wie --recursive als Option der
-Anwendung interpretiert werden.
+Exit code `0` means a confident match or successful management command; `1`
+means uncertain/no match, unknown ID, or validation issue; `2` means invalid
+CLI input; `3` means the knowledge root or global concepts configuration could
+not be used.
 
-### Exitcodes
+## 6. Review checklist
 
-| Code | Bedeutung |
-| --- | --- |
-| 0 | Sicherer Treffer oder erfolgreich ausgeführter Verwaltungsbefehl |
-| 1 | Unsicherer Treffer, kein Treffer oder festgestellte Validierungsprobleme |
-| 2 | Ungültige CLI-Argumente oder Optionen |
-| 3 | Knowledge-Verzeichnis nicht lesbar oder Konfigurationsfehler |
+- [ ] ID is stable, lowercase, hyphenated, and globally unique.
+- [ ] Required fields have the correct types.
+- [ ] Related IDs exist and do not merely point back accidentally.
+- [ ] Aliases are realistic, distinct, and specific.
+- [ ] Keywords distinguish this entry from its neighbors.
+- [ ] Type and intent match the content.
+- [ ] Every command was tested safely.
+- [ ] Placeholders and quoting are clear.
+- [ ] Prerequisites and platform limits are explicit.
+- [ ] Destructive behavior has an immediate warning.
+- [ ] No secret, private hostname, personal path, or personal data is present.
+- [ ] `validate knowledge` passes.
+- [ ] Exact, natural, typo, ambiguous, and unrelated queries behave sensibly.
+- [ ] `--explain` shows understandable reasons for the result.
 
-Bei validate bedeutet Code 0 eine erfolgreiche Validierung, Code 1 mindestens
-ein übersprungenes/strukturell fehlerhaftes Entry oder eine Warnung und Code 3
-ein fehlendes Knowledge-Root oder eine unbrauchbare globale
-Concept-Konfiguration. Bei einer normalen Suche bedeutet Code 1, dass Skripte
-die Ausgabe nicht als sicheren Treffer behandeln dürfen. In `validate --json`
-stehen Diagnosen im Feld `diagnostics`; Suchdiagnosen bleiben auf `stderr`.
+## 7. Common problems
 
-## 8. Review-Checkliste
+If an entry does not load, run `validate knowledge` and check file types,
+required values, YAML list types, duplicate IDs, and `related` references.
 
-Vor dem Merge eines Entries:
+If an entry cannot be found, add realistic aliases and distinctive keywords;
+use a concept only when the equivalence is global.
 
-- [ ] Ist die Aussage unter Linux fachlich korrekt?
-- [ ] Wurden alle Beispiele sicher getestet oder ihre Voraussetzungen erklärt?
-- [ ] Sind Distribution-, Versions- und Paketabhängigkeiten genannt?
-- [ ] Sind Dateinamen mit Leerzeichen korrekt quotiert?
-- [ ] Sind destruktive oder irreversible Auswirkungen deutlich markiert?
-- [ ] Gibt es mindestens drei realistische und unterschiedliche Aliase?
-- [ ] Sind Keywords knapp, fachlich stark und frei von Stopwords?
-- [ ] Sind id, Verzeichnisname, command und related korrekt geschrieben?
-- [ ] Verweisen alle related-Werte auf vorhandene Entry-IDs?
-- [ ] Werden globale Synonyme in concepts.yaml statt mehrfach lokal gepflegt?
-- [ ] Beantwortet content.md genau die durch Aliase und intent versprochenen
-      Fragen?
-- [ ] Liefert validate keine Warnungen oder Fehler?
-- [ ] Funktionieren direkter Alias, natürliche Frage und Synonymformulierung?
-- [ ] Verdrängt der Entry bei Negativtests keinen fachlich besseren Treffer?
-- [ ] Enthalten Beispiele keine Zugangsdaten oder privaten Informationen?
+If the wrong entry wins, compare candidates with `--explain`. Remove broad
+aliases or keywords before changing confidence thresholds.
 
-## 9. Häufige Probleme
-
-### Der Entry wird nicht geladen
-
-Prüfe:
-
-- Liegen meta.yaml und content.md im selben Entry-Verzeichnis?
-- Ist das YAML syntaktisch korrekt und sind Listen wirklich Listen?
-- Ist die ID global eindeutig?
-- Stimmen Verzeichnisname und id überein?
-- Zeigt --knowledge auf das erwartete Root-Verzeichnis?
-
-Führe danach validate aus und beachte Pfad, ID und Ursache der Warnung.
-
-### Der Entry wird nicht gefunden
-
-- Ergänze realistische Aliase, nicht bloß weitere Einzelwörter.
-- Prüfe, ob zentrale Objekt- und Aktionsbegriffe als Keywords vorhanden sind.
-- Pflege global gültige Synonyme in concepts.yaml.
-- Prüfe die normalisierte Query und die Teil-Scores mit --explain.
-- Kontrolliere, ob die Query ausschließlich aus Stopwords besteht.
-
-### Ein falscher Entry gewinnt
-
-- Entferne zu allgemeine oder sachlich falsche Aliase.
-- Prüfe Concept-Gruppen auf zu weit gefasste Synonyme.
-- Verwende spezifischere Keywords.
-- Prüfe type und intent.
-- Vergleiche die Teil-Scores beider Entries mit --explain.
-
-### Ein Flag wird als Programmoption gelesen
-
-Setze -- vor die Query:
-
-~~~bash
-./build/howlinux -- "--help"
-~~~
-
-Damit wird nach dem Linux-Flag --help gesucht, statt die Hilfe von howlinux
-aufzurufen.
+If a flag is parsed as a howlinux option, place `--` before the query.

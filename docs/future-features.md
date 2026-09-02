@@ -1,260 +1,127 @@
-# Post-V1-Roadmap
-
-Dieses Dokument sammelt mögliche Erweiterungen nach der stabilen V1. Es ist
-eine priorisierte technische Roadmap, keine Zusage für einen bestimmten
-Release. Ein Feature wird erst eingeplant, wenn Nutzen, Wartungsaufwand,
-Offline-Verhalten und messbare Abnahmekriterien geklärt sind.
-
-Die V1 bleibt die Referenz:
-
-- lokal und ohne Runtime-Netzwerk;
-- deterministisch und ressourcenschonend;
-- redaktionell geprüfte Antworten statt Textgenerierung;
-- keine Ausführung angezeigter Befehle;
-- YAML und Markdown bleiben die autoritative Knowledge-Quelle;
-- lexikalische Suche funktioniert ohne optionale Zusatzkomponenten.
+# Post-v1 roadmap
 
-## Prioritätsmodell
+This document records possible work after v1.0.0. It is not a promise or a
+release requirement. Any proposal must preserve the core contract: curated
+answers, deterministic behavior, offline operation, no command execution, and
+no hidden telemetry.
 
-- **P1:** naheliegende nächste Arbeit mit hohem praktischem Nutzen;
-- **P2:** mittelfristige Erweiterung nach belastbaren V1-Erfahrungen;
-- **P3:** experimentell; nur hinter klaren Schnittstellen und nie als
-  Voraussetzung für die Basissuche.
+Priority meanings:
 
-## P1 – Naheliegende Erweiterungen
+- **P1:** practical next steps with clear value and limited architectural risk
+- **P2:** medium-term work that needs a design proposal and measurements
+- **P3:** experiments that require evidence before becoming product features
 
-### 1. Persistenter, versionierter Index
+## P1 - practical extensions
 
-Der persistente Index gehört ausdrücklich **nicht zur V1**. Er ist der erste
-naheliegende Skalierungsschritt, wenn Startzeit oder Knowledge-Größe dies
-rechtfertigen.
+### Persistent versioned index
 
-Geplanter Umfang:
+Large knowledge bases may benefit from an optional compiled index. Its format
+would need a magic header, schema version, engine compatibility, source
+fingerprint, checksum, deterministic serialization, atomic replacement, and a
+safe fallback to rebuilding in memory. The YAML and Markdown sources remain
+authoritative and must never be deleted after compilation.
 
-- separates Programm howlinux-index oder eine klar getrennte
-  Compiler-Komponente;
-- Aufruf nach dem Muster
-  howlinux-index knowledge/ -o howlinux.idx;
-- Runtime-Nutzung über howlinux --index howlinux.idx "query";
-- exakt derselbe Loader und dieselbe Validierung wie für YAML/Markdown;
-- dokumentierte Formatversion;
-- Knowledge-Signatur, Hashes oder ausreichend genaue Änderungsinformationen;
-- Entries und Inhalte beziehungsweise sichere Referenzen darauf;
-- Inverted Index, Concept-Daten und IDF-Statistiken;
-- atomare Erstellung, damit ein abgebrochener Build keinen gültigen Index
-  überschreibt;
-- klare Ablehnung inkompatibler oder veralteter Indizes.
+Add this only after benchmarks show that startup time or memory is a real
+problem.
 
-Abnahmekriterien:
+### Distribution and installation
 
-- Ein Index liefert dieselben Suchresultate und Tie-Breaks wie der
-  In-Memory-Aufbau derselben Knowledge Base.
-- Ein veralteter oder beschädigter Index führt nie still zu falschen
-  Antworten.
-- Ohne Index bleibt die normale V1-Suche vollständig funktionsfähig.
-- Formatmigration und Fehlermeldungen sind getestet und dokumentiert.
+Potential additions include signed checksums, distribution packages, more
+architectures, and documented uninstall/upgrade behavior. Each artifact must
+come from tested tagged source and retain the license and third-party notices.
 
-### 2. Distributions- und Installationsausbau
+### Authoring and lint tools
 
-Die V1 enthält bereits CMake-Installationsregeln, einen relocatable
-`share/howlinux/knowledge`-Fallback und die explizite Option `--knowledge`.
-Mögliche nächste Schritte sind:
+Useful checks include duplicate or overly similar aliases, overly broad
+keywords, unused concepts, Markdown link/code-fence validation, placeholder
+quality, and risky command patterns. Lint must be deterministic and must not
+silently rewrite reviewed content.
 
-- XDG-kompatible Benutzer- und Systempfade mit dokumentierter Priorität;
-- Debian-Paket und reproduzierbares Release-Archiv;
-- Manpage und Shell-Completions für Bash, Zsh und Fish;
-- getrennte, versionierte Knowledge-Pakete mit Upgrade-/Deinstallations-Doku.
+### Ranking evaluation
 
-Die explizite Option `--knowledge` muss weiterhin jede automatische
-Pfadauflösung übersteuern.
+Create a versioned dataset of expected top results for positive, ambiguous,
+typo, and negative queries. Measure top-1 accuracy, recall at five, false
+confident matches, and latency before changing weights or confidence
+thresholds.
 
-### 3. Authoring- und Lint-Werkzeuge
+## P2 - medium-term extensions
 
-Die manuelle Pflege soll sicherer werden, ohne Inhalte automatisch zu
-erfinden.
+### Versioned knowledge packages
 
-Mögliche Funktionen:
+Separate content packages could have a manifest, package ID, semantic version,
+language, engine compatibility, checksums, deterministic archives, signatures,
+and explicit selection. Download or update operations must be separate and
+opt-in; the runtime remains offline.
 
-- howlinux init-entry zum Erzeugen einer minimalen Vorlage;
-- strikter Validator-Modus für CI;
-- versionierte JSON-Schema-Datei für die bereits vorhandenen Payloads;
-- CI-Ausgabe und Filter für die bereits vorhandenen Validator-Diagnosen;
-- Erkennung doppelter oder sehr ähnlicher Aliase;
-- Hinweise auf zu allgemeine Keywords und unbenutzte Concepts;
-- weitergehende Lints für Alias-Ähnlichkeit, ungenutzte Concepts und
-  redaktionelle ID-Konventionen (die Basisprüfung ist bereits V1);
-- optionaler Markdown-Link- und Codeblock-Check;
-- übersichtlicher Diff-Bericht über Ranking-Auswirkungen einer Änderung.
+### More precise lexical search
 
-Tools dürfen redaktionelle Entscheidungen unterstützen, aber keine
-fachlichen Inhalte ungeprüft erzeugen.
+Candidates include configurable field weights, explicit keyword weights,
+field-aware BM25, better compound-word and Unicode handling, language-specific
+stopwords, cautious stemming, selected Markdown section indexing, and bounded
+snippets. Every signal must remain deterministic and visible in `--explain`.
 
-### 4. Reproduzierbare Ranking-Evaluation
+### Curated multilingual knowledge
 
-Vor weiterer Ranking-Komplexität sollte ein kuratierter Evaluationskorpus
-entstehen.
+Language-specific packages could provide human-reviewed content,
+normalization, concepts, and an explicit fallback language. Validation must
+detect missing or stale translations. Machine translation may create a draft,
+but unreviewed translated text must never be presented as authoritative.
 
-Geplanter Umfang:
+### Reusable library and interfaces
 
-- versionierte Queries mit erwarteten Top-Ergebnissen;
-- getrennte positive, mehrdeutige und negative Fälle;
-- Kennzahlen wie Top-1-Genauigkeit, Recall@5 und Quote falscher sicherer
-  Treffer;
-- Performance-Datensatz mit mindestens 10.000 Entries;
-- Vergleichsberichte für Änderungen an Normalisierung, Concepts und Scores;
-- kalibrierte Safe- und Margin-Schwellen anhand der Testdaten.
+A stable core API could support an interactive terminal selector, read-only
+TUI, local editor integrations, and distribution tooling. No interface may run
+shell commands without a separate, explicit security design and user consent.
 
-Die Tests bleiben offline und enthalten keine aus Telemetrie gewonnenen
-Nutzerdaten.
+### Safe local reload
 
-## P2 – Mittelfristige Erweiterungen
+Very large or frequently edited knowledge bases may need change detection,
+incremental indexing, consistent snapshots, rollback to the last valid state,
+and measurable resource limits. A partially loaded state must never be visible.
 
-### 1. Versionierte Knowledge-Pakete
+## P3 - experiments
 
-Binary und Knowledge können getrennte Releasezyklen erhalten:
+### Optional embedding ranking
 
-- Manifest mit Paketversion, Sprache, unterstützten Plattformen und
-  Mindestversion der Engine;
-- deterministische Paketarchive;
-- Integritätsprüfung und optional signierte Releases;
-- expliziter, separater Download-/Updatevorgang;
-- parallele lokale Pakete, auswählbar über CLI oder Konfiguration.
+Embeddings may only be an optional stage behind a stable interface. Prefer a
+local model, keep lexical and fuzzy fallbacks, version the model and vector
+format, expose semantic scores, and never allow a vague semantic match to
+override an exact command or alias. Evaluate false confident matches and
+resource use before adoption.
 
-Die Runtime selbst bleibt offline. Ein Updatewerkzeug darf niemals unbemerkt
-Netzwerkzugriffe ausführen.
+Embeddings may select reviewed entries; they must not generate or modify answer
+text.
 
-### 2. Präzisere lexikalische Suche
+### Learned hybrid ranking
 
-Ausbau der bestehenden Suche, bevor komplexere Verfahren nötig werden:
+A learned ranker requires a sufficiently large, curated, versioned evaluation
+set; reproducible training without user telemetry; an exported versioned
+model; inspectable signals; and a deterministic fallback. Keep the rule-based
+ranker unless measurements demonstrate a meaningful improvement.
 
-- konfigurierbare Feldgewichte;
-- optionale explizite Keyword-Gewichte im YAML;
-- feldbezogene BM25-Varianten;
-- bessere Behandlung zusammengesetzter Wörter und Unicode;
-- sprachspezifische Stopwords und vorsichtiges Stemming;
-- section-aware Indexierung ausgewählter Markdown-Inhalte;
-- begrenzte, nachvollziehbare Textausschnitte in Vorschlägen.
+### Knowledge graph
 
-Alle neuen Teil-Scores müssen über --explain sichtbar und deterministisch
-bleiben. Binärdateien werden weiterhin nicht indexiert.
+`related` and concepts might become a typed, validated graph with orphan and
+cycle checks, nearby-topic suggestions, and a bounded ranking bonus. Graph
+proximity must never make an irrelevant result confident.
 
-### 3. Mehrsprachige, redaktionell gepflegte Knowledge Base
+### Local privacy-preserving diagnostics
 
-Möglicher Aufbau:
+An optional local-only mode might summarize no-match queries. It must be off by
+default, make no network requests, document storage and deletion, redact
+potentially sensitive input, and require explicit consent.
 
-- Sprache im Paketmanifest oder Entry;
-- getrennte, von Menschen geprüfte Inhalte pro Sprache;
-- sprachabhängige Normalisierung, Stopwords und Concepts;
-- definierte Fallback-Sprache;
-- Validierung auf fehlende oder veraltete Übersetzungen.
+## Outside the roadmap
 
-Automatische Übersetzung darf höchstens einen redaktionellen Entwurf liefern.
-Ungeprüfter maschineller Text darf nicht als autoritative Antwort erscheinen.
+The following would violate the project contract:
 
-### 4. Wiederverwendbare Library und weitere Oberflächen
+- unreviewed generative answers as default behavior;
+- automatic execution of displayed commands;
+- execution of query, YAML, or Markdown content;
+- required cloud services or runtime network access;
+- hidden telemetry;
+- a required external vector database;
+- replacing editable YAML/Markdown sources with an opaque binary format.
 
-Loader, Query Processor, Index und Ranker könnten als stabile C++-Library
-bereitgestellt werden. Darauf aufbauend wären möglich:
-
-- interaktiver Terminalmodus zur Auswahl unsicherer Treffer;
-- Read-only-TUI;
-- lokale Editorintegration;
-- dokumentierte API für Distributionstools;
-- Renderer für weitere strukturierte Ausgabeformate.
-
-Keine Oberfläche darf Shell-Befehle ohne einen separaten, ausdrücklich
-bestätigten Sicherheitsentwurf ausführen. Die Standardfunktion bleibt reine
-Anzeige.
-
-### 5. Sicherer lokaler Reload
-
-Für sehr große oder häufig aktualisierte Knowledge Bases:
-
-- Änderungserkennung ohne vollständigen Prozessneustart;
-- inkrementeller Indexaufbau;
-- konsistente Snapshots während eines Reloads;
-- Rückfall auf den letzten gültigen Zustand bei Validierungsfehlern;
-- messbare Speicher- und Latenzgrenzen.
-
-Ein teilweise geladener Datenbestand darf niemals sichtbar werden.
-
-## P3 – Experimentelle Erweiterungen
-
-### 1. Austauschbare Embedding-Rankingstufe
-
-Embeddings sind optional, experimentell und **niemals Voraussetzung** für
-howlinux. Sie dürfen nur als austauschbare Rankingstufe hinter einer stabilen
-Schnittstelle ergänzt werden.
-
-Leitplanken:
-
-- lexikalischer Inverted Index und Fuzzy-Fallback bleiben verfügbar;
-- Aktivierung ausschließlich explizit per Build-/Konfigurationsoption;
-- bevorzugt lokales, offline nutzbares Modell;
-- keine Cloud-API und keine zwingende externe Vector Database;
-- Modellname, Version und Vektordimension sind Teil der Indexmetadaten;
-- ein fehlendes Modell führt kontrolliert zur lexikalischen Suche zurück;
-- semantische Teil-Scores erscheinen in --explain;
-- exakte Command-, Flag- und Alias-Treffer dürfen nicht von einem diffusen
-  semantischen Match verdrängt werden;
-- Evaluation misst besonders falsche sichere Treffer und Ressourcenverbrauch.
-
-Embeddings wählen weiterhin nur geprüfte Entries aus. Sie generieren oder
-verändern keinen Antworttext.
-
-### 2. Gelerntes hybrides Ranking
-
-Ein lernender Ranker könnte lexikalische, Concept-, Intent- und optionale
-semantische Signale kombinieren. Voraussetzung sind:
-
-- ausreichend großer, kuratierter und versionierter Evaluationsdatensatz;
-- reproduzierbares Training ohne Nutzerdaten-Telemetrie;
-- exportiertes, versioniertes Modell;
-- verständliche Teil-Scores und ein deterministischer Fallback;
-- nachweisbarer Vorteil gegenüber der konfigurierten V1-Heuristik.
-
-Ohne messbaren Qualitätsgewinn bleibt der regelbasierte Ranker maßgeblich.
-
-### 3. Knowledge-Graph für verwandte Themen
-
-related und Concepts könnten zu einem validierten Graphen ausgebaut werden:
-
-- gerichtete und typisierte Beziehungen;
-- Prüfung auf verwaiste Knoten und unerwünschte Zyklen;
-- Vorschläge für benachbarte Themen;
-- Navigation in einer TUI oder strukturierten Ausgabe;
-- begrenzter Ranking-Bonus für fachlich nahe Entries.
-
-Graphbeziehungen dürfen einen inhaltlich unpassenden Treffer nicht zu einer
-sicheren Antwort machen.
-
-### 4. Lokale, datenschutzfreundliche Qualitätsmessung
-
-Als Experiment denkbar ist ein ausschließlich lokaler Diagnosemodus, der
-anonyme Aggregationen für den Betreiber erzeugt, etwa häufige No-Match-Queries.
-
-Voraussetzungen:
-
-- standardmäßig deaktiviert;
-- kein Netzwerk und keine automatische Übertragung;
-- klare Speicherorte und Löschfunktion;
-- Redaction potenziell sensibler Query-Bestandteile;
-- ausdrückliche Dokumentation und Einwilligung.
-
-Ohne überzeugendes Datenschutzkonzept wird dieses Feature nicht umgesetzt.
-
-## Bewusst außerhalb der Roadmap
-
-Folgende Änderungen würden den Kernvertrag von howlinux verletzen und sind
-nicht geplant:
-
-- ungeprüfte generative Antworten als Standardverhalten;
-- automatische Ausführung angezeigter Shell-Befehle;
-- Ausführung von Query- oder YAML-Inhalten;
-- verpflichtende Cloud-Dienste oder Runtime-Netzwerkzugriffe;
-- versteckte Telemetrie;
-- eine externe Vector Database als Voraussetzung;
-- Ersetzung der YAML-/Markdown-Quellen durch ein undurchsichtiges Binärformat.
-
-Jede spätere Erweiterung muss weiterhin zeigen, dass ein neuer geprüfter
-Knowledge-Eintrag ohne C++-Änderung ergänzt werden kann.
+Every future design must retain the ability to add a reviewed knowledge entry
+without changing C++ code.

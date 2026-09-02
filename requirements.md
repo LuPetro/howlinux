@@ -1,310 +1,78 @@
-# howlinux - vollständige Projektanforderungen
+# howlinux v1 requirements
 
-## 1. Zweck und Ziel
+This document defines the v1 behavior contract. Future ideas belong in
+[`docs/future-features.md`](docs/future-features.md) and must not silently
+change this contract.
 
-`howlinux` ist ein schnelles, lokales CLI-Programm, das Linux-Fragen aus einer von Menschen gepflegten Knowledge Base beantwortet. Es ist keine generative KI und kein Chatbot: Das Programm findet den passendsten geprüften Eintrag und rendert dessen Inhalt unverändert.
+## 1. Purpose
 
-Das System muss offline, deterministisch, ressourcenschonend und auf schwachen Linux-Systemen nutzbar sein. Ein neuer Knowledge-Eintrag darf keine C++-Änderung benötigen.
+`howlinux` is a fast, local CLI that answers Linux questions from a
+human-maintained knowledge base. It is a retrieval tool, not a chatbot: it
+selects the best reviewed entry and renders that entry without rewriting it.
 
-Diese Datei ist die Arbeitsgrundlage für einen Implementierungs-Agenten. Der Agent soll das gesamte technische System von Build bis Tests umsetzen. Die fachlichen Knowledge-Einträge selbst werden anschließend manuell ergänzt.
+The application must be offline, deterministic, economical enough for modest
+Linux systems, and useful without a database or network service.
 
-## 2. Ausgangslage
+## 2. Non-goals
 
-Das Repository enthält bereits eine funktionierende v0.01-Basis:
+Version 1 does not:
 
-- CMake und C++20
-- `yaml-cpp` zum Laden von `meta.yaml`
-- Markdown-Inhalte in `content.md`
-- Einträge unter `knowledge/commands/<id>/` und `knowledge/topics/<id>/`
-- lineare Suche mit Normalisierung, Stopwords und einfachem Scoring
-- Terminal-Renderer
+- generate or automatically translate answers;
+- execute commands from queries, YAML, or Markdown;
+- use cloud APIs, telemetry, embeddings, or a vector database;
+- crawl arbitrary documents or treat unreviewed text as authoritative;
+- maintain a persistent index or background update service;
+- provide a GUI, TUI, daemon, package manager, or automatic updater.
 
-Die bestehende Struktur und die vorhandenen Einträge müssen erhalten bleiben. Vorhandene öffentliche APIs dürfen geändert werden, wenn dadurch die Zielarchitektur sauber erreicht wird; unnötige inkompatible Änderungen sind zu vermeiden.
+## 3. Architecture
 
-## 3. Nicht-Ziele
+The executable is a thin process boundary around `howlinux_core`. The core
+contains the CLI parser, knowledge loader, concept dictionary, query processor,
+in-memory index, search engine, result policy, and renderers. Tests link the
+same core library as the executable.
 
-Folgende Funktionen gehören nicht zu Version 1:
-
-- Textgenerierung oder ein eigenes LLM
-- Netzwerkzugriff, Cloud-API oder Telemetrie
-- Embeddings oder eine externe Vector Database
-- automatische Erstellung fachlicher Knowledge-Einträge
-- Ausführung der in der Antwort angezeigten Shell-Befehle
-- Shell-Kommandos aus Benutzereingaben ausführen
-- Volltextsuche über beliebige Binärdateien
-- Übersetzungsautomatik
-
-Embeddings können später als austauschbare Ranking-Stufe ergänzt werden, dürfen aber die erste Implementierung nicht voraussetzen.
-
-## 4. Zielarchitektur
-
-Die Anwendung soll in klar getrennte Komponenten gegliedert sein:
+Runtime flow:
 
 ```text
-Knowledge-Dateien
-  -> Loader/Validator
-  -> Query Processor
-  -> Candidate Generator
-  -> Ranker
-  -> Result Policy
-  -> Renderer
+CLI arguments
+    -> resolve knowledge path
+    -> load and validate YAML/Markdown
+    -> load concepts
+    -> build in-memory index
+    -> normalize and classify query
+    -> generate and rank candidates
+    -> apply result policy
+    -> render text or JSON
 ```
 
-### 4.1 Knowledge Loader
-
-Der Loader liest rekursiv alle gültigen Einträge unter einem konfigurierten Knowledge-Verzeichnis. Ein Eintrag besteht aus:
-
-```text
-<category>/<entry-id>/meta.yaml
-<category>/<entry-id>/content.md
-```
-
-Unterstützte Kategorien sind mindestens `commands` und `topics`; weitere Kategorien müssen ohne C++-Änderung möglich sein.
-
-Der Loader muss:
-
-- `id`, `title`, `type`, `command`, `aliases`, `keywords`, `related` laden
-- optionale Felder mit sinnvollen Defaults behandeln
-- UTF-8-Text in Markdown unverändert laden
-- fehlende oder ungültige einzelne Einträge mit einer verständlichen Warnung überspringen
-- bei fehlendem Knowledge-Verzeichnis einen klaren Fehler liefern
-- doppelte IDs erkennen und nicht still überschreiben
-- Pfad, ID und konkrete Validierungsursache in Warnungen nennen
-- deterministische Reihenfolge liefern, vorzugsweise sortiert nach ID
-
-Ein kaputter Eintrag darf nicht den Start der gesamten Anwendung verhindern. Ein komplett leeres Verzeichnis ist ein gültiger Zustand, aber die CLI muss darauf hinweisen.
-
-### 4.2 Query Processor
-
-Die rohe Query wird in eine `QueryContext`-Struktur umgewandelt. Diese soll mindestens enthalten:
-
-- Originaltext
-- normalisierte Token
-- normalisierte zusammenhängende Query
-- erkannte Phrasen
-- erkannte Concepts/Kanonbegriffe
-- erkannter Query-Typ
-
-Die Normalisierung muss:
-
-1. UTF-8-freundlich mit ASCII-Linux-Vokabular umgehen
-2. Groß-/Kleinschreibung ignorieren
-3. Satzzeichen und überflüssige Leerzeichen behandeln
-4. Bindestriche, Unterstriche und typische Shell-Trennzeichen sinnvoll als Wortgrenzen behandeln
-5. Stopwords entfernen
-6. wiederholte Tokens deduplizieren, ohne die Phrase-Reihenfolge zu verlieren
-7. Zahlen, Flags und Versionen wie `755`, `tar.gz`, `-r`, `--recursive` und `2>` nicht zerstören
-
-Die Normalisierung muss aus einer einzelnen Funktion bzw. testbaren Klasse bestehen. Die Roh-Query bleibt für die Ausgabe erhalten.
-
-### 4.3 Stopwords
-
-Stopwords werden aus einer Datei oder einer klar zentralisierten Konfiguration geladen. Mindestens die bisher verwendeten englischen Wörter müssen abgedeckt werden, zum Beispiel `a`, `an`, `the`, `i`, `do`, `does`, `can`, `how`, `please`, `to`, `of`, `is`, `for`, `me`, `my`.
-
-Ein relevantes Linux-Token wie `mv`, `cp`, `rm`, `chmod`, `tar`, `ssh` oder `sudo` darf niemals als Stopword behandelt werden. Leere Queries nach der Normalisierung müssen sauber behandelt werden.
-
-### 4.4 Concepts und Synonyme
-
-Die Knowledge Base bekommt eine globale Datei:
-
-```text
-knowledge/concepts.yaml
-```
-
-Beispiel:
-
-```yaml
-concepts:
-  folder:
-    - folder
-    - directory
-    - dir
-  delete:
-    - delete
-    - remove
-    - erase
-  rename:
-    - rename
-    - change name
-    - give another name
-  permissions:
-    - permission
-    - permissions
-    - rights
-    - access rights
-  extract:
-    - extract
-    - unpack
-    - decompress
-```
-
-Anforderungen:
-
-- Jede Gruppe hat genau einen kanonischen Namen.
-- Einzelwörter und Mehrwort-Phrasen werden unterstützt.
-- Concepts werden sowohl auf Queries als auch auf Eintragsfeldern angewendet.
-- Die Originaltokens bleiben zusätzlich verfügbar, damit `directory` und `folder` nicht ununterscheidbar in der Ausgabe werden.
-- Zirkuläre oder doppelte Definitionen werden validiert und verständlich gemeldet.
-- Eine fehlende `concepts.yaml` ist erlaubt und bedeutet: keine Synonym-Erweiterung.
-- Die Datei darf später erweitert werden, ohne C++-Code zu ändern.
-
-### 4.5 Query-Typen
-
-Der Query Processor erkennt mindestens:
-
-```text
-EXPLAIN:  what is X, what does X mean, explain X
-HOW_TO:   how do I X, how can I X, X a folder
-WHY:      why does X, why can't X, why is X
-COMMAND:  direkte Kommandos oder Flags wie mv, chmod 755
-GENERAL:  alles andere
-```
-
-Die Erkennung ist heuristisch und darf nie dazu führen, dass ein ansonsten guter Treffer verworfen wird. Der Query-Typ ist ein Ranking-Signal, kein harter Filter.
-
-Die Metadaten unterstützen dafür mindestens:
-
-```yaml
-type: howto
-intent:
-  - how_to
-  - explain
-```
-
-Die bisherige Zeichenkette `type: howto` und bestehende Einträge müssen weiterhin funktionieren.
-
-## 5. Suche und Ranking
-
-### 5.1 Kandidaten-Generierung
-
-Die Suchmaschine soll nicht mehr bei jeder Query alle Einträge vollständig vergleichen. Beim Laden wird ein Inverted Index im RAM aufgebaut:
-
-```text
-token -> Entry IDs
-```
-
-Indexiert werden mindestens:
-
-- ID und Titel
-- Alias-Tokens und Alias-Phrasen
-- Keywords
-- Command
-- kanonische Concept-Tokens
-
-Für wenige Einträge darf ein vollständiger Fallback bestehen. Der Index muss aber die primäre Implementierung sein.
-
-Kandidaten entstehen aus Alias-, Token-, Concept-, Command- und optional Fuzzy-Treffern. Gibt es keine Index-Kandidaten, darf ein begrenzter Fuzzy-Fallback verwendet werden.
-
-### 5.2 Score
-
-Der Score muss aus nachvollziehbaren Teilwerten bestehen. Die konkreten Konstanten dürfen kalibriert werden, aber die folgende Priorität ist verbindlich:
-
-```text
-exact alias match       sehr hoch
-exact phrase match      hoch
-token/concept overlap    mittel bis hoch
-wichtige Keywords        mittel
-Command match            hoch
-Intent match             mittel
-Titelmatch               niedrig bis mittel
-BM25-ähnliche Seltenheit mittel
-Fuzzy match              niedrig
-```
-
-Ein möglicher Startpunkt:
-
-```text
-exact alias              +100
-phrase match              +40
-command match             +30
-gewichtetes Keyword       +20 je relevanter Übereinstimmung
-Concept/Synonym            +15 je Übereinstimmung
-Intent match               +20
-Titelmatch                 +10 je Token
-Fuzzy match                +10 bis maximal +15 je Token
-```
-
-Die Implementierung soll Teil-Scores in `SearchResult` oder einer Debug-Struktur speichern, damit `--explain` den Rang nachvollziehbar machen kann. Mehrfaches Auftreten desselben Tokens darf den Score nicht unkontrolliert aufblasen.
-
-### 5.3 Token-Gewichtung
-
-Häufige, wenig aussagekräftige Tokens sollen weniger zählen als seltene, fachlich starke Tokens. Für v1 reicht eine deterministische IDF-ähnliche Gewichtung:
-
-```text
-idf(token) = log((N + 1) / (document_frequency(token) + 1)) + 1
-```
-
-Die Gewichtung muss beim Indexaufbau aus der geladenen Knowledge Base berechnet werden. Ein explizites Gewicht im YAML darf später unterstützt werden, ist aber für v1 optional.
-
-### 5.4 Fuzzy Matching
-
-Fuzzy Matching ist ein Rettungsnetz, kein Primärsignal. Implementiert wird mindestens Levenshtein-Distanz oder eine gleichwertige edit-distance-basierte Methode.
-
-Regeln:
-
-- nur für ausreichend lange Tokens, standardmäßig ab vier Zeichen
-- maximale Distanz abhängig von der Tokenlänge, zum Beispiel 1 bei 4-6 und 2 ab 7 Zeichen
-- Zahlen, Flags und Kommandos nicht aggressiv fuzzy matchen
-- Fuzzy-Scores deutlich unter Exact-, Phrase- und Concept-Scores halten
-- im Ergebnis kenntlich machen, wenn ein Fuzzy-Match verwendet wurde
-
-Beispiel: `renmae fodler` muss `rename folder` als starken Kandidaten finden, darf aber keinen unverbundenen Treffer dominieren.
-
-### 5.5 Sortierung und Gleichstände
-
-Ergebnisse werden absteigend nach Gesamtscore sortiert. Gleichstände werden deterministisch nach folgenden Kriterien aufgelöst:
-
-1. höherer Exact-/Phrase-Teilscore
-2. höherer Intent-Teilscore
-3. alphabetische Entry-ID
-
-Die API muss die besten Ergebnisse und optional ein konfigurierbares Limit liefern. Standardmäßig werden höchstens fünf Vorschläge gerendert.
-
-## 6. Result Policy und Benutzerverhalten
-
-Die Anwendung unterscheidet drei Fälle:
-
-1. **Sicherer Treffer:** Der beste Treffer überschreitet eine konfigurierbare Schwelle und liegt ausreichend vor dem zweitbesten Treffer. Der vollständige Eintrag wird gerendert.
-2. **Unsicherer Treffer:** Es gibt Kandidaten, aber keine ausreichende Sicherheit. Es werden Titel, IDs, Score oder kurze Match-Informationen als Vorschläge angezeigt.
-3. **Kein Treffer:** Es gibt keine sinnvollen Kandidaten. Die Ausgabe erklärt kurz, dass nichts gefunden wurde, und zeigt eine Beispielsyntax.
-
-Schwellenwerte gehören in eine zentrale Konfiguration und nicht als verstreute Magic Numbers in `main.cpp`.
-
-Die CLI soll mindestens unterstützen:
-
-```text
-howlinux <query...>
-howlinux search <query...>
-howlinux --help
-howlinux --version
-howlinux --knowledge <path> <query...>
-howlinux --limit <n> <query...>
-howlinux --explain <query...>
-```
-
-Zusätzlich empfohlen:
-
-```text
-howlinux list
-howlinux show <entry-id>
-howlinux validate [path]
-howlinux --json <query...>
-```
-
-Die exakte Syntax darf an die vorhandene CLI angepasst werden, aber Hilfe, Version, Knowledge-Pfad, Limit, Validierung und Debug-Ranking müssen vorhanden sein.
-
-Exit-Codes:
-
-- `0`: Antwort oder valide Vorschläge erfolgreich erzeugt
-- `1`: kein Treffer oder unsicherer Treffer, falls für Skripte sinnvoll dokumentiert
-- `2`: ungültige CLI-Argumente
-- `3`: Knowledge-Verzeichnis nicht lesbar oder Konfigurationsfehler
-
-Die Ausgabe für Menschen bleibt standardmäßig gut lesbares Terminal-Markdown/ANSI. JSON darf keine ANSI-Sequenzen enthalten und muss eine stabile Struktur besitzen.
-
-## 7. Entry-Datenformat
-
-Bestehende Einträge wie `knowledge/topics/rename-folder/` bleiben gültig. Das Minimalformat:
+## 4. Knowledge loading
+
+The loader recursively discovers entry directories below the selected root.
+An entry directory contains exactly the entry's `meta.yaml` and `content.md`;
+categories such as `commands/` and `topics/` are organizational and must not be
+hard-coded into search behavior.
+
+The loader must:
+
+- produce deterministic entry order independent of filesystem iteration;
+- require a readable directory root;
+- treat an existing empty root as a valid zero-entry knowledge base;
+- accept only regular `meta.yaml` and `content.md` files and reject symlinks;
+- require valid UTF-8-compatible YAML values of the documented types;
+- require non-empty `id`, `title`, and `type` strings;
+- require readable, non-empty Markdown content;
+- reject duplicate IDs across every category;
+- validate `related` references after all otherwise valid entries are loaded;
+- report file, entry ID when known, severity, and cause for every diagnostic;
+- skip an invalid entry without discarding unrelated valid entries;
+- distinguish entry problems from global configuration failures.
+
+Unknown metadata fields produce a warning and have no search effect. Missing
+optional fields behave as empty values.
+
+## 5. Entry format
+
+Example:
 
 ```yaml
 id: rename-folder
@@ -313,303 +81,205 @@ type: howto
 command: mv
 
 aliases:
-  - rename folder
-  - rename directory
-  - change folder name
-
+  - rename a folder
+  - change the name of a directory
 keywords:
   - rename
   - folder
   - directory
-  - name
-
 related:
   - mv
-
 intent:
   - how_to
-```
-
-Zusätzlich mögliche optionale Felder:
-
-```yaml
 difficulty: beginner
 platforms:
   - linux
-  - ubuntu
 tags:
   - filesystem
 examples:
-  - mv old-name new-name
+  - mv -- old-name new-name
 ```
 
-Unbekannte optionale Felder sollen entweder ignoriert oder als Warnung gemeldet werden; sie dürfen den Loader nicht zum Absturz bringen.
+Required fields:
 
-`content.md` muss der geprüfte Antworttext sein. Er darf Shell-Codeblöcke, Überschriften, Listen und Inline-Code enthalten. Der Renderer darf Markdown nicht inhaltlich verändern.
+- `id`: globally unique stable identifier
+- `title`: short display title
+- `type`: entry kind, normally `command` or `howto`
 
-## 8. Entry-Autor-Anleitung
+Optional fields:
 
-Diese Anleitung gehört später auch in die README oder eine eigene Datei `docs/knowledge-authoring.md`.
+- `command`: primary command
+- `aliases`, `keywords`, `related`, `intent`, `platforms`, `tags`, `examples`:
+  lists of strings
+- `difficulty`: descriptive string
 
-### 8.1 Einen Eintrag anlegen
+`content.md` is the reviewed answer. Rendering may add terminal formatting,
+but must not semantically rewrite headings, prose, lists, inline code, or code
+blocks.
 
-1. Einen sprechenden, stabilen Slug unter `knowledge/topics/<id>/` oder `knowledge/commands/<id>/` anlegen.
-2. `meta.yaml` und `content.md` erstellen.
-3. Eine eindeutige `id` und einen lesbaren `title` vergeben.
-4. Aliase als echte Nutzerfragen und alternative Formulierungen ergänzen.
-5. Keywords auf die wichtigsten Linux-Begriffe begrenzen.
-6. Das relevante Kommando und verwandte Entry-IDs eintragen.
-7. Den Inhalt mit überprüften Befehlen und Beispielen schreiben.
-8. `howlinux validate knowledge` und die Suche mit mehreren Formulierungen ausführen.
+## 6. Concepts
 
-### 8.2 Gute Aliase
-
-Aliase decken Formulierungen ab, die Benutzer tatsächlich eingeben würden:
+`knowledge/concepts.yaml` contains global equivalents:
 
 ```yaml
-aliases:
-  - rename a folder
-  - change the name of a directory
-  - give a directory a different name
+concepts:
+  folder:
+    - folder
+    - directory
+    - dir
 ```
 
-Nicht hilfreich sind generische Aliase wie `linux help` oder zehn fast identische Varianten. Synonyme wie `directory`, `dir` und `folder` gehören bevorzugt in `concepts.yaml`, wenn sie global gelten.
+The mapping key is the canonical term. Values may be single words or phrases.
+Canonical terms and expressions must be non-empty and unique. One expression
+must not belong to multiple groups. Missing `concepts.yaml` is valid and
+disables expansion; an invalid or contradictory file is a global
+configuration error.
 
-### 8.3 Gute Keywords
+Concept expansion applies to queries and indexed entry fields while preserving
+the original tokens. It must remain inspectable through `--explain`.
 
-Keywords sind kurze, fachlich wichtige Begriffe. Dazu gehören Verben, Objekte, Kommandos und relevante Optionen. Stopwords, vollständige Sätze und sehr allgemeine Wörter sollen vermieden werden.
+## 7. Query processing
 
-```yaml
-keywords:
-  - rename
-  - folder
-  - directory
-  - mv
-```
+The processor must:
 
-### 8.4 Gute Inhalte
+- keep the original query for display and JSON;
+- normalize case and punctuation predictably;
+- retain Linux-relevant tokens such as commands, flags, paths, archive
+  extensions, permission modes, and redirection operators;
+- preserve token sequence for phrase detection;
+- remove only a small documented set of low-value stopwords;
+- deduplicate scoring tokens so repetition cannot inflate a score;
+- derive phrases needed by aliases and multi-word concepts;
+- classify the query as `explain`, `how_to`, `why`, `command`, or `general`;
+- treat query type as a ranking signal, never as a hard filter.
 
-Jeder Eintrag sollte möglichst diese Reihenfolge verwenden:
+Leading-dash query text must be accepted after the CLI's `--` delimiter.
 
-1. kurze Erklärung, was das Kommando oder Konzept tut
-2. allgemeine Syntax
-3. ein einfaches Beispiel
-4. wichtige Varianten oder Flags
-5. typische Fehler und Sicherheitswarnungen
-6. verwandte Einträge
+## 8. Search and ranking
 
-Keine Befehle ungeprüft kopieren. Destruktive Befehle müssen ausdrücklich markiert werden. Platzhalter wie `OLD_NAME` und `NEW_NAME` müssen klar erkennbar sein. Die Einträge erklären und zeigen Befehle; `howlinux` führt sie niemals automatisch aus.
+Search uses a deterministic in-memory inverted index over metadata. Full
+Markdown bodies are not scanned for every query and are not ranking fields.
+Candidate generation uses exact tokens, phrases, concepts, commands, and a
+bounded fuzzy fallback.
 
-### 8.5 Review-Checkliste für Einträge
+Default score components are:
 
-- Ist die Aussage für Linux korrekt?
-- Funktionieren die Beispiele oder ist ihre Voraussetzung erklärt?
-- Sind Dateinamen mit Leerzeichen korrekt quotiert?
-- Sind destruktive Auswirkungen genannt?
-- Gibt es mindestens drei realistische Suchformulierungen?
-- Sind `id`, `related` und Commands korrekt geschrieben?
-- Liefert die Validierung keine Warnungen?
-- Liefert die Suche sowohl direkte als auch synonymische Formulierungen?
+| Signal | Maximum/base weight |
+| --- | ---: |
+| Exact alias | 100 |
+| Phrase | 40 |
+| Command | 30 |
+| Keyword | 20 |
+| Intent | 20 |
+| Concept | 15 |
+| Title | 10 |
+| Fuzzy | 8 |
+| General token | 6, adjusted by IDF |
 
-## 9. Persistenter Index und Index-Compiler
+Rare tokens receive more weight than common tokens based on document
+frequency. Fuzzy matching is limited to query tokens of at least four
+characters, has a bounded candidate count, and remains weaker than an exact
+match. A result records whether fuzzy matching was used.
 
-Für v1 muss der In-Memory-Index beim Start zuverlässig funktionieren. Zusätzlich soll die Architektur einen optionalen Index-Compiler vorsehen:
+Results sort by total score, then exact/phrase contribution, then intent
+contribution, then entry ID. The same inputs and knowledge base must always
+produce the same ordering. `--explain` exposes component scores and concise
+match reasons.
+
+## 9. Result policy
+
+The default policy uses these thresholds:
+
+- confident score: `70`
+- required lead over the second result: `15`
+- minimum meaningful score: `8`
+- default result limit: `5`
+- maximum result limit: `100`
+
+A top result is `confident` only when it reaches the confident threshold and,
+when another candidate exists, clears the margin. A meaningful but weak or
+ambiguous result is `uncertain`. No meaningful result is `no_match`.
+
+Only a confident result renders the complete answer. Uncertain results render
+suggestions; no-match responses explain that no suitable curated answer was
+found. The tool must never fill a gap with generated text.
+
+## 10. CLI and output
+
+Supported forms:
 
 ```text
-howlinux-index knowledge/ -o howlinux.idx
-howlinux --index howlinux.idx "rename folder"
+howlinux [options] <query...>
+howlinux [options] search <query...>
+howlinux [options] list
+howlinux [options] show <entry-id>
+howlinux [options] validate [path]
 ```
 
-Der Compiler liest exakt dieselben YAML/Markdown-Dateien und erzeugt ein versioniertes, dokumentiertes Format. Das Format muss enthalten:
+The CLI supports `--help`, `--version`, `--knowledge`, `--limit`, `--explain`,
+`--json`, and `--`. Both `--option value` and documented `--option=value`
+forms must behave consistently. `show` accepts an exact loaded ID and never a
+filesystem path.
 
-- Formatversion
-- Knowledge-Signatur oder Änderungszeitpunkte
-- Einträge und Inhalte beziehungsweise Verweise darauf
-- Inverted Index
-- Concept-Daten
-- IDF-Statistiken
+Knowledge path precedence is:
 
-Der Runtime-Loader prüft die Formatversion und lehnt inkompatible Indizes mit einer klaren Meldung ab. Ein veralteter Index darf nicht still falsche Antworten liefern. Der Index-Compiler ist nach Möglichkeit ein separates Executable oder eine klar getrennte Library-Komponente. Er darf die manuelle Pflege von YAML/Markdown nicht ersetzen.
+1. `--knowledge`
+2. `HOWLINUX_KNOWLEDGE`
+3. `knowledge/` beside the executable
+4. the installed share directory relative to the executable
+5. `knowledge/` in the current directory
 
-## 10. Projektstruktur
+Text output may use terminal presentation. JSON output must be valid UTF-8,
+contain no ANSI escapes, remain structurally stable, and keep diagnostics out
+of a normal search payload. `validate --json` intentionally embeds structured
+diagnostics.
 
-Die bestehende Struktur soll in etwa zu folgender Zielstruktur wachsen:
+Exit codes:
 
-```text
-howlinux/
-├── CMakeLists.txt
-├── README.md
-├── requirements.md
-├── docs/
-│   └── knowledge-authoring.md
-├── include/
-│   ├── knowledge.hpp
-│   ├── query.hpp
-│   ├── concepts.hpp
-│   ├── index.hpp
-│   ├── search.hpp
-│   ├── cli.hpp
-│   └── render.hpp
-├── src/
-│   ├── main.cpp
-│   ├── cli.cpp
-│   ├── knowledge.cpp
-│   ├── query.cpp
-│   ├── concepts.cpp
-│   ├── index.cpp
-│   ├── search.cpp
-│   └── render.cpp
-├── tests/
-│   ├── test_query.cpp
-│   ├── test_concepts.cpp
-│   ├── test_search.cpp
-│   ├── test_knowledge.cpp
-│   └── fixtures/
-└── knowledge/
-    ├── concepts.yaml
-    ├── commands/
-    └── topics/
-```
+| Code | Contract |
+| --- | --- |
+| `0` | Confident match or successful management command |
+| `1` | Uncertain/no match, unknown ID, or validation issue |
+| `2` | Invalid arguments or options |
+| `3` | Unavailable knowledge root or invalid global configuration |
 
-Die Aufteilung ist ein Zielbild, keine Aufforderung zu blindem Umbenennen. Der Agent soll kleine, testbare Module bilden und den aktuellen Code schrittweise migrieren.
+## 11. Security and robustness
 
-## 11. Build und Abhängigkeiten
+- Query text, metadata, and Markdown are data and must never be executed.
+- `show` must not permit path traversal.
+- The loader must not follow entry-file symlinks.
+- Malformed entries must fail with controlled diagnostics rather than crashes.
+- A single invalid entry must not poison unrelated valid entries.
+- Search must remain bounded for long or typo-heavy queries.
+- Normal operation performs no network access and emits no telemetry.
+- Curated command examples must be reviewed, quote paths correctly, avoid
+  private data, and warn immediately before destructive behavior.
 
-- C++20 bleibt Standard.
-- CMake bleibt das Buildsystem.
-- `yaml-cpp` bleibt die YAML-Abhängigkeit.
-- Eine kleine CLI- oder Testbibliothek darf ergänzt werden, wenn sie sauber über CMake eingebunden wird.
-- Keine Netzwerkabhängigkeiten zur Laufzeit.
-- Debug- und Release-Build müssen funktionieren.
-- Compiler-Warnungen sollen auf einem sinnvollen Niveau aktiviert werden.
-- Der Build muss auf Ubuntu/Debian mit dokumentierten Paketen reproduzierbar sein.
+## 12. Build, installation, and distribution
 
-Empfohlene Befehle:
+- Use standard CMake with C++20 and warnings enabled.
+- Depend only on the standard library and `yaml-cpp` at runtime/build time.
+- Build both Debug and Release configurations in CI on supported Ubuntu
+  versions.
+- Run unit, integration, CLI, JSON, validation, installation, and smoke tests.
+- Install the executable, knowledge base, documentation, shell completions,
+  and man page using GNU directory conventions.
+- Produce a versioned TGZ release archive whose root contains `bin/` and
+  `share/`, plus a SHA-256 checksum file.
+- The archive must not require a specific shared `yaml-cpp` ABI.
+- A release tag must exactly match the compiled version.
 
-```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
-ctest --test-dir build --output-on-failure
-cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
-cmake --build build-release
-```
+## 13. Acceptance criteria
 
-## 12. Tests
+Version 1 is acceptable when:
 
-Tests sind Pflicht. Mindestens abzudecken:
-
-### Query und Normalisierung
-
-- lowercase und Satzzeichen
-- Stopwords
-- leere Query
-- Mehrwort-Phrasen
-- `tar.gz`, Zahlen und Flags
-- deterministische Token-Reihenfolge
-
-### Concepts
-
-- Einzelwort-Synonyme
-- Mehrwort-Synonyme
-- fehlende Datei
-- doppelte und ungültige Definitionen
-- Mapping auf denselben kanonischen Begriff
-
-### Loader
-
-- gültiger Eintrag
-- fehlendes `meta.yaml`
-- fehlendes `content.md`
-- ungültiges YAML
-- doppelte IDs
-- unbekannte optionale Felder
-- deterministische Reihenfolge
-
-### Ranking
-
-- exakter Alias gewinnt
-- `change the directory name` findet `rename-folder`
-- `remove directory` kann über Concepts einen Delete-F Treffer finden
-- `renmae fodler` findet `rename-folder`, aber Fuzzy bleibt schwächer als exact
-- Command-Match für `chmod 755` und `mv`
-- Intent-Match beeinflusst, ersetzt aber nicht den Inhaltsscore
-- Gleichstände sind stabil
-- keine Ergebnisse bei irrelevanter Query
-
-### CLI und Renderer
-
-- Help und Version
-- ungültige Optionen
-- Knowledge-Pfad
-- sichere Antwort, Vorschläge und kein Treffer
-- JSON enthält gültige, ANSI-freie Ausgabe
-- Exit-Codes sind dokumentiert und stabil
-
-Die Tests sollen mit kleinen temporären Fixtures arbeiten und nicht vom aktuellen Arbeitsverzeichnis abhängen.
-
-## 13. Performance und Robustheit
-
-Bei 10.000 Einträgen muss eine Query ohne Netzwerk typischerweise deutlich unter 100 ms bleiben, nachdem die Knowledge Base geladen wurde. Der Start muss nicht vorzeitig für eine unrealistische Benchmark optimiert werden.
-
-- Indexzugriff statt vollständigem Feldvergleich pro Query
-- keine unnötigen Kopien großer Markdown-Inhalte während der Suche
-- Fuzzy-Vergleiche nur gegen begrenzte Kandidaten oder passende Token
-- keine Abstürze bei leerem Input, kaputtem YAML oder fehlenden Dateien
-- keine Shell-Ausführung aus Suchtext oder Metadaten
-- Pfade dürfen nicht unkontrolliert aus User-Input geöffnet werden; `show` löst nur geladene IDs auf
-
-## 14. Dokumentation
-
-README und Dokumentation müssen aktualisiert werden und mindestens enthalten:
-
-- Installation
-- Debug- und Release-Build
-- CLI-Beispiele
-- Knowledge-Pfad und portable Nutzung
-- alle verfügbaren Optionen
-- Entry-Format
-- Concepts/Synonyme
-- Validierung
-- Tests
-- Fehlerbehebung
-- klare Aussage: offline, keine KI-Textgenerierung, keine Befehlsausführung
-
-Die `requirements.md` bleibt die übergeordnete technische Spezifikation. `docs/knowledge-authoring.md` ist die kurze tägliche Anleitung für die manuelle Inhaltspflege.
-
-## 15. Umsetzungsreihenfolge für den Folge-Agenten
-
-1. Bestehenden Build und aktuelle Tests bzw. Beispielaufrufe verifizieren.
-2. Datenmodelle und Loader robuster machen, ohne vorhandene Einträge zu brechen.
-3. Query Processor inklusive Query-Typen und Tests implementieren.
-4. `concepts.yaml` laden und Concept-Normalisierung testen.
-5. Inverted Index und IDF-ähnliche Gewichtung implementieren.
-6. Ranking mit Teil-Scores, stabiler Sortierung und Result Policy ersetzen.
-7. Levenshtein-Fallback ergänzen und gegen Fehlmatches testen.
-8. CLI-Parser mit Help, Version, Pfad, Limit, Validate und Explain bauen.
-9. Renderer für sichere Treffer, Vorschläge, Fehler und optional JSON vervollständigen.
-10. Test-Suite, CTest und Fixture-Isolation fertigstellen.
-11. README und `docs/knowledge-authoring.md` schreiben.
-12. Optional den persistenten Index-Compiler als separaten, gut abgegrenzten Schritt umsetzen.
-13. Erst danach große Mengen neuer Knowledge-Einträge manuell ergänzen.
-
-Nach jedem Schritt muss der Agent den kleinsten passenden Test ausführen. Am Ende müssen Build, Tests, Validierung der Beispiel-Knowledge Base und die wichtigsten CLI-Beispiele erfolgreich sein.
-
-## 16. Abnahmekriterien
-
-Das Projekt gilt als technisch fertig, wenn:
-
-- ein sauberer Debug- und Release-Build funktioniert
-- `ctest` ohne Fehler durchläuft
-- `howlinux "how can i change the name of a directory"` den Rename-Eintrag sicher findet
-- `howlinux "renmae fodler"` einen sinnvollen Rename-Treffer oder Vorschlag liefert
-- `howlinux "what does chmod 755 mean"` den passenden Explain-Eintrag bevorzugt
-- Synonyme aus `concepts.yaml` ohne Codeänderung wirken
-- ein neuer gültiger Entry nur durch neue YAML/Markdown-Dateien hinzugefügt werden kann
-- kaputte einzelne Entries verständliche Warnungen erzeugen und andere Entries weiter funktionieren
-- Ranking mit `--explain` nachvollziehbar ist
-- keine Runtime-Netzwerkverbindung und keine Kommandoausführung stattfindet
-- Dokumentation erklärt, wie der Betreiber ausschließlich durch neue Knowledge-Einträge Wissen erweitert
-
-## 17. Hinweise für den Implementierungs-Agenten
-
-Arbeite inkrementell und bewahre die vorhandenen Einträge. Beginne nicht mit Embeddings oder einem eigenen Sprachmodell. Halte Loader, Query-Verarbeitung, Index, Ranking, CLI und Renderer unabhängig testbar. Verwende strukturierte YAML-APIs statt eigener Stringparser. Jede neue Entscheidung, die das Datenformat oder die CLI verändert, muss in README und Tests sichtbar werden.
+- the full test suite passes in clean Debug and Release builds;
+- `howlinux validate knowledge` succeeds;
+- representative exact, phrase, command, concept, typo, ambiguous, and
+  unrelated queries follow the result policy;
+- installed execution works outside the source tree;
+- packaged execution works after extraction into a clean prefix;
+- public documentation, CLI text, metadata, and knowledge content are English;
+- licensing and third-party notices ship with source and binary packages;
+- no build outputs, credentials, private paths, or personal sample data are
+  tracked.

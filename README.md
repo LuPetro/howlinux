@@ -1,70 +1,63 @@
 # howlinux 1.0.0
 
-`howlinux` ist eine schnelle, lokale CLI-Suche für redaktionell gepflegtes
-Linux-Wissen. Sie wählt den passendsten Eintrag aus einer Knowledge Base aus
-YAML und Markdown und gibt dessen geprüften Inhalt aus.
+`howlinux` is a fast, local command-line search tool for curated Linux
+knowledge. It selects the best entry from a YAML and Markdown knowledge base
+and prints the reviewed content verbatim.
 
-Das Programm arbeitet vollständig offline. Es generiert keine Texte, verwendet
-keine Cloud-API, sendet keine Telemetrie und führt weder Suchanfragen noch die
-in Antworten gezeigten Shell-Befehle aus.
+The program works entirely offline. It does not generate answers, call cloud
+services, send telemetry, execute searches, or run any shell command shown in
+an answer.
 
-## Funktionen der V1
+## Features
 
-- robuster, rekursiver Loader mit Schema- und Duplikatvalidierung;
-- frei erweiterbare Kategorien unter `knowledge/`;
-- globale Einzelwort- und Mehrwort-Synonyme aus `concepts.yaml`;
-- testbare Normalisierung, Query-Typen und Erhalt von Linux-Tokens wie
-  `tar.gz`, `755`, `-r`, `--recursive` und `2>`;
-- In-Memory-Inverted-Index mit deterministischer IDF-Gewichtung;
-- erklärbares Ranking für Aliase, Phrasen, Commands, Keywords, Concepts,
-  Intent, Titel, Tokens und Tippfehler;
-- begrenztes Damerau-Levenshtein-Fuzzy-Matching;
-- sichere, unsichere und leere Result-Policy mit stabilen Exitcodes;
-- `search`, `list`, `show`, `validate`, `--explain` und ANSI-freies JSON;
-- Debug-/Release-Build, CTest-Suite und Installationsregeln.
+- Recursive knowledge loader with schema, reference, and duplicate validation
+- Extensible categories below `knowledge/` without C++ changes
+- Global single-word and multi-word synonyms in `concepts.yaml`
+- Linux-aware query normalization that preserves tokens such as `tar.gz`,
+  `755`, `-r`, `--recursive`, and `2>`
+- Deterministic in-memory inverted index with IDF weighting
+- Explainable ranking across aliases, phrases, commands, keywords, concepts,
+  intent, titles, tokens, and limited typo correction
+- Conservative confident, uncertain, and no-match result policy
+- `search`, `list`, `show`, `validate`, `--explain`, and ANSI-free JSON output
+- Debug and release builds, automated tests, installation rules, shell
+  completions, and a man page
 
-Die vollständige technische Spezifikation steht in [requirements.md](requirements.md).
-Für die tägliche Inhaltspflege gibt es
-[docs/knowledge-authoring.md](docs/knowledge-authoring.md). Geplante Arbeiten
-nach V1 stehen ausschließlich in [docs/future-features.md](docs/future-features.md).
+The detailed behavior contract is in [requirements.md](requirements.md).
+See [docs/knowledge-authoring.md](docs/knowledge-authoring.md) to add content
+and [docs/future-features.md](docs/future-features.md) for post-v1 ideas.
 
-## Voraussetzungen
+## Requirements
 
-Ubuntu oder Debian:
-
-```bash
-sudo apt update
-sudo apt install -y build-essential cmake libyaml-cpp-dev
-```
-
-Zum Bauen werden ein C++20-Compiler, CMake ab 3.16 und die
-`yaml-cpp`-Entwicklungsdateien benötigt. Das Release-Binary bindet `yaml-cpp`
-statisch ein und benötigt deshalb keine bestimmte `libyaml-cpp`-ABI zur
-Laufzeit. Es bestehen keine Netzwerk- oder Datenbankabhängigkeiten.
-
-## Einfache Installation unter Linux
-
-Auf Ubuntu oder Debian:
+On Ubuntu or Debian:
 
 ```bash
 sudo apt update
 sudo apt install -y build-essential cmake libyaml-cpp-dev git
+```
+
+Building requires a C++20 compiler, CMake 3.16 or newer, and the `yaml-cpp`
+development package. Release archives link `yaml-cpp` statically, so they do
+not depend on a particular `libyaml-cpp` ABI at runtime. The application has no
+network or database dependency.
+
+## Install
+
+Clone, build, test, and install to `~/.local`:
+
+```bash
 git clone https://github.com/LuPetro/howlinux.git
 cd howlinux
 ./scripts/install.sh
 ```
 
-Das Skript baut, testet und installiert standardmäßig nach
-`~/.local/bin/howlinux`. Ein anderer Installationspfad kann über
-`HOWLINUX_PREFIX` gesetzt werden:
+Choose another absolute installation prefix with `HOWLINUX_PREFIX`:
 
 ```bash
 HOWLINUX_PREFIX="$HOME/opt/howlinux" ./scripts/install.sh
 ```
 
-`HOWLINUX_PREFIX` muss ein absoluter Pfad sein. Falls `howlinux` direkt nach
-der Installation noch nicht gefunden wird, ergänze den `PATH` der aktuellen
-Shell und prüfe die Installation:
+If the command is not yet on `PATH`:
 
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
@@ -72,49 +65,38 @@ howlinux --version
 howlinux validate
 ```
 
-Für neue Login-Shells enthält eine normale Ubuntu-/Debian-`~/.profile` bereits
-`$HOME/.local/bin`, sobald das Verzeichnis existiert. Prüfe ein angepasstes
-Profil bei Problemen zuerst auf Syntaxfehler:
-
-```bash
-bash -n "$HOME/.profile"
-```
-
-Eine Installation aus einem CMake-Build kann mit diesem Befehl entfernt
-werden:
+Uninstall a CMake installation made by the script:
 
 ```bash
 cmake --build build-install --target uninstall
 ```
 
-Alternativ kann ein Release-Archiv aus dem GitHub-Reiter **Releases** direkt
-in einen Prefix entpackt werden:
+Alternatively, download the v1.0.0 archive and `SHA256SUMS` from the GitHub
+release, verify it, and extract it into a prefix:
 
 ```bash
+sha256sum --check SHA256SUMS
 mkdir -p "$HOME/.local"
 tar -xzf howlinux-1.0.0-Linux-x86_64.tar.gz -C "$HOME/.local"
 "$HOME/.local/bin/howlinux" validate
 ```
 
-Das Archiv enthält `bin/` und `share/` direkt an seiner Wurzel. Shell-
-Completions und die Manpage werden ebenfalls installiert. Änderungen laufen
-über Pull Requests; die Review-Einstellungen stehen in
-[CONTRIBUTING.md](CONTRIBUTING.md).
+The archive contains `bin/` and `share/` at its root, including shell
+completions, the man page, the knowledge base, and project documentation.
 
-### Aufruf aus WSL und PowerShell
+### WSL and PowerShell
 
-In einer WSL-Shell wird `howlinux` nach dem Setzen des `PATH` direkt gestartet.
-Aus PowerShell kann eine WSL-Login-Shell verwendet werden, damit `~/.profile`
-geladen wird:
+Run `howlinux` normally inside WSL. From PowerShell, use a WSL login shell so
+the Linux profile and `PATH` are loaded:
 
 ```powershell
 wsl.exe -d Ubuntu -- bash -lc "howlinux --version"
 wsl.exe -d Ubuntu -- bash -lc "howlinux 'what does chmod 755 mean'"
 ```
 
-## Bauen und testen
+## Build and test
 
-Debug-Build:
+Debug build:
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
@@ -122,7 +104,7 @@ cmake --build build --parallel
 ctest --test-dir build --output-on-failure
 ```
 
-Separater Release-Build:
+Release build:
 
 ```bash
 cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
@@ -130,37 +112,35 @@ cmake --build build-release --parallel
 ctest --test-dir build-release --output-on-failure
 ```
 
-Das Binary liegt je nach Build-Verzeichnis unter `build/howlinux` oder
-`build-release/howlinux`.
-
-Optional installieren:
+Install the release build manually:
 
 ```bash
 cmake --install build-release --prefix "$HOME/.local"
 ```
 
-Dabei wird das Binary nach `bin/` und die Knowledge Base nach
-`share/howlinux/knowledge/` unterhalb des Prefix installiert.
-Falls `$HOME/.local/bin` nicht im `PATH` liegt, starte es mit
-`$HOME/.local/bin/howlinux` oder ergänze dieses Verzeichnis im Shell-Profil.
+Before creating a release tag, run the clean Debug, Release, install, and
+package audit:
 
-## Schnellstart
+```bash
+./scripts/release-audit.sh
+```
+
+## Quick start
 
 ```bash
 ./build/howlinux rename folder
-./build/howlinux "how can i change the name of a directory"
+./build/howlinux "how can I change the name of a directory"
 ./build/howlinux "what does chmod 755 mean"
 ./build/howlinux "renmae fodler"
 ./build/howlinux --explain "change the directory name"
 ./build/howlinux --json "extract tar.gz"
 ```
 
-Ein sicherer Treffer rendert den vollständigen, unveränderten Inhalt der
-zugehörigen `content.md`. Bei zu geringem Score oder zu kleinem Abstand zum
-zweiten Treffer erscheinen stattdessen Vorschläge. Eine irrelevante Query
-liefert keinen künstlich erzeugten Text.
+A confident match prints the complete, unchanged `content.md` entry. If the
+score or the lead over the second result is too small, howlinux prints
+suggestions instead. An unrelated query never produces invented text.
 
-## CLI-Referenz
+## CLI reference
 
 ```text
 howlinux [options] <query...>
@@ -170,273 +150,158 @@ howlinux [options] show <entry-id>
 howlinux [options] validate [path]
 ```
 
-Optionen:
-
-| Option | Bedeutung |
+| Option | Meaning |
 | --- | --- |
-| `-h`, `--help` | Hilfe anzeigen, ohne Knowledge zu laden |
-| `-V`, `--version` | Programmversion anzeigen |
-| `--knowledge <path>` oder `--knowledge=<path>` | Knowledge-Verzeichnis explizit auswählen |
-| `--limit <n>` oder `--limit=<n>` | Höchstens 1 bis 100 Ergebnisse; Standard ist 5 (nur Suche) |
-| `--explain` | Bei der Suche Query-Typ, Concepts, Teil-Scores und Matchgründe zeigen |
-| `--json` | Stabile, maschinenlesbare und ANSI-freie Ausgabe |
-| `--` | Optionsauswertung beenden; der Rest ist Query-Text |
+| `-h`, `--help` | Show help without loading the knowledge base |
+| `-V`, `--version` | Show the program version |
+| `--knowledge <path>` | Select a knowledge directory |
+| `--limit <n>` | Return 1 to 100 search results; default: 5 |
+| `--explain` | Include query type, concepts, score components, and match reasons |
+| `--json` | Emit stable, machine-readable, ANSI-free JSON |
+| `--` | Stop option parsing and treat the rest as query text |
 
-Verwaltungsbefehle:
+`list` prints all valid entries in deterministic ID order. `show <entry-id>`
+only accepts an already loaded ID and never interprets it as a path.
+`validate [path]` uses the runtime loader to check entries, field types, IDs,
+references, and concepts.
 
-- `list` zeigt alle gültigen Entries deterministisch nach ID sortiert.
-- `show <entry-id>` rendert ausschließlich eine bereits geladene ID. Der Wert
-  wird nie als Dateipfad interpretiert.
-- `validate [path]` verwendet exakt denselben Loader wie die Runtime und prüft
-  Entries, Feldtypen, IDs, Referenzen und Concepts.
-
-Da Linux-Fragen selbst mit einem Bindestrich beginnen können, wird vor solchen
-Query-Argumenten `--` verwendet:
+Queries beginning with a dash must follow `--`:
 
 ```bash
 ./build/howlinux -- "--recursive"
 ./build/howlinux --knowledge knowledge search -- "tar -xzf"
 ```
 
-### Exitcodes
+### Exit codes
 
-| Code | Bedeutung |
+| Code | Meaning |
 | --- | --- |
-| `0` | sicherer Treffer oder erfolgreicher Verwaltungsbefehl |
-| `1` | unsicherer Treffer, kein Treffer, unbekannte ID oder Validierungsproblem |
-| `2` | ungültige CLI-Argumente oder Optionen |
-| `3` | Knowledge-Verzeichnis nicht lesbar oder globale Konfiguration ungültig |
+| `0` | Confident match or successful management command |
+| `1` | Uncertain/no match, unknown ID, or validation failure |
+| `2` | Invalid CLI arguments or options |
+| `3` | Unreadable knowledge directory or invalid global configuration |
 
-Bei normaler Suche werden Loader-/Konfigurationsdiagnosen auf `stderr`
-geschrieben, damit `stdout` eine einzelne JSON-Nutzlast bleibt. `validate
---json` bettet seine Diagnosen dagegen bewusst in das Feld `diagnostics` ein.
-CLI-Fehler sowie Help/Version bleiben menschenlesbar; Konfigurationsfehler
-geben zusätzlich eine stabile JSON-Fehlernutzlast aus, wenn `--json` aktiv ist.
+Loader and configuration diagnostics go to `stderr` during normal search so
+`stdout` remains a single JSON value. `validate --json` includes diagnostics
+in its `diagnostics` array. Help, version, and parser errors remain readable
+plain text.
 
-## Knowledge-Pfad und portable Nutzung
+## Knowledge path resolution
 
-Die Pfadauflösung verwendet die erste passende Quelle in dieser Reihenfolge:
+The first available source wins:
 
-1. `--knowledge <path>`;
-2. Umgebungsvariable `HOWLINUX_KNOWLEDGE`;
-3. Verzeichnis `knowledge/` neben dem Binary;
-4. installierter Pfad `../share/howlinux/knowledge/` relativ zum Binary;
-5. `knowledge/` im aktuellen Arbeitsverzeichnis.
+1. `--knowledge <path>`
+2. `HOWLINUX_KNOWLEDGE`
+3. `knowledge/` beside the executable
+4. `../share/howlinux/knowledge/` relative to the executable
+5. `knowledge/` in the current working directory
 
-Relative explizite Pfade und die Umgebungsvariable werden relativ zum aktuellen
-Arbeitsverzeichnis aufgelöst. Für Skripte und Dienste ist ein absoluter
-`--knowledge`-Pfad am eindeutigsten.
+Explicit relative paths and the environment variable are resolved from the
+current working directory. Prefer absolute paths in scripts and services:
 
 ```bash
 HOWLINUX_KNOWLEDGE=/srv/howlinux/knowledge howlinux mv
 howlinux --knowledge /srv/howlinux/knowledge validate
 ```
 
-Ein fehlender Pfad ist ein Konfigurationsfehler. Ein vorhandenes, aber leeres
-Verzeichnis ist gültig und wird als Knowledge Base mit null Entries gemeldet.
+A missing directory is a configuration error. An existing empty directory is
+a valid knowledge base containing zero entries.
 
-## Knowledge Base erweitern
+## Add knowledge
 
-Ein Eintrag besteht aus genau einem Verzeichnis mit `meta.yaml` und
-`content.md`:
+Each entry is a directory containing `meta.yaml` and `content.md`:
 
 ```text
 knowledge/
-├── concepts.yaml
-├── commands/
-│   └── mv/
-│       ├── meta.yaml
-│       └── content.md
-└── topics/
-    └── rename-folder/
-        ├── meta.yaml
-        └── content.md
+|-- concepts.yaml
+|-- commands/
+|   `-- mv/
+|       |-- meta.yaml
+|       `-- content.md
+`-- topics/
+    `-- rename-folder/
+        |-- meta.yaml
+        `-- content.md
 ```
 
-Weitere Kategorien sind ohne C++-Änderung möglich. IDs sind über alle
-Kategorien hinweg eindeutig. Ein minimaler Eintrag:
+A minimal metadata file looks like this:
 
 ```yaml
 id: rename-folder
 title: Rename a folder
 type: howto
 command: mv
-
 aliases:
   - rename folder
   - rename directory
   - change folder name
-
 keywords:
   - rename
   - folder
   - directory
-  - name
-
 related:
   - mv
-
 intent:
   - how_to
 ```
 
-Erforderlich sind `id`, `title`, `type` und eine reguläre, lesbare, nicht leere
-`content.md` (Symlinks werden aus Sicherheitsgründen abgelehnt). `command`, alle Listen, `difficulty`, `platforms`, `tags` und
-`examples` sind optional. Der Markdown-Inhalt darf Überschriften, Listen,
-Inline-Code und Codeblöcke enthalten und wird nicht semantisch umgeschrieben.
+`id`, `title`, `type`, and a readable, non-empty regular `content.md` file are
+required. Symlinks are rejected. The Markdown content may contain headings,
+lists, inline code, and fenced code blocks; howlinux does not rewrite it.
 
-Nach dem Hinzufügen ist kein Rebuild erforderlich:
+No rebuild is needed after adding an entry:
 
 ```bash
 ./build/howlinux validate knowledge
-./build/howlinux --explain "eine realistische Suchformulierung"
+./build/howlinux --explain "a realistic search phrase"
 ```
 
-Der vollständige Workflow, Qualitätsregeln und eine Review-Checkliste stehen
-in [docs/knowledge-authoring.md](docs/knowledge-authoring.md).
+Global equivalents belong in `knowledge/concepts.yaml`. An expression may
+belong to only one concept group. A missing concepts file disables expansion;
+contradictory concepts are a configuration error. For the full schema and
+review checklist, read [docs/knowledge-authoring.md](docs/knowledge-authoring.md).
 
-## Concepts und Synonyme
+## Search and JSON behavior
 
-Globale, fachlich gleichwertige Formulierungen stehen in
-`knowledge/concepts.yaml`:
+At startup, howlinux builds an in-memory index from metadata. Rare tokens carry
+more weight than common tokens. Ranking combines exact aliases and phrases,
+commands, weighted keywords, concepts, intent, titles, token overlap, and a
+limited fuzzy fallback. `--explain` exposes each component. Ties are resolved
+deterministically.
 
-```yaml
-concepts:
-  folder:
-    - folder
-    - directory
-    - dir
-  rename:
-    - rename
-    - change name
-    - give another name
-```
-
-Der Schlüssel ist der kanonische Begriff. Einzelwörter und Mehrwort-Phrasen
-werden auf Queries und indexierte Entry-Felder angewendet; die Originaltokens
-bleiben parallel erhalten. Ein Ausdruck darf nicht zwei Gruppen zugeordnet
-sein. Eine fehlende Datei ist erlaubt und deaktiviert nur die
-Concept-Erweiterung; eine widersprüchliche Datei ist ein Konfigurationsfehler.
-
-## Suche und Ranking
-
-Beim Start baut howlinux aus den geladenen Metadaten einen In-Memory-Index.
-Queries werden nicht gegen jedes vollständige Markdown-Dokument gescannt.
-Seltene Tokens erhalten gemäß ihrer Dokumenthäufigkeit mehr Gewicht als
-häufige. Das Ranking kombiniert folgende getrennte Signale:
-
-1. exakter Alias und exakte Phrase;
-2. Command, gewichtete Keywords und Concepts;
-3. Intent, Titel und allgemeine Token-Überlappung;
-4. begrenztes Fuzzy-Matching als schwaches Rettungsnetz.
-
-`--explain` zeigt die Teilwerte. Wiederholte Query-Tokens erhöhen einen Score
-nicht mehrfach. Ein Query-Typ ist nur ein Bonus und nie ein harter Filter.
-Gleichstände werden über Exact/Phrase, Intent und anschließend alphabetische
-Entry-ID reproduzierbar aufgelöst.
-
-## JSON-Ausgabe
-
-`--json` erzeugt eine UTF-8-JSON-Nutzlast ohne ANSI-Sequenzen. Das Suchschema
-enthält immer `status` (`confident`, `uncertain` oder `no_match`), `query`,
-`query_type`, `concepts`, `results` und `entry`. Ein Resultat enthält `id`,
-`title`, `score`, `fuzzy_used` und `match_reasons`; mit `--explain` kommt
-`breakdown` mit `exact_alias`, `phrase`, `command`, `keywords`, `concepts`,
-`intent`, `title`, `token_idf`, `fuzzy` und `total` hinzu. `entry` ist nur bei
-`confident` ein vollständiges Entry-Objekt, sonst `null`.
-
-`show` liefert `{status: "ok", entry}` oder `{status: "not_found", id}`;
-`list` liefert `{status: "ok", count, entries[]}`; `validate` liefert
-`status` (`valid`, `invalid`, `error`), Knowledge-/Concept-Zähler und
-`diagnostics[]` mit `scope`, `severity`, `path`, `entry_id` und `message`.
-Help, Version und Parserfehler bleiben bewusst menschenlesbar.
-
-Beispiel:
+Search JSON always contains `status` (`confident`, `uncertain`, or `no_match`),
+`query`, `query_type`, `concepts`, `results`, and `entry`. Results contain
+`id`, `title`, `score`, `fuzzy_used`, and `match_reasons`. With `--explain`,
+they also contain a score `breakdown`. The complete entry is present only for
+a confident match.
 
 ```bash
 ./build/howlinux --json --explain "chmod 755" | jq .
 ```
 
-## Projektstruktur
+## Troubleshooting
 
-```text
-howlinux/
-├── CMakeLists.txt
-├── README.md
-├── requirements.md
-├── docs/
-│   ├── knowledge-authoring.md
-│   └── future-features.md
-├── include/
-│   ├── app.hpp
-│   ├── cli.hpp
-│   ├── concepts.hpp
-│   ├── config.hpp
-│   ├── diagnostics.hpp
-│   ├── index.hpp
-│   ├── knowledge.hpp
-│   ├── query.hpp
-│   ├── render.hpp
-│   └── search.hpp
-├── src/
-├── tests/
-└── knowledge/
-```
+- If the knowledge directory is unreadable, pass an explicit absolute path and
+  run `validate`.
+- If an entry is skipped, `validate knowledge` reports the file, entry ID, and
+  cause. One invalid entry does not prevent valid entries from loading.
+- If `-r` or `--recursive` is parsed as an option, place `--` before the query.
+- If a result remains uncertain, compare candidates with `--explain` and add a
+  precise alias, keyword, or globally valid concept.
+- If CMake cannot find `yaml-cpp`, install `libyaml-cpp-dev` or set
+  `CMAKE_PREFIX_PATH` to a custom dependency prefix.
 
-`howlinux_core` kapselt Loader, Query Processor, Index, Ranker, Policy, CLI und
-Renderer. Das Executable enthält nur die Prozessgrenze. Die Tests linken
-dieselbe Core-Library wie das Programm.
+## Security and trust model
 
-## Fehlerbehebung
+The curated knowledge base is the only answer source. howlinux reads metadata
+and Markdown, but never executes their contents or interpolates query text into
+shell commands. Contributors must still review every example, quote paths,
+mark destructive commands clearly, and keep secrets and private data out of
+the repository. See [SECURITY.md](SECURITY.md) for vulnerability reports.
 
-### `Knowledge directory ...` ist nicht lesbar
+## Contributing and license
 
-Prüfe den aufgelösten Pfad mit einem expliziten Aufruf:
-
-```bash
-./build/howlinux --knowledge "$(pwd)/knowledge" validate
-```
-
-Der Pfad muss ein lesbares Verzeichnis sein. `meta.yaml` und `content.md`
-müssen reguläre Dateien sein.
-
-### Ein Entry wird übersprungen
-
-```bash
-./build/howlinux validate knowledge
-```
-
-Jede Diagnose nennt Pfad, soweit vorhanden die Entry-ID und die konkrete
-Ursache. Ein kaputter einzelner Entry verhindert nicht, dass gültige Entries
-geladen werden.
-
-### Eine Query mit `-r` oder `--recursive` wird als Option gelesen
-
-Setze `--` vor die Query:
-
-```bash
-./build/howlinux -- "what does --recursive mean"
-```
-
-### Ein Treffer bleibt unsicher
-
-Vergleiche die Kandidaten mit `--explain`. Pflege präzise Aliase und Keywords
-oder ein global gültiges Synonym; vermeide generische Alias-Sätze. Die
-Confidence-Schwellen sind bewusst konservativ, damit howlinux keine schwache
-Übereinstimmung als sichere Antwort ausgibt.
-
-### Build findet `yaml-cpp` nicht
-
-Installiere unter Ubuntu/Debian `libyaml-cpp-dev` und konfiguriere den
-CMake-Build danach neu. Bei einer benutzerdefinierten Installation kann
-`CMAKE_PREFIX_PATH` auf deren Prefix zeigen.
-
-## Sicherheits- und Vertrauensmodell
-
-Die Knowledge Base ist redaktionell vertrauenswürdig und die einzige Quelle
-für Antworten. howlinux öffnet nur Knowledge-Metadaten und Markdown, führt
-keinen darin enthaltenen Text aus und interpoliert Query-Text nicht in
-Shell-Kommandos. `show` arbeitet ausschließlich mit geladenen IDs. Für
-kuratierte Inhalte gelten dennoch die üblichen Review-Regeln: destruktive
-Befehle kennzeichnen, Beispiele testen, Pfade korrekt quotieren und keine
-Geheimnisse eintragen.
+Contributions are welcome through issues and pull requests. Read
+[CONTRIBUTING.md](CONTRIBUTING.md) first. howlinux is released under the
+[MIT License](LICENSE); bundled dependency notices are in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
