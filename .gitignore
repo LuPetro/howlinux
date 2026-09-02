@@ -1,0 +1,28 @@
+# CMake build trees and generated files
+/build*/
+/_build*/
+/cmake-build-*/
+/Testing/
+/build-*/
+/CMakeCache.txt
+/CMakeFiles/
+/Makefile
+/cmake_install.cmake
+/CPackConfig.cmake
+/CPackSourceConfig.cmake
+/_CPack_Packages/
+/install_manifest.txt
+/*.tar.gz
+
+# Compiler and editor artifacts
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.exe
+*.swp
+*~
+
+# Generated index files (reserved for a future release)
+*.idx

@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    # Build on the oldest supported Ubuntu so the dynamically linked archive
+    # also runs on newer supported releases.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libyaml-cpp-dev
+      - name: Build and test
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --parallel
+          ctest --test-dir build --output-on-failure
+          test "$(build/howlinux --version)" = "howlinux ${GITHUB_REF_NAME#v}"
+          if ldd build/howlinux | grep -q libyaml-cpp; then
+            echo "Release binary must not depend on a yaml-cpp ABI version" >&2
+            exit 1
+          fi
+      - name: Package
+        run: |
+          cmake --build build --target package
+          mkdir -p "$RUNNER_TEMP/howlinux-release"
+          tar -xzf build/howlinux-*.tar.gz -C "$RUNNER_TEMP/howlinux-release"
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/howlinux-release/bin/howlinux" validate
+          cd "$GITHUB_WORKSPACE/build"
+          sha256sum howlinux-*.tar.gz > SHA256SUMS
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        with:
+          body_path: docs/releases/v1.0.0.md
+          fail_on_unmatched_files: true
+          files: |
+            build/*.tar.gz
+            build/SHA256SUMS

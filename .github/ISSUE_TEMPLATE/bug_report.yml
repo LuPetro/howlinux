@@ -1,0 +1,56 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Do not report unpatched vulnerabilities here. Follow SECURITY.md and
+        use GitHub's private vulnerability reporting instead.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `howlinux --version` or the commit SHA.
+      placeholder: howlinux 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      description: Distribution, release, and architecture.
+      placeholder: Ubuntu 24.04, x86_64
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Include expected and actual behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest safe example that reproduces the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Remove credentials, private paths, hostnames, and personal data.
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Submission checks
+      options:
+        - label: I removed secrets and private or personal data.
+          required: true
+        - label: This is not an undisclosed security vulnerability.
+          required: true

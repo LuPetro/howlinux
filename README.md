@@ -1,102 +1,307 @@
-# howlinux v0.01
+# howlinux 1.0.0
 
-Offline CLI-Tool: erklärt Linux-Befehle basierend auf einer lokalen,
-textbasierten Knowledge Base (YAML + Markdown). Keine AI, keine
-Embeddings, keine Datenbank, kein Internet.
+`howlinux` is a fast, local command-line search tool for curated Linux
+knowledge. It selects the best entry from a YAML and Markdown knowledge base
+and prints the reviewed content verbatim.
 
-## Stand v0.01
+The program works entirely offline. It does not generate answers, call cloud
+services, send telemetry, execute searches, or run any shell command shown in
+an answer.
 
-Umgesetzt (entspricht "Schritt 6" aus dem Plan):
+## Features
 
-- CMake + Buildsystem
-- Knowledge-Format (`meta.yaml` + `content.md` pro Eintrag)
-- Loader, der `knowledge/commands/*` und `knowledge/topics/*` automatisch einliest
-- Einfache Suche: Normalisierung (lowercase, Satzzeichen weg, Stopwörter raus) +
-  Scoring (exact alias match, keyword match, command match, title match)
-- Terminal-Renderer inkl. "Did you mean" bei schwachen Treffern
-- 5 Beispiel-Einträge (mv, chmod, rename-folder, chmod-755, extract-tar)
+- Recursive knowledge loader with schema, reference, and duplicate validation
+- Extensible categories below `knowledge/` without C++ changes
+- Global single-word and multi-word synonyms in `concepts.yaml`
+- Linux-aware query normalization that preserves tokens such as `tar.gz`,
+  `755`, `-r`, `--recursive`, and `2>`
+- Deterministic in-memory inverted index with IDF weighting
+- Explainable ranking across aliases, phrases, commands, keywords, concepts,
+  intent, titles, tokens, and limited typo correction
+- Conservative confident, uncertain, and no-match result policy
+- `search`, `list`, `show`, `validate`, `--explain`, and ANSI-free JSON output
+- Debug and release builds, automated tests, installation rules, shell
+  completions, and a man page
 
-Noch NICHT umgesetzt (kommt in v0.02+, siehe Notizen):
+The detailed behavior contract is in [requirements.md](requirements.md).
+See [docs/knowledge-authoring.md](docs/knowledge-authoring.md) to add content
+and [docs/future-features.md](docs/future-features.md) for post-v1 ideas.
 
-- Concepts/Synonyme (`concepts.yaml`)
-- Inverted Index (aktuell wird bei jeder Query linear über alle Einträge iteriert –
-  bei 5-20 Einträgen völlig egal, erst bei hunderten relevant)
-- Fuzzy Matching (Tippfehler wie `renmae` werden noch nicht erkannt)
-- CLI11 (aktuell werden Argumente einfach manuell zusammengefügt)
-- Tests (Catch2)
+## Requirements
 
-## Setup in WSL / Linux (Ubuntu/Debian)
+On Ubuntu or Debian:
 
 ```bash
 sudo apt update
-sudo apt install -y build-essential cmake libyaml-cpp-dev
+sudo apt install -y build-essential cmake libyaml-cpp-dev git
 ```
 
-## Bauen
+Building requires a C++20 compiler, CMake 3.16 or newer, and the `yaml-cpp`
+development package. Release archives link `yaml-cpp` statically, so they do
+not depend on a particular `libyaml-cpp` ABI at runtime. The application has no
+network or database dependency.
 
-Im Projekt-Root (`howlinux/`):
+## Install
+
+Clone, build, test, and install to `~/.local`:
 
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
+git clone https://github.com/LuPetro/howlinux.git
+cd howlinux
+./scripts/install.sh
 ```
 
-Das Binary liegt danach unter `build/howlinux`.
+Choose another absolute installation prefix with `HOWLINUX_PREFIX`:
 
-## Ausführen
+```bash
+HOWLINUX_PREFIX="$HOME/opt/howlinux" ./scripts/install.sh
+```
 
-WICHTIG: `howlinux` sucht den Ordner `knowledge/` relativ zum aktuellen
-Arbeitsverzeichnis. Du musst es also aus dem Projekt-Root heraus starten:
+If the command is not yet on `PATH`:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+howlinux --version
+howlinux validate
+```
+
+Uninstall a CMake installation made by the script:
+
+```bash
+cmake --build build-install --target uninstall
+```
+
+Alternatively, download the v1.0.0 archive and `SHA256SUMS` from the GitHub
+release, verify it, and extract it into a prefix:
+
+```bash
+sha256sum --check SHA256SUMS
+mkdir -p "$HOME/.local"
+tar -xzf howlinux-1.0.0-Linux-x86_64.tar.gz -C "$HOME/.local"
+"$HOME/.local/bin/howlinux" validate
+```
+
+The archive contains `bin/` and `share/` at its root, including shell
+completions, the man page, the knowledge base, and project documentation.
+
+### WSL and PowerShell
+
+Run `howlinux` normally inside WSL. From PowerShell, use a WSL login shell so
+the Linux profile and `PATH` are loaded:
+
+```powershell
+wsl.exe -d Ubuntu -- bash -lc "howlinux --version"
+wsl.exe -d Ubuntu -- bash -lc "howlinux 'what does chmod 755 mean'"
+```
+
+## Build and test
+
+Debug build:
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure
+```
+
+Release build:
+
+```bash
+cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
+cmake --build build-release --parallel
+ctest --test-dir build-release --output-on-failure
+```
+
+Install the release build manually:
+
+```bash
+cmake --install build-release --prefix "$HOME/.local"
+```
+
+Before creating a release tag, run the clean Debug, Release, install, and
+package audit:
+
+```bash
+./scripts/release-audit.sh
+```
+
+## Quick start
 
 ```bash
 ./build/howlinux rename folder
-./build/howlinux mv
-./build/howlinux chmod 755
-./build/howlinux extract tar.gz
+./build/howlinux "how can I change the name of a directory"
+./build/howlinux "what does chmod 755 mean"
+./build/howlinux "renmae fodler"
+./build/howlinux --explain "change the directory name"
+./build/howlinux --json "extract tar.gz"
 ```
 
-Falls du es systemweit als `howlinux` verfügbar machen willst, kannst du es
-später z.B. nach `/usr/local/bin` kopieren – dann müsstest du aber auch den
-`knowledge/`-Ordner an einen festen Pfad legen und den Pfad im Code fest
-verdrahten statt `"knowledge"` relativ zu verwenden. Für v0.01 reicht es,
-es aus dem Projektordner heraus zu starten.
+A confident match prints the complete, unchanged `content.md` entry. If the
+score or the lead over the second result is too small, howlinux prints
+suggestions instead. An unrelated query never produces invented text.
 
-## Neuen Knowledge-Eintrag hinzufügen (ohne Code-Änderung)
-
-1. Neuen Ordner anlegen, z.B. `knowledge/topics/delete-file/`
-2. Darin `meta.yaml` anlegen (siehe bestehende Einträge als Vorlage)
-3. Darin `content.md` anlegen mit dem eigentlichen Erklärtext
-4. Neu bauen ist NICHT nötig – `howlinux` liest den Ordner beim Start neu ein.
-
-## Projektstruktur
+## CLI reference
 
 ```text
-howlinux/
-├── CMakeLists.txt
-├── README.md
-├── src/
-│   ├── main.cpp        Einstiegspunkt, Argumente einlesen, Ablauf steuern
-│   ├── knowledge.cpp   Lädt meta.yaml + content.md aus knowledge/
-│   ├── search.cpp      Normalisierung + Scoring
-│   └── render.cpp      Terminal-Ausgabe
-├── include/
-│   ├── knowledge.hpp
-│   ├── search.hpp
-│   └── render.hpp
-└── knowledge/
-    ├── commands/
-    │   ├── mv/
-    │   └── chmod/
-    └── topics/
-        ├── rename-folder/
-        ├── chmod-755/
-        └── extract-tar/
+howlinux [options] <query...>
+howlinux [options] search <query...>
+howlinux [options] list
+howlinux [options] show <entry-id>
+howlinux [options] validate [path]
 ```
 
-## Nächste Schritte (laut Plan)
+| Option | Meaning |
+| --- | --- |
+| `-h`, `--help` | Show help without loading the knowledge base |
+| `-V`, `--version` | Show the program version |
+| `--knowledge <path>` | Select a knowledge directory |
+| `--limit <n>` | Return 1 to 100 search results; default: 5 |
+| `--explain` | Include query type, concepts, score components, and match reasons |
+| `--json` | Emit stable, machine-readable, ANSI-free JSON |
+| `--` | Stop option parsing and treat the rest as query text |
 
-1. `concepts.yaml` (Synonyme wie folder/directory/dir)
-2. Inverted Index statt linearem Scan
-3. Fuzzy Matching (Levenshtein) für Tippfehler
-4. Mehr Knowledge-Einträge (Richtung 75-100)
-5. Catch2 Tests
+`list` prints all valid entries in deterministic ID order. `show <entry-id>`
+only accepts an already loaded ID and never interprets it as a path.
+`validate [path]` uses the runtime loader to check entries, field types, IDs,
+references, and concepts.
+
+Queries beginning with a dash must follow `--`:
+
+```bash
+./build/howlinux -- "--recursive"
+./build/howlinux --knowledge knowledge search -- "tar -xzf"
+```
+
+### Exit codes
+
+| Code | Meaning |
+| --- | --- |
+| `0` | Confident match or successful management command |
+| `1` | Uncertain/no match, unknown ID, or validation failure |
+| `2` | Invalid CLI arguments or options |
+| `3` | Unreadable knowledge directory or invalid global configuration |
+
+Loader and configuration diagnostics go to `stderr` during normal search so
+`stdout` remains a single JSON value. `validate --json` includes diagnostics
+in its `diagnostics` array. Help, version, and parser errors remain readable
+plain text.
+
+## Knowledge path resolution
+
+The first available source wins:
+
+1. `--knowledge <path>`
+2. `HOWLINUX_KNOWLEDGE`
+3. `knowledge/` beside the executable
+4. `../share/howlinux/knowledge/` relative to the executable
+5. `knowledge/` in the current working directory
+
+Explicit relative paths and the environment variable are resolved from the
+current working directory. Prefer absolute paths in scripts and services:
+
+```bash
+HOWLINUX_KNOWLEDGE=/srv/howlinux/knowledge howlinux mv
+howlinux --knowledge /srv/howlinux/knowledge validate
+```
+
+A missing directory is a configuration error. An existing empty directory is
+a valid knowledge base containing zero entries.
+
+## Add knowledge
+
+Each entry is a directory containing `meta.yaml` and `content.md`:
+
+```text
+knowledge/
+|-- concepts.yaml
+|-- commands/
+|   `-- mv/
+|       |-- meta.yaml
+|       `-- content.md
+`-- topics/
+    `-- rename-folder/
+        |-- meta.yaml
+        `-- content.md
+```
+
+A minimal metadata file looks like this:
+
+```yaml
+id: rename-folder
+title: Rename a folder
+type: howto
+command: mv
+aliases:
+  - rename folder
+  - rename directory
+  - change folder name
+keywords:
+  - rename
+  - folder
+  - directory
+related:
+  - mv
+intent:
+  - how_to
+```
+
+`id`, `title`, `type`, and a readable, non-empty regular `content.md` file are
+required. Symlinks are rejected. The Markdown content may contain headings,
+lists, inline code, and fenced code blocks; howlinux does not rewrite it.
+
+No rebuild is needed after adding an entry:
+
+```bash
+./build/howlinux validate knowledge
+./build/howlinux --explain "a realistic search phrase"
+```
+
+Global equivalents belong in `knowledge/concepts.yaml`. An expression may
+belong to only one concept group. A missing concepts file disables expansion;
+contradictory concepts are a configuration error. For the full schema and
+review checklist, read [docs/knowledge-authoring.md](docs/knowledge-authoring.md).
+
+## Search and JSON behavior
+
+At startup, howlinux builds an in-memory index from metadata. Rare tokens carry
+more weight than common tokens. Ranking combines exact aliases and phrases,
+commands, weighted keywords, concepts, intent, titles, token overlap, and a
+limited fuzzy fallback. `--explain` exposes each component. Ties are resolved
+deterministically.
+
+Search JSON always contains `status` (`confident`, `uncertain`, or `no_match`),
+`query`, `query_type`, `concepts`, `results`, and `entry`. Results contain
+`id`, `title`, `score`, `fuzzy_used`, and `match_reasons`. With `--explain`,
+they also contain a score `breakdown`. The complete entry is present only for
+a confident match.
+
+```bash
+./build/howlinux --json --explain "chmod 755" | jq .
+```
+
+## Troubleshooting
+
+- If the knowledge directory is unreadable, pass an explicit absolute path and
+  run `validate`.
+- If an entry is skipped, `validate knowledge` reports the file, entry ID, and
+  cause. One invalid entry does not prevent valid entries from loading.
+- If `-r` or `--recursive` is parsed as an option, place `--` before the query.
+- If a result remains uncertain, compare candidates with `--explain` and add a
+  precise alias, keyword, or globally valid concept.
+- If CMake cannot find `yaml-cpp`, install `libyaml-cpp-dev` or set
+  `CMAKE_PREFIX_PATH` to a custom dependency prefix.
+
+## Security and trust model
+
+The curated knowledge base is the only answer source. howlinux reads metadata
+and Markdown, but never executes their contents or interpolates query text into
+shell commands. Contributors must still review every example, quote paths,
+mark destructive commands clearly, and keep secrets and private data out of
+the repository. See [SECURITY.md](SECURITY.md) for vulnerability reports.
+
+## Contributing and license
+
+Contributions are welcome through issues and pull requests. Read
+[CONTRIBUTING.md](CONTRIBUTING.md) first. howlinux is released under the
+[MIT License](LICENSE); bundled dependency notices are in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

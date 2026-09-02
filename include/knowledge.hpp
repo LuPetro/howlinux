@@ -1,35 +1,67 @@
 #pragma once
-#include <string>
-#include <vector>
+
+#include "diagnostics.hpp"
+
 #include <filesystem>
+#include <optional>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-// Ein einzelner Knowledge-Eintrag, z.B. "rename-folder" oder der Command "mv".
-// Kommt 1:1 aus meta.yaml + content.md.
+namespace howlinux {
+
 struct KnowledgeEntry {
-    std::string id;        // z.B. "rename-folder"
-    std::string title;     // z.B. "Rename a folder"
-    std::string type;      // "howto" oder "command"
-    std::string command;   // z.B. "mv" (kann leer sein)
+    std::string id;
+    std::string title;
+    std::string type;
+    std::string command;
 
-    std::vector<std::string> aliases;   // andere Formulierungen der gleichen Frage
-    std::vector<std::string> keywords;  // Wörter die zu diesem Eintrag passen
-    std::vector<std::string> related;   // IDs verwandter Einträge
+    std::vector<std::string> aliases;
+    std::vector<std::string> keywords;
+    std::vector<std::string> related;
+    std::vector<std::string> intents;
+    std::string difficulty;
+    std::vector<std::string> platforms;
+    std::vector<std::string> tags;
+    std::vector<std::string> examples;
 
-    std::string content;   // kompletter Inhalt aus content.md
+    std::string category;
+    std::filesystem::path source_directory;
+    std::string content;
 };
 
-// Lädt alle Knowledge-Einträge aus einem Ordner (z.B. "knowledge/").
-// Erwartet Struktur: <directory>/<kategorie>/<entry-id>/meta.yaml + content.md
+struct KnowledgeLoadReport {
+    bool root_available{false};
+    std::size_t discovered_entries{0};
+    std::size_t loaded_entries{0};
+    std::size_t skipped_entries{0};
+    std::vector<Diagnostic> diagnostics;
+
+    [[nodiscard]] bool hasIssues() const;
+};
+
 class KnowledgeBase {
 public:
-    void load(const std::filesystem::path& directory);
+    KnowledgeLoadReport load(const std::filesystem::path& directory);
 
-    const std::vector<KnowledgeEntry>& entries() const { return entries_; }
+    [[nodiscard]] const std::vector<KnowledgeEntry>& entries() const noexcept {
+        return entries_;
+    }
+    [[nodiscard]] const KnowledgeEntry* findById(const std::string& id) const noexcept;
+    [[nodiscard]] const std::filesystem::path& root() const noexcept { return root_; }
+    [[nodiscard]] const KnowledgeLoadReport& report() const noexcept { return report_; }
 
 private:
-    std::vector<KnowledgeEntry> entries_;
+    std::optional<KnowledgeEntry> loadEntry(
+        const std::filesystem::path& entry_directory,
+        const std::string& category,
+        std::vector<Diagnostic>& diagnostics) const;
+    void rebuildLookup();
 
-    // Versucht genau einen Eintrag aus einem Ordner zu laden.
-    // Gibt false zurück wenn meta.yaml oder content.md fehlen/kaputt sind.
-    bool loadEntry(const std::filesystem::path& entryDir, KnowledgeEntry& out);
+    std::filesystem::path root_;
+    std::vector<KnowledgeEntry> entries_;
+    std::unordered_map<std::string, std::size_t> id_lookup_;
+    KnowledgeLoadReport report_;
 };
+
+}  // namespace howlinux

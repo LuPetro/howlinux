@@ -1,0 +1,27 @@
+concepts:
+  folder:
+    - folder
+    - folders
+    - directory
+    - directories
+    - dir
+  delete:
+    - delete
+    - remove
+    - erase
+  rename:
+    - rename
+    - change name
+    - give another name
+  permissions:
+    - permission
+    - permissions
+    - rights
+    - access rights
+  extract:
+    - extract
+    - unpack
+    - decompress
+  archive:
+    - archive
+    - compressed file

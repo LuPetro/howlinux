@@ -1,0 +1,14 @@
+if(NOT EXISTS "@CMAKE_BINARY_DIR@/install_manifest.txt")
+    message(FATAL_ERROR "install_manifest.txt not found; install the project first")
+endif()
+
+file(READ "@CMAKE_BINARY_DIR@/install_manifest.txt" installed_files)
+string(REGEX REPLACE "\n+$" "" installed_files "${installed_files}")
+string(REPLACE "\n" ";" installed_files "${installed_files}")
+
+foreach(file_path ${installed_files})
+    if(EXISTS "${file_path}" OR IS_SYMLINK "${file_path}")
+        message(STATUS "Uninstalling ${file_path}")
+        file(REMOVE "${file_path}")
+    endif()
+endforeach()
