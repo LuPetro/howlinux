@@ -8,6 +8,7 @@ aliases:
   - find a file
   - search files by name
   - find recently modified files
+  - which files changed recently
 
 keywords:
   - find
@@ -19,6 +20,7 @@ keywords:
 
 related:
   - find
+  - remove-files
   - search-text
 
 intent:

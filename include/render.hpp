@@ -26,7 +26,8 @@ public:
     static void list(std::ostream& output, const KnowledgeBase& knowledge);
     static void validation(std::ostream& output,
                            const KnowledgeLoadReport& knowledge_report,
-                           const ConceptLoadReport& concept_report);
+                           const ConceptLoadReport& concept_report,
+                           const KnowledgeLintReport& lint_report = {});
     static void searchJson(std::ostream& output,
                            const SearchResponse& response,
                            const PolicyDecision& decision,
@@ -38,7 +39,8 @@ public:
     static void listJson(std::ostream& output, const KnowledgeBase& knowledge);
     static void validationJson(std::ostream& output,
                                const KnowledgeLoadReport& knowledge_report,
-                               const ConceptLoadReport& concept_report);
+                               const ConceptLoadReport& concept_report,
+                               const KnowledgeLintReport& lint_report = {});
 };
 
 [[nodiscard]] std::string escapeJson(const std::string& value);

@@ -1,4 +1,4 @@
-# howlinux 1.0.1
+# howlinux 1.1.0
 
 `howlinux` is a fast, local command-line search tool for curated Linux
 knowledge. It selects the best entry from a YAML and Markdown knowledge base
@@ -11,6 +11,8 @@ an answer.
 ## Features
 
 - Recursive knowledge loader with schema, reference, and duplicate validation
+- Deterministic authoring lints for aliases, keywords, concepts, related
+  entries, Markdown fences, and local links
 - Extensible categories below `knowledge/` without C++ changes
 - Global single-word and multi-word synonyms in `concepts.yaml`
 - Linux-aware query normalization that preserves tokens such as `tar.gz`,
@@ -73,13 +75,13 @@ Uninstall a CMake installation made by the script:
 cmake --build build-install --target uninstall
 ```
 
-Alternatively, download the v1.0.1 archive and `SHA256SUMS` from the GitHub
+Alternatively, download the v1.1.0 archive and `SHA256SUMS` from the GitHub
 release, verify it, and extract it into a prefix:
 
 ```bash
 sha256sum --check SHA256SUMS
 mkdir -p "$HOME/.local"
-tar -xzf howlinux-1.0.1-Linux-x86_64.tar.gz -C "$HOME/.local"
+tar -xzf howlinux-1.1.0-Linux-x86_64.tar.gz -C "$HOME/.local"
 "$HOME/.local/bin/howlinux" validate
 ```
 
@@ -165,7 +167,10 @@ howlinux [options] validate [path]
 `list` prints all valid entries in deterministic ID order. `show <entry-id>`
 only accepts an already loaded ID and never interprets it as a path.
 `validate [path]` uses the runtime loader to check entries, field types, IDs,
-references, and concepts.
+references, and concepts. It then lints normalized aliases and keywords,
+concept usage, reciprocal relationships, Markdown code fences, and local link
+targets. External links are deliberately not fetched so validation stays
+offline and deterministic.
 
 Queries beginning with a dash must follow `--`:
 
@@ -184,9 +189,9 @@ Queries beginning with a dash must follow `--`:
 | `3` | Unreadable knowledge directory or invalid global configuration |
 
 Loader and configuration diagnostics go to `stderr` during normal search so
-`stdout` remains a single JSON value. `validate --json` includes diagnostics
-in its `diagnostics` array. Help, version, and parser errors remain readable
-plain text.
+`stdout` remains a single JSON value. `validate --json` includes lint counters
+in `lint` and all scoped findings in its `diagnostics` array. Help, version,
+and parser errors remain readable plain text.
 
 ## Knowledge path resolution
 

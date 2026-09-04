@@ -7,7 +7,7 @@ command: chmod
 aliases:
   - chmod 755
   - make file executable
-  - what does chmod 755 mean
+  - explain numeric permission 755
 
 keywords:
   - chmod

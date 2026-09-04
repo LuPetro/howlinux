@@ -18,8 +18,10 @@ keywords:
   - boot
 
 related:
+  - manage-service
   - read-logs
   - systemctl
+  - tail
 
 intent:
   - explain

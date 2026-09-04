@@ -10,6 +10,8 @@
 
 namespace howlinux {
 
+class ConceptDictionary;
+
 struct KnowledgeEntry {
     std::string id;
     std::string title;
@@ -40,9 +42,22 @@ struct KnowledgeLoadReport {
     [[nodiscard]] bool hasIssues() const;
 };
 
+struct KnowledgeLintReport {
+    bool performed{false};
+    std::size_t entries_checked{0};
+    std::size_t aliases_checked{0};
+    std::size_t keywords_checked{0};
+    std::size_t concepts_checked{0};
+    std::vector<Diagnostic> diagnostics;
+
+    [[nodiscard]] bool hasIssues() const;
+};
+
 class KnowledgeBase {
 public:
     KnowledgeLoadReport load(const std::filesystem::path& directory);
+    [[nodiscard]] KnowledgeLintReport lint(
+        const ConceptDictionary& concepts) const;
 
     [[nodiscard]] const std::vector<KnowledgeEntry>& entries() const noexcept {
         return entries_;

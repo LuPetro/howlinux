@@ -28,6 +28,6 @@ add_test(
     NAME howlinux.ranking-evaluation
     COMMAND bash ${PROJECT_SOURCE_DIR}/scripts/evaluate-ranking.sh
             $<TARGET_FILE:howlinux> ${PROJECT_SOURCE_DIR}/knowledge
-            ${CMAKE_CURRENT_SOURCE_DIR}/data/ranking-v1.tsv
+            ${CMAKE_CURRENT_SOURCE_DIR}/data/ranking-v2.tsv
 )
 set_tests_properties(howlinux.ranking-evaluation PROPERTIES TIMEOUT 30)

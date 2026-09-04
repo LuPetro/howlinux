@@ -21,6 +21,9 @@ ctest --test-dir build --output-on-failure
 Maintainers preparing a tag should also run `./scripts/release-audit.sh`.
 
 For Knowledge changes, also test representative queries with `--explain`.
+Add durable expected queries to `tests/data/ranking-v2.tsv` and run
+`./scripts/evaluate-ranking.sh ./build/howlinux knowledge` when search behavior
+or metadata changes.
 Do not add secrets, private data, unverified commands, or automatically
 generated authoritative answers.
 

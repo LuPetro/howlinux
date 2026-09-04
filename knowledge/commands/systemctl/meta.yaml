@@ -7,7 +7,7 @@ command: systemctl
 aliases:
   - systemctl
   - check service status
-  - restart a systemd service
+  - control systemd units
 
 keywords:
   - systemctl
@@ -20,6 +20,7 @@ keywords:
 related:
   - manage-service
   - journalctl
+  - read-logs
 
 intent:
   - explain

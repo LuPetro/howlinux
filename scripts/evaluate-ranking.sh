@@ -8,7 +8,7 @@ fi
 
 binary="$1"
 knowledge="$2"
-dataset="${3:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)/tests/data/ranking-v1.tsv}"
+dataset="${3:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)/tests/data/ranking-v2.tsv}"
 
 if [[ ! -x "$binary" ]]; then
   echo "Evaluation binary is not executable: $binary" >&2

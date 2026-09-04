@@ -38,6 +38,7 @@ CLI arguments
     -> resolve knowledge path
     -> load and validate YAML/Markdown
     -> load concepts
+    -> run authoring lint when validating
     -> build in-memory index
     -> normalize and classify query
     -> generate and rank candidates
@@ -69,6 +70,21 @@ The loader must:
 
 Unknown metadata fields produce a warning and have no search effect. Missing
 optional fields behave as empty values.
+
+After entries and concepts load successfully, `validate` must run an offline,
+deterministic authoring lint. It reports:
+
+- aliases duplicated after search normalization, including collisions between
+  entries;
+- aliases within one entry that differ by only a restrained edit;
+- duplicate or overly broad keywords;
+- duplicate, self-referential, or non-reciprocal `related` values;
+- unclosed Markdown code fences and missing local Markdown link targets;
+- local Markdown links that escape the knowledge root; and
+- concepts unused by all searchable entry metadata.
+
+External links are not fetched. A lint finding is a validation issue, does not
+prevent normal runtime loading, and uses exit code `1` from `validate`.
 
 ## 5. Entry format
 
@@ -190,7 +206,7 @@ match reasons.
 
 The default policy uses these thresholds:
 
-- confident score: `70`
+- confident score: `90`
 - required lead over the second result: `15`
 - minimum meaningful score: `8`
 - default result limit: `5`
@@ -232,7 +248,8 @@ Knowledge path precedence is:
 Text output may use terminal presentation. JSON output must be valid UTF-8,
 contain no ANSI escapes, remain structurally stable, and keep diagnostics out
 of a normal search payload. `validate --json` intentionally embeds structured
-diagnostics.
+diagnostics and a `lint` object containing whether lint ran and how many
+entries, aliases, keywords, and concepts were checked.
 
 Exit codes:
 

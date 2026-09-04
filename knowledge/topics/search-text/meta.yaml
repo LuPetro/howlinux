@@ -7,6 +7,7 @@ command: grep
 aliases:
   - search text in files
   - find a word recursively
+  - find a word inside files
   - search file contents
 
 keywords:

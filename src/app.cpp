@@ -113,12 +113,16 @@ int runApplication(const std::vector<std::string>& arguments,
     }
 
     if (options.command == CliCommand::validate) {
+        const auto lint_report = knowledge.lint(concepts);
         if (options.json) {
-            Renderer::validationJson(output, knowledge_report, concept_report);
+            Renderer::validationJson(
+                output, knowledge_report, concept_report, lint_report);
         } else {
-            Renderer::validation(output, knowledge_report, concept_report);
+            Renderer::validation(
+                output, knowledge_report, concept_report, lint_report);
         }
         return knowledge_report.hasIssues() || concept_report.hasIssues()
+                       || lint_report.hasIssues()
                    ? kNoConfidentResult
                    : kSuccess;
     }
