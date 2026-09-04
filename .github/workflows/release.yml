@@ -43,7 +43,7 @@ jobs:
       - name: Publish GitHub release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
-          body_path: docs/releases/v1.0.0.md
+          body_path: docs/releases/${{ github.ref_name }}.md
           fail_on_unmatched_files: true
           files: |
             build/*.tar.gz

@@ -1,0 +1,36 @@
+id: find
+title: find - search directory trees
+
+type: command
+command: find
+
+aliases:
+  - find
+  - find files by name
+  - search directories recursively
+
+keywords:
+  - find
+  - filename
+  - recursive
+  - path
+  - mtime
+  - exec
+
+related:
+  - find-files
+  - grep
+  - rm
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - filesystem
+  - search
+examples:
+  - find DIRECTORY -type f -name '*.log'

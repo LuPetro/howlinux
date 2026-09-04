@@ -1,0 +1,36 @@
+id: tail
+title: tail - show or follow the end of files
+
+type: command
+command: tail
+
+aliases:
+  - tail
+  - show last lines
+  - follow a log file
+
+keywords:
+  - tail
+  - last lines
+  - follow
+  - log
+  - realtime
+
+related:
+  - head
+  - read-logs
+  - journalctl
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - text
+  - logs
+examples:
+  - tail -n 50 -- FILE
+  - tail -F -- LOG_FILE

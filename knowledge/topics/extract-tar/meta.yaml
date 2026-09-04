@@ -7,6 +7,7 @@ command: tar
 aliases:
   - extract tar.gz
   - unpack tar.gz
+  - decompress a gzip tar archive
 
 keywords:
   - tar
@@ -15,7 +16,16 @@ keywords:
   - unpack
   - archive
 
-related: []
+related:
+  - tar
 
 intent:
   - how_to
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - archives
+examples:
+  - tar -xzf ARCHIVE.tar.gz -C DESTINATION

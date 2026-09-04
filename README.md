@@ -1,4 +1,4 @@
-# howlinux 1.0.0
+# howlinux 1.0.1
 
 `howlinux` is a fast, local command-line search tool for curated Linux
 knowledge. It selects the best entry from a YAML and Markdown knowledge base
@@ -20,6 +20,8 @@ an answer.
   intent, titles, tokens, and limited typo correction
 - Conservative confident, uncertain, and no-match result policy
 - `search`, `list`, `show`, `validate`, `--explain`, and ANSI-free JSON output
+- 38 reviewed command references and task-oriented guides covering files,
+  text search, storage, processes, networking, services, logs, and packages
 - Debug and release builds, automated tests, installation rules, shell
   completions, and a man page
 
@@ -71,13 +73,13 @@ Uninstall a CMake installation made by the script:
 cmake --build build-install --target uninstall
 ```
 
-Alternatively, download the v1.0.0 archive and `SHA256SUMS` from the GitHub
+Alternatively, download the v1.0.1 archive and `SHA256SUMS` from the GitHub
 release, verify it, and extract it into a prefix:
 
 ```bash
 sha256sum --check SHA256SUMS
 mkdir -p "$HOME/.local"
-tar -xzf howlinux-1.0.0-Linux-x86_64.tar.gz -C "$HOME/.local"
+tar -xzf howlinux-1.0.1-Linux-x86_64.tar.gz -C "$HOME/.local"
 "$HOME/.local/bin/howlinux" validate
 ```
 

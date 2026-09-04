@@ -1,0 +1,34 @@
+id: search-text
+title: Search for text inside files
+
+type: howto
+command: grep
+
+aliases:
+  - search text in files
+  - find a word recursively
+  - search file contents
+
+keywords:
+  - search
+  - text
+  - contents
+  - recursive
+  - pattern
+  - grep
+
+related:
+  - grep
+  - find-files
+
+intent:
+  - how_to
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - text
+  - search
+examples:
+  - grep -RInF -- TEXT DIRECTORY

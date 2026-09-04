@@ -1,0 +1,33 @@
+id: du
+title: du - estimate file and directory usage
+
+type: command
+command: du
+
+aliases:
+  - du
+  - find large directories
+  - check folder size
+
+keywords:
+  - du
+  - disk usage
+  - directory size
+  - summarize
+  - filesystem
+
+related:
+  - disk-space
+  - df
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - storage
+examples:
+  - du -sh -- DIRECTORY

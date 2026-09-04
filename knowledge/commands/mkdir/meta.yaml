@@ -1,0 +1,32 @@
+id: mkdir
+title: mkdir - create directories
+
+type: command
+command: mkdir
+
+aliases:
+  - mkdir
+  - create a directory
+  - make a folder
+
+keywords:
+  - mkdir
+  - directory
+  - folder
+  - parents
+  - permissions
+
+related:
+  - touch
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - filesystem
+examples:
+  - mkdir -p -- PARENT/CHILD

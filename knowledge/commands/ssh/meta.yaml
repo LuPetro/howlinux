@@ -1,0 +1,34 @@
+id: ssh
+title: ssh - open a secure remote shell
+
+type: command
+command: ssh
+
+aliases:
+  - ssh
+  - connect to remote server
+  - remote shell login
+
+keywords:
+  - ssh
+  - remote
+  - login
+  - host key
+  - port
+  - identity
+
+related:
+  - remote-login
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - networking
+  - remote
+examples:
+  - ssh USER@HOST

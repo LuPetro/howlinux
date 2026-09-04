@@ -1,0 +1,34 @@
+id: ps
+title: ps - display process information
+
+type: command
+command: ps
+
+aliases:
+  - ps
+  - list running processes
+  - show process ids
+
+keywords:
+  - ps
+  - process
+  - pid
+  - command
+  - status
+
+related:
+  - manage-processes
+  - kill
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - processes
+examples:
+  - ps -ef
+  - ps aux

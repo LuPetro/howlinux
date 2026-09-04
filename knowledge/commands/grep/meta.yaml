@@ -1,0 +1,35 @@
+id: grep
+title: grep - search text for patterns
+
+type: command
+command: grep
+
+aliases:
+  - grep
+  - search inside files
+  - find matching text
+
+keywords:
+  - grep
+  - pattern
+  - regular expression
+  - recursive
+  - text
+
+related:
+  - search-text
+  - find
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - text
+  - search
+examples:
+  - grep -n -- PATTERN FILE
+  - grep -RIn -- PATTERN DIRECTORY

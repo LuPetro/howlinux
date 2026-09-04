@@ -1,0 +1,34 @@
+id: cat
+title: cat - concatenate and display files
+
+type: command
+command: cat
+
+aliases:
+  - cat
+  - display a text file
+  - concatenate files
+
+keywords:
+  - cat
+  - concatenate
+  - stdout
+  - text
+  - file contents
+
+related:
+  - less
+  - head
+  - tail
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - text
+examples:
+  - cat -- FILE

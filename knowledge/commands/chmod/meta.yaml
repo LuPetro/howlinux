@@ -6,12 +6,15 @@ command: chmod
 
 aliases:
   - chmod
+  - change file permissions
+  - set executable permission
 
 keywords:
   - chmod
   - permission
   - permissions
   - rights
+  - mode
 
 related:
   - chmod-755
@@ -19,3 +22,11 @@ related:
 intent:
   - explain
   - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - permissions
+examples:
+  - chmod MODE -- FILE

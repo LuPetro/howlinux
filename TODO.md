@@ -19,11 +19,11 @@ be completed by repository files alone.
 - [ ] Detect duplicate or overly similar aliases.
 - [ ] Detect overly broad keywords and unused concepts.
 - [ ] Optionally validate Markdown links and code fences.
-- [ ] Build a versioned ranking evaluation set.
-- [ ] Measure top-1 accuracy, recall at five, and false confident matches.
+- [x] Build a versioned ranking evaluation set.
+- [x] Measure top-1 accuracy, recall at five, and false confident matches.
 - [ ] Calibrate thresholds only from evaluation data.
-- [ ] Add more reviewed entries for common Linux commands and flags.
-- [ ] Test neighboring entries against each other.
+- [x] Add more reviewed entries for common Linux commands and flags.
+- [x] Test neighboring entries against each other.
 - [ ] Continue validating all commands in a safe environment.
 
 Longer-term proposals are tracked in

@@ -1,0 +1,34 @@
+id: rm
+title: rm - remove files and directories
+
+type: command
+command: rm
+
+aliases:
+  - rm
+  - delete a file
+  - remove a directory
+
+keywords:
+  - rm
+  - remove
+  - delete
+  - recursive
+  - force
+
+related:
+  - remove-files
+  - find
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - filesystem
+  - destructive
+examples:
+  - rm -i -- FILE

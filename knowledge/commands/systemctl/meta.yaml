@@ -1,0 +1,35 @@
+id: systemctl
+title: systemctl - inspect and control systemd units
+
+type: command
+command: systemctl
+
+aliases:
+  - systemctl
+  - check service status
+  - restart a systemd service
+
+keywords:
+  - systemctl
+  - systemd
+  - service
+  - unit
+  - status
+  - restart
+
+related:
+  - manage-service
+  - journalctl
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - services
+  - systemd
+examples:
+  - systemctl status UNIT

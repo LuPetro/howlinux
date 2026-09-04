@@ -1,0 +1,34 @@
+id: remove-files
+title: Remove files and directories carefully
+
+type: howto
+command: rm
+
+aliases:
+  - remove files safely
+  - delete a directory
+  - delete files with confirmation
+
+keywords:
+  - remove
+  - delete
+  - file
+  - directory
+  - recursive
+  - rm
+
+related:
+  - rm
+  - find-files
+
+intent:
+  - how_to
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - filesystem
+  - destructive
+examples:
+  - rm -i -- FILE

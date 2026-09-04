@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(
     howlinux
-    VERSION 1.0.0
+    VERSION 1.0.1
     DESCRIPTION "Deterministic offline Linux knowledge CLI"
     LANGUAGES CXX
 )

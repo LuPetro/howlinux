@@ -1,0 +1,34 @@
+id: find-files
+title: Find files by name, type, or age
+
+type: howto
+command: find
+
+aliases:
+  - find a file
+  - search files by name
+  - find recently modified files
+
+keywords:
+  - find
+  - filename
+  - modified
+  - recursive
+  - directory
+  - type
+
+related:
+  - find
+  - search-text
+
+intent:
+  - how_to
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - filesystem
+  - search
+examples:
+  - find DIRECTORY -type f -name '*.txt'
