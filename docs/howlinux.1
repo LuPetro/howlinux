@@ -1,4 +1,4 @@
-.TH HOWLINUX 1 "2026-09-04" "howlinux 1.0.1" "User Commands"
+.TH HOWLINUX 1 "2026-09-04" "howlinux 1.1.0" "User Commands"
 .SH NAME
 howlinux \- deterministic offline Linux knowledge search
 .SH SYNOPSIS
@@ -39,6 +39,10 @@ howlinux --explain "what does chmod 755 mean"
 howlinux --json "extract tar.gz"
 howlinux validate knowledge
 .fi
+.SH VALIDATION
+The validate command checks the entry schema and concepts, then performs
+deterministic authoring lints for aliases, keywords, related entries, Markdown
+code fences, local links, and unused concepts. External links are not fetched.
 .SH FILES
 .TP
 .I knowledge/

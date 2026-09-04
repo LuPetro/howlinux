@@ -1,0 +1,105 @@
+# Expected top result ID<TAB>query
+# Exact and representative queries
+ls	list files
+ls	show directory contents
+cp	cp
+copy-files	copy a folder recursively
+copy-files	duplicate a directory
+mv	move a file
+rename-folder	rename directory
+rm	rm
+remove-files	delete files with confirmation
+mkdir	create a directory
+touch	update file timestamp
+ln	make a symlink
+find	search directories recursively
+find-files	find recently modified files
+grep	grep
+search-text	search file contents
+cat	concatenate files
+less	view a long text file
+head	show first lines
+tail	show last lines
+df	show filesystem usage
+du	check folder size
+disk-space	filesystem is full
+ps	list running processes
+kill	send process signal
+manage-processes	find and kill a process
+ip	show ip addresses
+curl	make an http request
+download-file	save a url to a file
+ssh	ssh
+remote-login	open remote terminal
+systemctl	check service status
+manage-service	service failed to start
+journalctl	show service logs
+read-logs	follow service logs
+apt	install ubuntu package
+tar	create a tar archive
+extract-tar	unpack tar.gz
+chmod	change file permissions
+chmod-755	explain numeric permission 755
+
+# Natural and neighboring queries
+ls	show hidden files
+cp	copy one file to another
+copy-files	how can i duplicate a folder
+mv	move directory to another path
+rename-folder	change folder name
+rm	remove one file
+remove-files	safely delete a directory tree
+mkdir	make parent directories
+touch	create an empty file
+ln	create a symbolic link
+find	find files named log
+find-files	which files changed recently
+grep	grep recursively
+search-text	find a word inside files
+cat	print file contents
+less	scroll through a long file
+head	first 20 lines of a file
+tail	watch log updates
+df	free space on a mounted filesystem
+du	size of a directory
+disk-space	why is my disk full
+ps	show process ids
+kill	send sigterm to a pid
+manage-processes	how do i stop a stuck process
+ip	display the routing table
+curl	request http headers with curl
+download-file	safely download and verify a file
+ssh	ssh on a custom port
+remote-login	how to log into a remote server
+systemctl	list running systemd units
+manage-service	restart a service
+journalctl	journal messages from this boot
+read-logs	troubleshoot application logs
+apt	update package lists
+tar	list archive contents
+extract-tar	extract tar.gz into a directory
+chmod	set file mode
+chmod-755	what permissions does 755 give
+
+# Restrained spelling mistakes
+rename-folder	renmae fodler
+search-text	how do i serach text in flies
+disk-space	how can i chekc diks space
+read-logs	folow servce logs
+
+# Out-of-scope and potentially dangerous mismatches
+-	quantum zephyr
+-	bake sourdough bread
+-	weather tomorrow
+-	guitar chord progression
+-	translate japanese poem
+-	configure nginx reverse proxy
+-	change a database password
+-	recover deleted photos
+-	format a usb drive
+-	edit a crontab
+-	compile a custom kernel
+-	reset a forgotten password
+-	mount a network share
+-	partition a disk
+-	create a docker container

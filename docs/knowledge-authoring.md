@@ -228,6 +228,17 @@ Run the complete validator after every knowledge change:
 ./build/howlinux --json validate knowledge
 ```
 
+Validation also performs authoring lints. It detects normalized alias
+collisions, nearly duplicate aliases within an entry, duplicate or overly
+broad keywords, unused concepts, duplicate/self/non-reciprocal `related`
+values, unclosed code fences, and broken local Markdown links. External links
+are not requested because validation must remain offline and deterministic.
+
+The JSON result includes a `lint` object with checked-item counts. Lint
+findings appear in `diagnostics` with `"scope":"lint"` and make validation
+exit with code `1` without preventing the valid entries from loading during a
+normal search.
+
 Then test several query forms:
 
 ```bash
@@ -255,7 +266,7 @@ not be used.
 
 - [ ] ID is stable, lowercase, hyphenated, and globally unique.
 - [ ] Required fields have the correct types.
-- [ ] Related IDs exist and do not merely point back accidentally.
+- [ ] Related IDs exist, are reciprocal, and do not point to the entry itself.
 - [ ] Aliases are realistic, distinct, and specific.
 - [ ] Keywords distinguish this entry from its neighbors.
 - [ ] Type and intent match the content.

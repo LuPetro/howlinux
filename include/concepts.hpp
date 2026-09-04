@@ -36,6 +36,10 @@ public:
         const std::string& normalized_phrase) const;
     [[nodiscard]] const ConceptLoadReport& report() const noexcept { return report_; }
     [[nodiscard]] bool empty() const noexcept { return phrase_to_canonical_.empty(); }
+    [[nodiscard]] const std::unordered_map<std::string, std::string>&
+    phraseMappings() const noexcept {
+        return phrase_to_canonical_;
+    }
 
 private:
     struct PhraseDefinition {

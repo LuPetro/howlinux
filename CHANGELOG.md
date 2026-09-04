@@ -4,6 +4,25 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and releases use
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-09-04
+
+### Added
+
+- Added deterministic authoring lints for normalized alias collisions,
+  overly similar aliases, duplicate or broad keywords, invalid relationships,
+  unused concepts, Markdown code fences, and local link targets.
+- Added lint counters and scoped findings to human-readable and JSON
+  validation reports.
+- Added the `ranking-v2` evaluation dataset with 82 positive and 15 negative
+  queries, including natural phrasing, neighboring topics, and restrained
+  spelling mistakes.
+
+### Changed
+
+- Raised the default confident-result threshold from 70 to 90 after evaluation
+  exposed false confident matches for unsupported tasks.
+- Refined aliases and related-entry metadata based on lint and ranking results.
+
 ## [1.0.1] - 2026-09-04
 
 ### Added
@@ -34,5 +53,6 @@ All notable changes to this project are documented here. The format follows
 - CMake installation, shell completions, man page, test suite, and TGZ release
   packaging with SHA-256 checksums.
 
+[1.1.0]: https://github.com/LuPetro/howlinux/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/LuPetro/howlinux/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/LuPetro/howlinux/releases/tag/v1.0.0

@@ -18,6 +18,7 @@ keywords:
 
 related:
   - journalctl
+  - manage-service
   - tail
   - systemctl
 

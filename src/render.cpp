@@ -369,11 +369,12 @@ const char* severityName(DiagnosticSeverity severity) {
 }
 
 bool hasValidationIssues(const KnowledgeLoadReport& knowledge_report,
-                         const ConceptLoadReport& concept_report) {
+                         const ConceptLoadReport& concept_report,
+                         const KnowledgeLintReport& lint_report) {
     return !knowledge_report.root_available ||
            knowledge_report.skipped_entries != 0 ||
            !knowledge_report.diagnostics.empty() || !concept_report.usable ||
-           !concept_report.diagnostics.empty();
+           !concept_report.diagnostics.empty() || lint_report.hasIssues();
 }
 
 void writeJsonDiagnostic(std::ostream& output,
@@ -585,8 +586,10 @@ void Renderer::list(std::ostream& output, const KnowledgeBase& knowledge) {
 
 void Renderer::validation(std::ostream& output,
                           const KnowledgeLoadReport& knowledge_report,
-                          const ConceptLoadReport& concept_report) {
-    const bool issues = hasValidationIssues(knowledge_report, concept_report);
+                          const ConceptLoadReport& concept_report,
+                          const KnowledgeLintReport& lint_report) {
+    const bool issues =
+        hasValidationIssues(knowledge_report, concept_report, lint_report);
     const char* validation_status =
         !knowledge_report.root_available ? "error" : (issues ? "invalid" : "valid");
 
@@ -603,6 +606,12 @@ void Renderer::validation(std::ostream& output,
            << '\n';
     output << "  Usable: " << (concept_report.usable ? "yes" : "no") << '\n';
     output << "  Loaded concepts: " << concept_report.concepts_loaded << '\n';
+    output << "Lint:\n";
+    output << "  Performed: " << (lint_report.performed ? "yes" : "no") << '\n';
+    output << "  Entries checked: " << lint_report.entries_checked << '\n';
+    output << "  Aliases checked: " << lint_report.aliases_checked << '\n';
+    output << "  Keywords checked: " << lint_report.keywords_checked << '\n';
+    output << "  Concepts checked: " << lint_report.concepts_checked << '\n';
 
     if (knowledge_report.root_available &&
         knowledge_report.loaded_entries == 0) {
@@ -610,13 +619,17 @@ void Renderer::validation(std::ostream& output,
     }
 
     const std::size_t diagnostic_count =
-        knowledge_report.diagnostics.size() + concept_report.diagnostics.size();
+        knowledge_report.diagnostics.size() + concept_report.diagnostics.size() +
+        lint_report.diagnostics.size();
     output << "Diagnostics: " << diagnostic_count << '\n';
     for (const auto& diagnostic : knowledge_report.diagnostics) {
         writeHumanDiagnostic(output, "knowledge", diagnostic);
     }
     for (const auto& diagnostic : concept_report.diagnostics) {
         writeHumanDiagnostic(output, "concepts", diagnostic);
+    }
+    for (const auto& diagnostic : lint_report.diagnostics) {
+        writeHumanDiagnostic(output, "lint", diagnostic);
     }
 }
 
@@ -683,8 +696,10 @@ void Renderer::listJson(std::ostream& output, const KnowledgeBase& knowledge) {
 void Renderer::validationJson(
     std::ostream& output,
     const KnowledgeLoadReport& knowledge_report,
-    const ConceptLoadReport& concept_report) {
-    const bool issues = hasValidationIssues(knowledge_report, concept_report);
+    const ConceptLoadReport& concept_report,
+    const KnowledgeLintReport& lint_report) {
+    const bool issues =
+        hasValidationIssues(knowledge_report, concept_report, lint_report);
     const char* validation_status =
         !knowledge_report.root_available ? "error" : (issues ? "invalid" : "valid");
 
@@ -707,6 +722,13 @@ void Renderer::validationJson(
     output << ",\"usable\":" << (concept_report.usable ? "true" : "false");
     output << ",\"concepts_loaded\":" << concept_report.concepts_loaded;
     output << '}';
+    output << ",\"lint\":{";
+    output << "\"performed\":" << (lint_report.performed ? "true" : "false");
+    output << ",\"entries_checked\":" << lint_report.entries_checked;
+    output << ",\"aliases_checked\":" << lint_report.aliases_checked;
+    output << ",\"keywords_checked\":" << lint_report.keywords_checked;
+    output << ",\"concepts_checked\":" << lint_report.concepts_checked;
+    output << '}';
     output << ",\"diagnostics\":[";
 
     bool first = true;
@@ -722,6 +744,13 @@ void Renderer::validationJson(
             output << ',';
         }
         writeJsonDiagnostic(output, "concepts", diagnostic);
+        first = false;
+    }
+    for (const auto& diagnostic : lint_report.diagnostics) {
+        if (!first) {
+            output << ',';
+        }
+        writeJsonDiagnostic(output, "lint", diagnostic);
         first = false;
     }
     output << "]}\n";

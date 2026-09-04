@@ -17,7 +17,9 @@ keywords:
   - realtime
 
 related:
+  - cat
   - head
+  - less
   - read-logs
   - journalctl
 

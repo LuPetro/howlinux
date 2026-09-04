@@ -14,7 +14,7 @@ body:
     attributes:
       label: Version
       description: Output of `howlinux --version` or the commit SHA.
-      placeholder: howlinux 1.0.1
+      placeholder: howlinux 1.1.0
     validations:
       required: true
   - type: input

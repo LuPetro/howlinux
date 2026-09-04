@@ -7,6 +7,7 @@ command: cp
 aliases:
   - cp
   - copy a file
+  - copy one file to another
   - copy a directory
 
 keywords:
@@ -18,6 +19,7 @@ keywords:
 
 related:
   - copy-files
+  - ln
   - mv
 
 intent:

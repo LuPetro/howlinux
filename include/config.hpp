@@ -5,7 +5,7 @@
 namespace howlinux {
 
 #ifndef HOWLINUX_VERSION
-#define HOWLINUX_VERSION "1.0.1"
+#define HOWLINUX_VERSION "1.1.0"
 #endif
 #ifndef HOWLINUX_INSTALL_DATADIR
 #define HOWLINUX_INSTALL_DATADIR "share"
@@ -25,7 +25,7 @@ struct SearchConfig {
     double token_score{6.0};
     double fuzzy_score{8.0};
 
-    double confident_score{70.0};
+    double confident_score{90.0};
     double confident_margin{15.0};
     double meaningful_score{8.0};
 

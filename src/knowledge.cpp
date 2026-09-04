@@ -1,5 +1,9 @@
 #include "knowledge.hpp"
 
+#include "concepts.hpp"
+#include "index.hpp"
+#include "query.hpp"
+
 #include <yaml-cpp/yaml.h>
 
 #include <algorithm>
@@ -22,6 +26,212 @@ namespace fs = std::filesystem;
 
 constexpr std::string_view kMetadataFilename = "meta.yaml";
 constexpr std::string_view kContentFilename = "content.md";
+
+void addLintDiagnostic(KnowledgeLintReport& report,
+                       const fs::path& path,
+                       std::string entry_id,
+                       std::string message) {
+    report.diagnostics.push_back(
+        {DiagnosticSeverity::warning, path, std::move(entry_id),
+         std::move(message)});
+}
+
+std::string trimmed(std::string value) {
+    const auto is_space = [](const unsigned char character) {
+        return std::isspace(character) != 0;
+    };
+    value.erase(value.begin(),
+                std::find_if_not(value.begin(), value.end(), is_space));
+    value.erase(std::find_if_not(value.rbegin(), value.rend(), is_space).base(),
+                value.end());
+    return value;
+}
+
+std::string normalizedSearchPhrase(const std::string& value) {
+    return joinTokens(tokenize(value, true, false));
+}
+
+bool aliasesAreOverlySimilar(const std::string& left,
+                             const std::string& right) {
+    if (left == right || left.size() < 8 || right.size() < 8) {
+        return false;
+    }
+    const auto left_tokens = tokenize(left, true, false);
+    const auto right_tokens = tokenize(right, true, false);
+    if (left_tokens.size() < 2 || left_tokens.size() != right_tokens.size()) {
+        return false;
+    }
+    const auto length_difference =
+        left.size() > right.size() ? left.size() - right.size()
+                                   : right.size() - left.size();
+    return length_difference <= 1 &&
+           damerauLevenshteinDistance(left, right, 1) <= 1;
+}
+
+bool pathEscapesRoot(const fs::path& path, const fs::path& root) {
+    std::error_code path_error;
+    const fs::path resolved = fs::weakly_canonical(path, path_error);
+    if (path_error) {
+        return false;
+    }
+    std::error_code root_error;
+    const fs::path resolved_root = fs::weakly_canonical(root, root_error);
+    if (root_error) {
+        return false;
+    }
+    const fs::path relative = resolved.lexically_relative(resolved_root);
+    return !relative.empty() && *relative.begin() == "..";
+}
+
+void lintMarkdownLinks(const std::string& line,
+                       const fs::path& content_path,
+                       const fs::path& root,
+                       const std::string& entry_id,
+                       const std::size_t line_number,
+                       KnowledgeLintReport& report) {
+    std::size_t marker = 0;
+    while ((marker = line.find("](", marker)) != std::string::npos) {
+        const std::size_t target_begin = marker + 2;
+        const std::size_t target_end = line.find(')', target_begin);
+        if (target_end == std::string::npos) {
+            addLintDiagnostic(report,
+                              content_path,
+                              entry_id,
+                              "unterminated Markdown link on line " +
+                                  std::to_string(line_number));
+            return;
+        }
+
+        std::string target = trimmed(
+            line.substr(target_begin, target_end - target_begin));
+        const bool angle_wrapped =
+            target.size() >= 2 && target.front() == '<' && target.back() == '>';
+        if (angle_wrapped) {
+            target = target.substr(1, target.size() - 2);
+        } else {
+            const auto whitespace = target.find_first_of(" \t");
+            if (whitespace != std::string::npos) {
+                target.erase(whitespace);
+            }
+        }
+
+        if (target.empty()) {
+            addLintDiagnostic(report,
+                              content_path,
+                              entry_id,
+                              "empty Markdown link target on line " +
+                                  std::to_string(line_number));
+            marker = target_end + 1;
+            continue;
+        }
+        if (target.front() == '#' || target.find("://") != std::string::npos ||
+            target.rfind("mailto:", 0) == 0) {
+            marker = target_end + 1;
+            continue;
+        }
+        if (target.front() == '/') {
+            addLintDiagnostic(report,
+                              content_path,
+                              entry_id,
+                              "absolute Markdown link target on line " +
+                                  std::to_string(line_number) + ": '" + target +
+                                  "'");
+            marker = target_end + 1;
+            continue;
+        }
+
+        const auto suffix = target.find_first_of("#?");
+        if (suffix != std::string::npos) {
+            target.erase(suffix);
+        }
+        if (!target.empty()) {
+            const fs::path resolved = content_path.parent_path() / target;
+            std::error_code exists_error;
+            const bool exists = fs::exists(resolved, exists_error);
+            if (pathEscapesRoot(resolved, root)) {
+                addLintDiagnostic(report,
+                                  content_path,
+                                  entry_id,
+                                  "Markdown link escapes the knowledge root on line " +
+                                      std::to_string(line_number) + ": '" + target +
+                                      "'");
+            } else if (exists_error || !exists) {
+                addLintDiagnostic(report,
+                                  content_path,
+                                  entry_id,
+                                  "Markdown link target does not exist on line " +
+                                      std::to_string(line_number) + ": '" + target +
+                                      "'");
+            }
+        }
+        marker = target_end + 1;
+    }
+}
+
+void lintMarkdown(const KnowledgeEntry& entry,
+                  const fs::path& root,
+                  KnowledgeLintReport& report) {
+    struct OpenFence {
+        char marker{'`'};
+        std::size_t length{0};
+        std::size_t line{0};
+    };
+
+    const fs::path content_path = entry.source_directory / kContentFilename;
+    std::optional<OpenFence> open_fence;
+    std::istringstream input(entry.content);
+    std::string line;
+    std::size_t line_number = 0;
+    while (std::getline(input, line)) {
+        ++line_number;
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
+
+        std::size_t offset = 0;
+        while (offset < line.size() && offset < 4 && line[offset] == ' ') {
+            ++offset;
+        }
+        bool fence_line = false;
+        if (offset <= 3 && offset < line.size() &&
+            (line[offset] == '`' || line[offset] == '~')) {
+            const char marker = line[offset];
+            std::size_t end = offset;
+            while (end < line.size() && line[end] == marker) {
+                ++end;
+            }
+            const std::size_t length = end - offset;
+            if (length >= 3) {
+                if (!open_fence) {
+                    open_fence = OpenFence{marker, length, line_number};
+                    fence_line = true;
+                } else if (open_fence->marker == marker &&
+                           length >= open_fence->length &&
+                           trimmed(line.substr(end)).empty()) {
+                    open_fence.reset();
+                    fence_line = true;
+                }
+            }
+        }
+
+        if (!open_fence && !fence_line) {
+            lintMarkdownLinks(line,
+                              content_path,
+                              root,
+                              entry.id,
+                              line_number,
+                              report);
+        }
+    }
+
+    if (open_fence) {
+        addLintDiagnostic(report,
+                          content_path,
+                          entry.id,
+                          "unclosed Markdown code fence opened on line " +
+                              std::to_string(open_fence->line));
+    }
+}
 
 void addDiagnostic(std::vector<Diagnostic>& diagnostics,
                    const DiagnosticSeverity severity,
@@ -275,6 +485,10 @@ std::vector<std::string> relativeComponents(const fs::path& path,
 }  // namespace
 
 bool KnowledgeLoadReport::hasIssues() const {
+    return !diagnostics.empty();
+}
+
+bool KnowledgeLintReport::hasIssues() const {
     return !diagnostics.empty();
 }
 
@@ -718,6 +932,173 @@ KnowledgeLoadReport KnowledgeBase::load(const fs::path& directory) {
     }
 
     return report_;
+}
+
+KnowledgeLintReport KnowledgeBase::lint(
+    const ConceptDictionary& concepts) const {
+    KnowledgeLintReport lint_report;
+    lint_report.performed = true;
+    lint_report.entries_checked = entries_.size();
+
+    static const std::unordered_set<std::string> broad_keywords = {
+        "basic", "basics", "command", "commands", "general", "help",
+        "linux", "stuff", "thing", "things", "tutorial", "use", "using",
+    };
+
+    std::unordered_map<std::string, std::string> aliases_by_normalized_value;
+    std::unordered_set<std::string> used_concepts;
+
+    const auto collect_concepts = [&](const std::string& value) {
+        const auto tokens = tokenize(value, true, false);
+        for (const auto& match : concepts.detect(tokens)) {
+            used_concepts.insert(match.canonical);
+        }
+    };
+
+    for (const auto& entry : entries_) {
+        const fs::path metadata_path =
+            entry.source_directory / kMetadataFilename;
+        std::vector<std::pair<std::string, std::string>> normalized_aliases;
+        std::unordered_set<std::string> local_aliases;
+
+        collect_concepts(entry.id);
+        collect_concepts(entry.title);
+        collect_concepts(entry.command);
+
+        for (const auto& alias : entry.aliases) {
+            ++lint_report.aliases_checked;
+            collect_concepts(alias);
+            const std::string normalized = normalizedSearchPhrase(alias);
+            if (normalized.empty()) {
+                addLintDiagnostic(lint_report,
+                                  metadata_path,
+                                  entry.id,
+                                  "alias '" + alias +
+                                      "' is empty after search normalization");
+                continue;
+            }
+            if (!local_aliases.insert(normalized).second) {
+                addLintDiagnostic(lint_report,
+                                  metadata_path,
+                                  entry.id,
+                                  "duplicate alias after search normalization: '" +
+                                      normalized + "'");
+                continue;
+            }
+
+            const auto [source, inserted] = aliases_by_normalized_value.emplace(
+                normalized, entry.id);
+            if (!inserted && source->second != entry.id) {
+                addLintDiagnostic(
+                    lint_report,
+                    metadata_path,
+                    entry.id,
+                        "alias '" + normalized +
+                        "' duplicates an alias from entry '" +
+                        source->second + "'");
+            }
+            normalized_aliases.emplace_back(alias, normalized);
+        }
+
+        for (std::size_t left = 0; left < normalized_aliases.size(); ++left) {
+            for (std::size_t right = left + 1;
+                 right < normalized_aliases.size();
+                 ++right) {
+                if (aliasesAreOverlySimilar(normalized_aliases[left].second,
+                                            normalized_aliases[right].second)) {
+                    addLintDiagnostic(
+                        lint_report,
+                        metadata_path,
+                        entry.id,
+                        "overly similar aliases: '" +
+                            normalized_aliases[left].first + "' and '" +
+                            normalized_aliases[right].first + "'");
+                }
+            }
+        }
+
+        std::unordered_set<std::string> local_keywords;
+        for (const auto& keyword : entry.keywords) {
+            ++lint_report.keywords_checked;
+            collect_concepts(keyword);
+            const std::string normalized = normalizedSearchPhrase(keyword);
+            if (normalized.empty()) {
+                addLintDiagnostic(lint_report,
+                                  metadata_path,
+                                  entry.id,
+                                  "keyword '" + keyword +
+                                      "' is empty after search normalization");
+                continue;
+            }
+            if (!local_keywords.insert(normalized).second) {
+                addLintDiagnostic(lint_report,
+                                  metadata_path,
+                                  entry.id,
+                                  "duplicate keyword after search normalization: '" +
+                                      normalized + "'");
+            }
+            const auto tokens = tokenize(normalized, false, false);
+            if (tokens.size() == 1 && broad_keywords.contains(tokens.front())) {
+                addLintDiagnostic(lint_report,
+                                  metadata_path,
+                                  entry.id,
+                                  "overly broad keyword: '" + keyword + "'");
+            }
+        }
+
+        std::unordered_set<std::string> related_ids;
+        for (const auto& related_id : entry.related) {
+            if (!related_ids.insert(related_id).second) {
+                addLintDiagnostic(lint_report,
+                                  metadata_path,
+                                  entry.id,
+                                  "duplicate related id: '" + related_id + "'");
+                continue;
+            }
+            if (related_id == entry.id) {
+                addLintDiagnostic(lint_report,
+                                  metadata_path,
+                                  entry.id,
+                                  "entry must not relate to itself");
+                continue;
+            }
+            const auto* related_entry = findById(related_id);
+            if (related_entry != nullptr &&
+                std::find(related_entry->related.begin(),
+                          related_entry->related.end(),
+                          entry.id) == related_entry->related.end()) {
+                addLintDiagnostic(lint_report,
+                                  metadata_path,
+                                  entry.id,
+                                  "related id '" + related_id +
+                                      "' is not reciprocal");
+            }
+        }
+
+        lintMarkdown(entry, root_, lint_report);
+    }
+
+    std::vector<std::string> canonical_concepts;
+    canonical_concepts.reserve(concepts.phraseMappings().size());
+    for (const auto& [phrase, canonical] : concepts.phraseMappings()) {
+        (void)phrase;
+        canonical_concepts.push_back(canonical);
+    }
+    std::sort(canonical_concepts.begin(), canonical_concepts.end());
+    canonical_concepts.erase(
+        std::unique(canonical_concepts.begin(), canonical_concepts.end()),
+        canonical_concepts.end());
+    lint_report.concepts_checked = canonical_concepts.size();
+    for (const auto& canonical : canonical_concepts) {
+        if (!used_concepts.contains(canonical)) {
+            addLintDiagnostic(lint_report,
+                              root_ / "concepts.yaml",
+                              canonical,
+                              "concept is not used by any searchable entry metadata");
+        }
+    }
+
+    return lint_report;
 }
 
 void KnowledgeBase::rebuildLookup() {

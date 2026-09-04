@@ -178,6 +178,98 @@ HL_TEST(loader_accepts_an_empty_directory_but_rejects_a_missing_root) {
                                           "knowledge root"));
 }
 
+HL_TEST(knowledge_lint_accepts_clean_metadata_and_markdown) {
+    hltest::TemporaryDirectory temporary;
+    const auto root = temporary.path() / "knowledge";
+    hltest::writeSearchKnowledge(root);
+
+    KnowledgeBase knowledge;
+    HL_REQUIRE(!knowledge.load(root).hasIssues());
+    ConceptDictionary concepts;
+    HL_REQUIRE(!concepts.load(root / "concepts.yaml").hasIssues());
+
+    const auto lint = knowledge.lint(concepts);
+    HL_REQUIRE(lint.performed);
+    HL_REQUIRE_EQ(lint.entries_checked, std::size_t{6});
+    HL_REQUIRE(lint.aliases_checked > 0);
+    HL_REQUIRE(lint.keywords_checked > 0);
+    HL_REQUIRE_EQ(lint.concepts_checked, std::size_t{4});
+    HL_REQUIRE(!lint.hasIssues());
+}
+
+HL_TEST(knowledge_lint_reports_search_markdown_relation_and_concept_issues) {
+    hltest::TemporaryDirectory temporary;
+    const auto root = temporary.path() / "knowledge";
+
+    hltest::writeRawEntry(root, "topics/alpha", R"yaml(id: alpha
+title: Alpha
+type: howto
+aliases:
+  - shared answer
+  - how shared answer
+  - copy file
+  - copy files
+keywords:
+  - linux
+  - specific keyword
+  - specific-keyword
+related:
+  - beta
+  - alpha
+  - beta
+)yaml", R"markdown(# Alpha
+
+[Missing](missing.md)
+[Escaped](../../../outside.md)
+
+```bash
+printf alpha
+)markdown");
+
+    auto beta = hltest::entrySpec("beta", "Beta");
+    beta.aliases = {"shared answer"};
+    beta.keywords = {"specific"};
+    hltest::writeEntry(root, "topics/beta", beta);
+    hltest::writeText(root / "concepts.yaml", R"yaml(concepts:
+  used:
+    - copy
+  orphan:
+    - orphan
+)yaml");
+
+    KnowledgeBase knowledge;
+    HL_REQUIRE(!knowledge.load(root).hasIssues());
+    ConceptDictionary concepts;
+    HL_REQUIRE(!concepts.load(root / "concepts.yaml").hasIssues());
+
+    const auto lint = knowledge.lint(concepts);
+    HL_REQUIRE(lint.hasIssues());
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "overly similar aliases"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "duplicate alias after"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "duplicates an alias"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "overly broad keyword"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "duplicate keyword after"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "not reciprocal"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "must not relate to itself"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "duplicate related id"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "link target does not exist"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "link escapes the knowledge root"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "unclosed Markdown code fence"));
+    HL_REQUIRE(hltest::diagnosticsContain(lint.diagnostics,
+                                          "concept is not used"));
+}
+
 HL_TEST(index_computes_idf_and_damerau_transpositions) {
     hltest::TemporaryDirectory temporary;
     const auto root = temporary.path() / "knowledge";
@@ -314,18 +406,18 @@ HL_TEST(result_policy_requires_both_score_and_margin) {
 
     std::vector<SearchResult> one(1);
     one[0].entry = &alpha;
-    one[0].score = 70.0;
+    one[0].score = 90.0;
     const auto confident_single = policy.decide(one);
     HL_REQUIRE(confident_single.status == ResultStatus::confident);
     HL_REQUIRE(confident_single.selected == &one.front());
 
     std::vector<SearchResult> close(2);
     close[0].entry = &alpha;
-    close[0].score = 80.0;
+    close[0].score = 100.0;
     close[1].entry = &beta;
-    close[1].score = 70.0;
+    close[1].score = 90.0;
     HL_REQUIRE(policy.decide(close).status == ResultStatus::uncertain);
 
-    close[1].score = 65.0;
+    close[1].score = 85.0;
     HL_REQUIRE(policy.decide(close).status == ResultStatus::confident);
 }

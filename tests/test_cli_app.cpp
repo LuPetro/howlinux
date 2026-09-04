@@ -308,11 +308,15 @@ HL_TEST(app_validate_distinguishes_clean_entry_errors_and_global_config_errors) 
     const auto valid = run({"validate", pathString(valid_root)}, executable, cwd);
     HL_REQUIRE_EQ(valid.exit_code, 0);
     HL_REQUIRE(!valid.output.empty());
+    HL_REQUIRE_CONTAINS(valid.output, "Lint:");
+    HL_REQUIRE_CONTAINS(valid.output, "Performed: yes");
 
     const auto valid_json = run(
         {"--json", "validate", pathString(valid_root)}, executable, cwd);
     HL_REQUIRE_EQ(valid_json.exit_code, 0);
     HL_REQUIRE(hltest::isValidJson(valid_json.output));
+    HL_REQUIRE_CONTAINS(valid_json.output, "\"lint\":{");
+    HL_REQUIRE_CONTAINS(valid_json.output, "\"performed\":true");
 
     const auto broken_root = temporary.path() / "broken";
     auto good = hltest::entrySpec("good", "Good entry");
@@ -323,6 +327,18 @@ HL_TEST(app_validate_distinguishes_clean_entry_errors_and_global_config_errors) 
         run({"validate", pathString(broken_root)}, executable, cwd);
     HL_REQUIRE_EQ(broken.exit_code, 1);
     HL_REQUIRE_CONTAINS(broken.output, "broken");
+
+    const auto lint_root = temporary.path() / "lint-warning";
+    auto broad = hltest::entrySpec("broad", "Broad entry");
+    broad.aliases = {"specific alias"};
+    broad.keywords = {"linux"};
+    hltest::writeEntry(lint_root, "topics/broad", broad);
+    const auto lint_warning = run(
+        {"--json", "validate", pathString(lint_root)}, executable, cwd);
+    HL_REQUIRE_EQ(lint_warning.exit_code, 1);
+    HL_REQUIRE(hltest::isValidJson(lint_warning.output));
+    HL_REQUIRE_CONTAINS(lint_warning.output, "\"scope\":\"lint\"");
+    HL_REQUIRE_CONTAINS(lint_warning.output, "overly broad keyword");
 
     const auto invalid_concepts_root = temporary.path() / "invalid-concepts";
     hltest::writeEntry(invalid_concepts_root, "topics/good", good);

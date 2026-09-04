@@ -6,6 +6,7 @@ command: ip
 
 aliases:
   - ip command
+  - display the routing table
   - show ip addresses
   - show network routes
 
