@@ -1,0 +1,34 @@
+id: disk-space
+title: Investigate disk space usage
+
+type: howto
+
+aliases:
+  - check disk space
+  - find what uses disk space
+  - filesystem is full
+
+keywords:
+  - disk
+  - space
+  - full
+  - filesystem
+  - directory size
+  - df
+  - du
+
+related:
+  - df
+  - du
+
+intent:
+  - how_to
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - storage
+examples:
+  - df -h -- PATH
+  - du -h --max-depth=1 -- DIRECTORY

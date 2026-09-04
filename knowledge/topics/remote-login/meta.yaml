@@ -1,0 +1,33 @@
+id: remote-login
+title: Connect to a remote host with SSH
+
+type: howto
+command: ssh
+
+aliases:
+  - log in to remote server
+  - connect with ssh
+  - open remote terminal
+
+keywords:
+  - remote
+  - login
+  - server
+  - ssh
+  - host key
+  - identity
+
+related:
+  - ssh
+
+intent:
+  - how_to
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - networking
+  - remote
+examples:
+  - ssh USER@HOST

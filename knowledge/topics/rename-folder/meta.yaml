@@ -21,3 +21,11 @@ related:
 
 intent:
   - how_to
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - filesystem
+examples:
+  - mv -i -- OLD_NAME NEW_NAME

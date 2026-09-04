@@ -7,10 +7,15 @@ concepts:
     - dir
   delete:
     - delete
+    - deletes
+    - deleting
     - remove
+    - removes
+    - removing
     - erase
   rename:
     - rename
+    - renaming
     - change name
     - give another name
   permissions:
@@ -18,10 +23,32 @@ concepts:
     - permissions
     - rights
     - access rights
+  file:
+    - file
+    - files
+  copy:
+    - copy
+    - copying
+    - duplicate
   extract:
     - extract
+    - extracting
     - unpack
     - decompress
   archive:
     - archive
+    - archives
     - compressed file
+  search:
+    - search
+    - searching
+    - find
+    - locate
+  process:
+    - process
+    - processes
+  download:
+    - download
+    - downloading
+    - fetch
+    - retrieve

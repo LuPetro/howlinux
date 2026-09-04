@@ -1,0 +1,34 @@
+id: cp
+title: cp - copy files and directories
+
+type: command
+command: cp
+
+aliases:
+  - cp
+  - copy a file
+  - copy a directory
+
+keywords:
+  - cp
+  - copy
+  - recursive
+  - preserve
+  - archive
+
+related:
+  - copy-files
+  - mv
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - filesystem
+examples:
+  - cp -i -- SOURCE DESTINATION
+  - cp -a -- SOURCE_DIRECTORY DESTINATION

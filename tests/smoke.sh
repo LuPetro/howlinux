@@ -27,7 +27,7 @@ expect_code() {
 }
 
 expect_success "$binary" --knowledge "$knowledge" list
-grep -q 'Knowledge entries: 5' "$stdout_file"
+grep -q 'Knowledge entries: 38' "$stdout_file"
 
 expect_success "$binary" --knowledge "$knowledge" validate
 grep -q 'Validation status: valid' "$stdout_file"
@@ -43,6 +43,15 @@ grep -q '"status":"confident"' "$stdout_file"
 
 expect_success "$binary" --knowledge "$knowledge" show rename-folder
 grep -q 'mv -i -- OLD_NAME NEW_NAME' "$stdout_file"
+
+expect_success "$binary" --knowledge "$knowledge" 'copy a folder recursively'
+grep -q 'Copy files and directories safely' "$stdout_file"
+
+expect_success "$binary" --knowledge "$knowledge" 'filesystem is full'
+grep -q 'Investigate disk space usage' "$stdout_file"
+
+expect_success "$binary" --knowledge "$knowledge" 'follow service logs'
+grep -q 'Read and follow Linux logs' "$stdout_file"
 
 expect_code 1 "$binary" --knowledge "$knowledge" 'unknown thing'
 expect_code 2 "$binary" --definitely-invalid

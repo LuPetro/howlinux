@@ -1,0 +1,34 @@
+id: read-logs
+title: Read and follow Linux logs
+
+type: howto
+
+aliases:
+  - read linux logs
+  - follow service logs
+  - troubleshoot with logs
+
+keywords:
+  - logs
+  - journal
+  - service
+  - follow
+  - journalctl
+  - tail
+
+related:
+  - journalctl
+  - tail
+  - systemctl
+
+intent:
+  - how_to
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - logs
+  - troubleshooting
+examples:
+  - journalctl -u UNIT --since today

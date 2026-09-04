@@ -1,0 +1,32 @@
+id: head
+title: head - show the beginning of files
+
+type: command
+command: head
+
+aliases:
+  - head
+  - show first lines
+  - read beginning of file
+
+keywords:
+  - head
+  - first lines
+  - bytes
+  - text
+
+related:
+  - tail
+  - cat
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - text
+examples:
+  - head -n 20 -- FILE

@@ -1,0 +1,35 @@
+id: apt
+title: apt - manage packages on Debian-based systems
+
+type: command
+command: apt
+
+aliases:
+  - apt
+  - install ubuntu package
+  - update debian packages
+
+keywords:
+  - apt
+  - package
+  - install
+  - update
+  - upgrade
+  - ubuntu
+  - debian
+
+related: []
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - debian
+  - ubuntu
+tags:
+  - packages
+examples:
+  - apt search PACKAGE
+  - sudo apt install PACKAGE

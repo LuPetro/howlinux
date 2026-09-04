@@ -1,0 +1,33 @@
+id: download-file
+title: Download a file with curl
+
+type: howto
+command: curl
+
+aliases:
+  - download a file
+  - save a url to a file
+  - download with curl
+
+keywords:
+  - download
+  - url
+  - http
+  - https
+  - curl
+  - checksum
+
+related:
+  - curl
+
+intent:
+  - how_to
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - networking
+  - web
+examples:
+  - curl --fail --location --output FILE URL

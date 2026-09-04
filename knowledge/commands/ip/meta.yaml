@@ -1,0 +1,33 @@
+id: ip
+title: ip - inspect network interfaces and routes
+
+type: command
+command: ip
+
+aliases:
+  - ip command
+  - show ip addresses
+  - show network routes
+
+keywords:
+  - ip
+  - address
+  - interface
+  - route
+  - link
+  - network
+
+related: []
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - networking
+examples:
+  - ip address show
+  - ip route show

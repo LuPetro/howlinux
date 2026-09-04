@@ -1,0 +1,34 @@
+id: tar
+title: tar - create and extract archives
+
+type: command
+command: tar
+
+aliases:
+  - tar command
+  - create a tar archive
+  - extract a tar archive
+
+keywords:
+  - tar
+  - archive
+  - extract
+  - create
+  - gzip
+  - list
+
+related:
+  - extract-tar
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - archives
+examples:
+  - tar -tf ARCHIVE.tar
+  - tar -czf ARCHIVE.tar.gz DIRECTORY

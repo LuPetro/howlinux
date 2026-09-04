@@ -1,0 +1,33 @@
+id: copy-files
+title: Copy files and directories safely
+
+type: howto
+command: cp
+
+aliases:
+  - copy files
+  - copy a folder recursively
+  - duplicate a directory
+
+keywords:
+  - copy
+  - file
+  - directory
+  - recursive
+  - preserve
+  - cp
+
+related:
+  - cp
+  - mv
+
+intent:
+  - how_to
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - filesystem
+examples:
+  - cp -i -- SOURCE_FILE DESTINATION

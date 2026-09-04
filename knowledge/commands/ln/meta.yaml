@@ -1,0 +1,32 @@
+id: ln
+title: ln - create hard or symbolic links
+
+type: command
+command: ln
+
+aliases:
+  - ln
+  - create a symbolic link
+  - make a symlink
+
+keywords:
+  - ln
+  - link
+  - symbolic link
+  - symlink
+  - hard link
+
+related:
+  - cp
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - filesystem
+examples:
+  - ln -s -- TARGET LINK_NAME

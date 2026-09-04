@@ -6,11 +6,14 @@ command: mv
 
 aliases:
   - mv
+  - move a file
+  - move a directory
 
 keywords:
   - mv
   - move
   - rename
+  - destination
 
 related:
   - rename-folder
@@ -18,3 +21,11 @@ related:
 intent:
   - explain
   - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - filesystem
+examples:
+  - mv -i -- SOURCE DESTINATION

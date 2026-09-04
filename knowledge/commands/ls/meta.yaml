@@ -1,0 +1,32 @@
+id: ls
+title: ls - list directory contents
+
+type: command
+command: ls
+
+aliases:
+  - ls
+  - list files
+  - show directory contents
+
+keywords:
+  - ls
+  - files
+  - directories
+  - hidden
+  - long listing
+
+related:
+  - find
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - filesystem
+examples:
+  - ls -la -- DIRECTORY

@@ -1,0 +1,35 @@
+id: journalctl
+title: journalctl - query the systemd journal
+
+type: command
+command: journalctl
+
+aliases:
+  - journalctl
+  - read systemd logs
+  - show service logs
+
+keywords:
+  - journalctl
+  - journal
+  - logs
+  - systemd
+  - service
+  - boot
+
+related:
+  - read-logs
+  - systemctl
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - logs
+  - systemd
+examples:
+  - journalctl -u UNIT --since today

@@ -1,0 +1,33 @@
+id: less
+title: less - view text one screen at a time
+
+type: command
+command: less
+
+aliases:
+  - less
+  - page through a file
+  - view a long text file
+
+keywords:
+  - less
+  - pager
+  - scroll
+  - search
+  - text
+
+related:
+  - cat
+  - tail
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - text
+examples:
+  - less -- FILE

@@ -1,0 +1,36 @@
+id: manage-service
+title: Inspect and manage a systemd service
+
+type: howto
+command: systemctl
+
+aliases:
+  - manage a service
+  - restart systemd service
+  - service failed to start
+
+keywords:
+  - service
+  - systemd
+  - status
+  - start
+  - stop
+  - restart
+  - systemctl
+
+related:
+  - systemctl
+  - journalctl
+  - read-logs
+
+intent:
+  - how_to
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - services
+  - systemd
+examples:
+  - systemctl status UNIT

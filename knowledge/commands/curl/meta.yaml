@@ -1,0 +1,34 @@
+id: curl
+title: curl - transfer data using URLs
+
+type: command
+command: curl
+
+aliases:
+  - curl
+  - download a url
+  - make an http request
+
+keywords:
+  - curl
+  - http
+  - https
+  - url
+  - download
+  - headers
+
+related:
+  - download-file
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - networking
+  - web
+examples:
+  - curl --fail --location --output FILE URL

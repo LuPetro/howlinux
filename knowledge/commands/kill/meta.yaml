@@ -1,0 +1,34 @@
+id: kill
+title: kill - send a signal to a process
+
+type: command
+command: kill
+
+aliases:
+  - kill
+  - stop a process
+  - send process signal
+
+keywords:
+  - kill
+  - signal
+  - process
+  - pid
+  - sigterm
+  - sigkill
+
+related:
+  - manage-processes
+  - ps
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - processes
+examples:
+  - kill -TERM PID

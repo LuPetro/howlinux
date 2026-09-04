@@ -1,0 +1,33 @@
+id: manage-processes
+title: Inspect and stop a process
+
+type: howto
+
+aliases:
+  - stop a running process
+  - find and kill a process
+  - inspect process by pid
+
+keywords:
+  - process
+  - pid
+  - stop
+  - signal
+  - ps
+  - kill
+
+related:
+  - ps
+  - kill
+
+intent:
+  - how_to
+
+difficulty: intermediate
+platforms:
+  - linux
+tags:
+  - processes
+examples:
+  - ps -p PID -o pid,ppid,user,stat,etime,cmd
+  - kill -TERM PID

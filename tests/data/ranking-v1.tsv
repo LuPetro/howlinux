@@ -1,0 +1,46 @@
+# Expected top result ID<TAB>query
+ls	list files
+ls	show directory contents
+cp	cp
+copy-files	copy a folder recursively
+copy-files	duplicate a directory
+mv	move a file
+rename-folder	rename directory
+rm	rm
+remove-files	delete files with confirmation
+mkdir	create a directory
+touch	update file timestamp
+ln	make a symlink
+find	search directories recursively
+find-files	find recently modified files
+grep	grep
+search-text	search file contents
+cat	concatenate files
+less	view a long text file
+head	show first lines
+tail	show last lines
+df	show filesystem usage
+du	check folder size
+disk-space	filesystem is full
+ps	list running processes
+kill	send process signal
+manage-processes	find and kill a process
+ip	show ip addresses
+curl	make an http request
+download-file	save a url to a file
+ssh	ssh
+remote-login	open remote terminal
+systemctl	check service status
+manage-service	service failed to start
+journalctl	show service logs
+read-logs	follow service logs
+apt	install ubuntu package
+tar	create a tar archive
+extract-tar	unpack tar.gz
+chmod	change file permissions
+chmod-755	what does chmod 755 mean
+-	quantum zephyr
+-	bake sourdough bread
+-	weather tomorrow
+-	guitar chord progression
+-	translate japanese poem

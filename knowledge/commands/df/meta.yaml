@@ -1,0 +1,33 @@
+id: df
+title: df - report filesystem space
+
+type: command
+command: df
+
+aliases:
+  - df
+  - check free disk space
+  - show filesystem usage
+
+keywords:
+  - df
+  - disk
+  - filesystem
+  - free space
+  - capacity
+
+related:
+  - disk-space
+  - du
+
+intent:
+  - explain
+  - command
+
+difficulty: beginner
+platforms:
+  - linux
+tags:
+  - storage
+examples:
+  - df -h -- PATH
