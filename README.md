@@ -1,4 +1,4 @@
-# howlinux 1.1.0
+# howlinux 1.2.0
 
 `howlinux` is a fast, local command-line search tool for curated Linux
 knowledge. It selects the best entry from a YAML and Markdown knowledge base
@@ -22,10 +22,12 @@ an answer.
   intent, titles, tokens, and limited typo correction
 - Conservative confident, uncertain, and no-match result policy
 - `search`, `list`, `show`, `validate`, `--explain`, and ANSI-free JSON output
-- 38 reviewed command references and task-oriented guides covering files,
+- 39 reviewed command references and task-oriented guides covering files,
   text search, storage, processes, networking, services, logs, and packages
 - Debug and release builds, automated tests, installation rules, shell
   completions, and a man page
+- Ubuntu, Debian, and Arch Linux source installation, with Arch package
+  management reference content for `pacman`
 
 The detailed behavior contract is in [requirements.md](requirements.md).
 See [docs/knowledge-authoring.md](docs/knowledge-authoring.md) to add content
@@ -40,10 +42,27 @@ sudo apt update
 sudo apt install -y build-essential cmake libyaml-cpp-dev git
 ```
 
+On Arch Linux:
+
+```bash
+sudo pacman -Syu --needed base-devel cmake yaml-cpp git
+```
+
+This performs a full system upgrade as well as installing build dependencies.
+Review [Arch news](https://archlinux.org/news/) and the package transaction
+before confirming; Arch does not support partial upgrades.
+
 Building requires a C++20 compiler, CMake 3.16 or newer, and the `yaml-cpp`
 development package. Release archives link `yaml-cpp` statically, so they do
 not depend on a particular `libyaml-cpp` ABI at runtime. The application has no
 network or database dependency.
+
+Source builds default to `-DHOWLINUX_STATIC_YAML_CPP=AUTO`: they use the static
+library when available and otherwise the installed CMake package target.
+Arch's `yaml-cpp` package supplies a shared library, which must remain installed
+when running a source build. Use `ON` to require static linkage (official
+release archives), or `OFF` to use the package target explicitly. These options
+also work with the installer via `HOWLINUX_STATIC_YAML_CPP=ON|OFF|AUTO`.
 
 ## Install
 
@@ -75,13 +94,13 @@ Uninstall a CMake installation made by the script:
 cmake --build build-install --target uninstall
 ```
 
-Alternatively, download the v1.1.0 archive and `SHA256SUMS` from the GitHub
-release, verify it, and extract it into a prefix:
+Alternatively, once published, download the v1.2.0 archive and `SHA256SUMS`
+from the GitHub release, verify it, and extract it into a prefix:
 
 ```bash
 sha256sum --check SHA256SUMS
 mkdir -p "$HOME/.local"
-tar -xzf howlinux-1.1.0-Linux-x86_64.tar.gz -C "$HOME/.local"
+tar -xzf howlinux-1.2.0-Linux-x86_64.tar.gz -C "$HOME/.local"
 "$HOME/.local/bin/howlinux" validate
 ```
 
@@ -123,11 +142,17 @@ cmake --install build-release --prefix "$HOME/.local"
 ```
 
 Before creating a release tag, run the clean Debug, Release, install, and
-package audit:
+package audit on Ubuntu/Debian with the static `yaml-cpp` library installed:
 
 ```bash
 ./scripts/release-audit.sh
 ```
+
+Arch CI tests Debug and Release builds against the rolling Arch repositories,
+including installation, archive relocation, and explicit shared linkage.
+Locally, test installation and packaging after a build with
+`bash tests/install-package.sh build`. A locally created archive using shared
+linkage requires that distribution's compatible `yaml-cpp` runtime package.
 
 ## Quick start
 
@@ -138,6 +163,7 @@ package audit:
 ./build/howlinux "renmae fodler"
 ./build/howlinux --explain "change the directory name"
 ./build/howlinux --json "extract tar.gz"
+./build/howlinux "install arch linux package"
 ```
 
 A confident match prints the complete, unchanged `content.md` entry. If the
@@ -297,6 +323,9 @@ a confident match.
   precise alias, keyword, or globally valid concept.
 - If CMake cannot find `yaml-cpp`, install `libyaml-cpp-dev` or set
   `CMAKE_PREFIX_PATH` to a custom dependency prefix.
+- On Arch, the dependency package is `yaml-cpp`. If an existing build directory
+  still requires `libyaml-cpp.a`, reconfigure with
+  `-DHOWLINUX_STATIC_YAML_CPP=AUTO` or rerun `scripts/install.sh`.
 
 ## Security and trust model
 

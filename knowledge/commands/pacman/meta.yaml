@@ -1,0 +1,34 @@
+id: pacman
+title: pacman - manage packages on Arch Linux
+
+type: command
+command: pacman
+
+aliases:
+  - pacman
+  - install arch linux package
+  - update arch packages
+  - search arch packages
+
+keywords:
+  - pacman
+  - arch
+  - package
+  - install
+  - update
+  - upgrade
+
+related: []
+
+intent:
+  - explain
+  - command
+
+difficulty: intermediate
+platforms:
+  - arch
+tags:
+  - packages
+examples:
+  - pacman -Ss PACKAGE
+  - sudo pacman -Syu PACKAGE

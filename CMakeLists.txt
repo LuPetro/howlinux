@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(
     howlinux
-    VERSION 1.1.0
+    VERSION 1.2.0
     DESCRIPTION "Deterministic offline Linux knowledge CLI"
     LANGUAGES CXX
 )
@@ -25,11 +25,16 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(yaml-cpp REQUIRED)
 
-option(
-    HOWLINUX_STATIC_YAML_CPP
-    "Link yaml-cpp statically so release archives do not depend on its ABI version"
-    ON
+set(
+    HOWLINUX_STATIC_YAML_CPP AUTO CACHE STRING
+    "yaml-cpp linkage: AUTO prefers static when available, ON requires static, OFF uses the package target"
 )
+set_property(CACHE HOWLINUX_STATIC_YAML_CPP PROPERTY TYPE STRING)
+set_property(CACHE HOWLINUX_STATIC_YAML_CPP PROPERTY STRINGS AUTO ON OFF)
+string(TOUPPER "${HOWLINUX_STATIC_YAML_CPP}" HOWLINUX_YAML_CPP_LINK_MODE)
+if(NOT HOWLINUX_YAML_CPP_LINK_MODE MATCHES "^(AUTO|ON|OFF)$")
+    message(FATAL_ERROR "HOWLINUX_STATIC_YAML_CPP must be AUTO, ON, or OFF")
+endif()
 
 if(TARGET yaml-cpp::yaml-cpp)
     set(HOWLINUX_YAML_CPP_TARGET yaml-cpp::yaml-cpp)
@@ -51,17 +56,23 @@ add_library(howlinux_core
 )
 
 target_include_directories(howlinux_core PUBLIC include)
-if(HOWLINUX_STATIC_YAML_CPP)
+if(NOT HOWLINUX_YAML_CPP_LINK_MODE STREQUAL "OFF")
     set(HOWLINUX_SAVED_LIBRARY_SUFFIXES "${CMAKE_FIND_LIBRARY_SUFFIXES}")
     set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
     find_library(HOWLINUX_YAML_CPP_STATIC_LIBRARY NAMES yaml-cpp)
     set(CMAKE_FIND_LIBRARY_SUFFIXES "${HOWLINUX_SAVED_LIBRARY_SUFFIXES}")
 
-    if(NOT HOWLINUX_YAML_CPP_STATIC_LIBRARY)
+    if(HOWLINUX_YAML_CPP_LINK_MODE STREQUAL "ON" AND
+       NOT HOWLINUX_YAML_CPP_STATIC_LIBRARY)
         message(FATAL_ERROR
-            "HOWLINUX_STATIC_YAML_CPP is ON, but libyaml-cpp.a was not found")
+            "HOWLINUX_STATIC_YAML_CPP is ON, but libyaml-cpp.a was not found. "
+            "For a local build, use -DHOWLINUX_STATIC_YAML_CPP=AUTO or OFF.")
     endif()
+endif()
 
+if(NOT HOWLINUX_YAML_CPP_LINK_MODE STREQUAL "OFF" AND
+   HOWLINUX_YAML_CPP_STATIC_LIBRARY)
+    message(STATUS "howlinux: linking yaml-cpp statically")
     get_target_property(
         HOWLINUX_YAML_CPP_INCLUDE_DIRECTORIES
         ${HOWLINUX_YAML_CPP_TARGET}
@@ -75,6 +86,7 @@ if(HOWLINUX_STATIC_YAML_CPP)
     target_link_libraries(howlinux_core PUBLIC ${HOWLINUX_YAML_CPP_STATIC_LIBRARY})
     target_compile_definitions(howlinux_core PUBLIC YAML_CPP_STATIC_DEFINE)
 else()
+    message(STATUS "howlinux: linking yaml-cpp using the installed package target")
     target_link_libraries(howlinux_core PUBLIC ${HOWLINUX_YAML_CPP_TARGET})
 endif()
 target_compile_definitions(

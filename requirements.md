@@ -277,13 +277,16 @@ Exit codes:
 - Use standard CMake with C++20 and warnings enabled.
 - Depend only on the standard library and `yaml-cpp` at runtime/build time.
 - Build both Debug and Release configurations in CI on supported Ubuntu
-  versions.
+  versions and rolling Arch Linux.
+- Source builds prefer static `yaml-cpp` when available and otherwise use the
+  installed package target. Explicit static linkage must fail if unavailable.
 - Run unit, integration, CLI, JSON, validation, installation, and smoke tests.
 - Install the executable, knowledge base, documentation, shell completions,
   and man page using GNU directory conventions.
 - Produce a versioned TGZ release archive whose root contains `bin/` and
   `share/`, plus a SHA-256 checksum file.
-- The archive must not require a specific shared `yaml-cpp` ABI.
+- Official release archives must not require a specific shared `yaml-cpp` ABI;
+  the release workflow must explicitly require static linkage.
 - A release tag must exactly match the compiled version.
 
 ## 13. Acceptance criteria

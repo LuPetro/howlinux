@@ -14,6 +14,7 @@ for tool in cmake c++; do
   command -v "$tool" >/dev/null 2>&1 || {
     echo "Missing required tool: $tool" >&2
     echo "Ubuntu/Debian: sudo apt install build-essential cmake libyaml-cpp-dev" >&2
+    echo "Arch Linux: sudo pacman -Syu --needed base-devel cmake yaml-cpp" >&2
     exit 1
   }
 done
@@ -21,10 +22,13 @@ done
 if ! cmake --find-package -DNAME=yaml-cpp -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST >/dev/null 2>&1; then
   echo "Could not find yaml-cpp development files." >&2
   echo "Ubuntu/Debian: sudo apt install libyaml-cpp-dev" >&2
+  echo "Arch Linux: sudo pacman -Syu --needed yaml-cpp" >&2
   exit 1
 fi
 
-cmake -S "$project_dir" -B "$build_dir" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$prefix"
+cmake -S "$project_dir" -B "$build_dir" -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$prefix" \
+  -DHOWLINUX_STATIC_YAML_CPP="${HOWLINUX_STATIC_YAML_CPP:-AUTO}"
 cmake --build "$build_dir" --parallel
 ctest --test-dir "$build_dir" --output-on-failure
 cmake --install "$build_dir"

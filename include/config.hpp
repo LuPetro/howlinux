@@ -5,7 +5,7 @@
 namespace howlinux {
 
 #ifndef HOWLINUX_VERSION
-#define HOWLINUX_VERSION "1.1.0"
+#define HOWLINUX_VERSION "1.2.0"
 #endif
 #ifndef HOWLINUX_INSTALL_DATADIR
 #define HOWLINUX_INSTALL_DATADIR "share"
