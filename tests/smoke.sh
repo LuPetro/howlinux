@@ -27,7 +27,7 @@ expect_code() {
 }
 
 expect_success "$binary" --knowledge "$knowledge" list
-grep -q 'Knowledge entries: 38' "$stdout_file"
+grep -q 'Knowledge entries: 39' "$stdout_file"
 
 expect_success "$binary" --knowledge "$knowledge" validate
 grep -q 'Validation status: valid' "$stdout_file"
@@ -54,6 +54,14 @@ expect_success "$binary" --knowledge "$knowledge" 'follow service logs'
 grep -q 'Read and follow Linux logs' "$stdout_file"
 
 expect_code 1 "$binary" --knowledge "$knowledge" 'unknown thing'
+expect_success "$binary" --knowledge "$knowledge" --json 'install arch linux package'
+grep -q '"status":"confident"' "$stdout_file"
+grep -q '"entry":{"id":"pacman"' "$stdout_file"
+
+expect_success "$binary" --knowledge "$knowledge" show pacman
+grep -q '^ID: pacman$' "$stdout_file"
+grep -q '^sudo pacman -Syu PACKAGE$' "$stdout_file"
+
 expect_code 2 "$binary" --definitely-invalid
 
 echo 'howlinux smoke tests passed'

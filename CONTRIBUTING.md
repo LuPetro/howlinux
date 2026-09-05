@@ -38,7 +38,8 @@ Repository administrators must enable these settings under GitHub:
 1. Settings → Branches → Add branch protection rule for `master`.
 2. Require a pull request before merging.
 3. Require approvals (at least 1).
-4. Require all four `Ubuntu ... / ...` checks from the `CI` workflow.
+4. Require all four `Ubuntu ... / ...` and both `Arch Linux / ...` checks from
+   the `CI` workflow.
 5. Require branches to be up to date before merging.
 6. Restrict who can push to the protected branch, if desired.
 

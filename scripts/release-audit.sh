@@ -17,19 +17,20 @@ package_prefix="${audit_dir}/package"
 bash -n "${project_dir}/scripts/install.sh" \
   "${project_dir}/scripts/evaluate-ranking.sh" \
   "${project_dir}/scripts/release-audit.sh" \
-  "${project_dir}/tests/smoke.sh"
+  "${project_dir}/tests/smoke.sh" \
+  "${project_dir}/tests/install-package.sh"
 
 cmake -S "$project_dir" -B "$debug_dir" -DCMAKE_BUILD_TYPE=Debug
 cmake --build "$debug_dir" --parallel
 ctest --test-dir "$debug_dir" --output-on-failure
 "${debug_dir}/howlinux" validate "${project_dir}/knowledge"
 
-cmake -S "$project_dir" -B "$release_dir" -DCMAKE_BUILD_TYPE=Release
+cmake -S "$project_dir" -B "$release_dir" -DCMAKE_BUILD_TYPE=Release -DHOWLINUX_STATIC_YAML_CPP=ON
 cmake --build "$release_dir" --parallel
 ctest --test-dir "$release_dir" --output-on-failure
 "${release_dir}/howlinux" validate "${project_dir}/knowledge"
 
-test "$("${release_dir}/howlinux" --version)" = "howlinux 1.1.0"
+test "$("${release_dir}/howlinux" --version)" = "howlinux 1.2.0"
 "${project_dir}/scripts/evaluate-ranking.sh" \
   "${release_dir}/howlinux" "${project_dir}/knowledge"
 if ldd "${release_dir}/howlinux" | grep -q libyaml-cpp; then
@@ -44,7 +45,7 @@ cmake --install "$release_dir" --prefix "$install_prefix"
 )
 
 cmake --build "$release_dir" --target package
-archive="$(find "$release_dir" -maxdepth 1 -name 'howlinux-1.1.0-*.tar.gz' -print -quit)"
+archive="$(find "$release_dir" -maxdepth 1 -name 'howlinux-1.2.0-*.tar.gz' -print -quit)"
 if [[ -z "$archive" ]]; then
   echo "Release archive was not created." >&2
   exit 1
@@ -56,7 +57,7 @@ grep -qx 'share/howlinux/knowledge/concepts.yaml' "${audit_dir}/archive-files"
 grep -qx 'share/doc/howlinux/LICENSE' "${audit_dir}/archive-files"
 grep -qx 'share/doc/howlinux/THIRD_PARTY_NOTICES.md' "${audit_dir}/archive-files"
 grep -qx 'share/doc/howlinux/CHANGELOG.md' "${audit_dir}/archive-files"
-grep -qx 'share/doc/howlinux/docs/releases/v1.1.0.md' "${audit_dir}/archive-files"
+grep -qx 'share/doc/howlinux/docs/releases/v1.2.0.md' "${audit_dir}/archive-files"
 
 mkdir "$package_prefix"
 tar -xzf "$archive" -C "$package_prefix"

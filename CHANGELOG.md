@@ -4,6 +4,25 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and releases use
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - Unreleased
+
+### Added
+
+- Arch Linux installation instructions and Debug/Release CI with installation,
+  archive relocation, installer, and shared-library checks.
+- A reviewed `pacman` reference with full-upgrade guidance and Arch-specific
+  search regression cases, bringing the bundled knowledge base to 39 entries.
+
+### Changed
+
+- Source builds select static `yaml-cpp` when available and otherwise use the
+  installed package target, allowing builds with Arch's shared-only package.
+- `HOWLINUX_STATIC_YAML_CPP` accepts `AUTO` (default), `ON` (required static),
+  and `OFF` (package target). The installer also accepts this environment
+  variable and defaults to `AUTO`, including with an existing build cache.
+- Official release builds and audits explicitly require static `yaml-cpp` to
+  preserve archive independence from its shared-library ABI.
+
 ## [1.1.0] - 2026-09-04
 
 ### Added
@@ -53,6 +72,7 @@ All notable changes to this project are documented here. The format follows
 - CMake installation, shell completions, man page, test suite, and TGZ release
   packaging with SHA-256 checksums.
 
+[1.2.0]: https://github.com/LuPetro/howlinux/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/LuPetro/howlinux/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/LuPetro/howlinux/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/LuPetro/howlinux/releases/tag/v1.0.0

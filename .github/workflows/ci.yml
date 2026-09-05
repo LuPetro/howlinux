@@ -39,3 +39,63 @@ jobs:
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/howlinux/bin/howlinux" list
           "$RUNNER_TEMP/howlinux/bin/howlinux" validate
+
+  arch-build-and-test:
+    name: Arch Linux / ${{ matrix.type }}
+    runs-on: ubuntu-24.04
+    container: archlinux:base-devel
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        type: [Debug, Release]
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm --needed base-devel cmake yaml-cpp git
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.type }}
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+      - name: Validate bundled knowledge
+        run: build/howlinux validate knowledge
+      - name: Install and package smoke test
+        run: bash tests/install-package.sh build
+      - name: Verify explicit linkage modes
+        if: matrix.type == 'Release'
+        run: |
+          cmake -S . -B build-shared -DCMAKE_BUILD_TYPE=Release -DHOWLINUX_STATIC_YAML_CPP=OFF
+          cmake --build build-shared --parallel
+          ctest --test-dir build-shared --output-on-failure
+          ldd build-shared/howlinux | grep libyaml-cpp
+          if [ ! -f /usr/lib/libyaml-cpp.a ]; then
+            if cmake -S . -B build-static -DHOWLINUX_STATIC_YAML_CPP=ON >static.log 2>&1; then
+              echo "Explicit static linkage must fail without libyaml-cpp.a" >&2
+              exit 1
+            fi
+            grep 'libyaml-cpp.a was not found' static.log
+          fi
+          if cmake -S . -B build-invalid -DHOWLINUX_STATIC_YAML_CPP=invalid >invalid.log 2>&1; then
+            echo "Invalid linkage mode must fail" >&2
+            exit 1
+          fi
+          grep 'must be AUTO, ON, or OFF' invalid.log
+      - name: Verify installer from outside the source tree
+        if: matrix.type == 'Release'
+        env:
+          HOWLINUX_PREFIX: ${{ runner.temp }}/howlinux installer
+          HOWLINUX_BUILD_DIR: ${{ github.workspace }}/build
+        run: |
+          # Older installer builds cached this option as a required static BOOL.
+          sed -i 's/HOWLINUX_STATIC_YAML_CPP:STRING=AUTO/HOWLINUX_STATIC_YAML_CPP:BOOL=ON/' "$HOWLINUX_BUILD_DIR/CMakeCache.txt"
+          cd "$RUNNER_TEMP"
+          "$GITHUB_WORKSPACE/scripts/install.sh"
+          "$HOWLINUX_PREFIX/bin/howlinux" --version
+          "$HOWLINUX_PREFIX/bin/howlinux" 'install arch linux package'

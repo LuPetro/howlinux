@@ -36,6 +36,13 @@ manage-service	service failed to start
 journalctl	show service logs
 read-logs	follow service logs
 apt	install ubuntu package
+pacman	pacman
+pacman	install arch linux package
+pacman	update arch packages
+pacman	search arch packages
+pacman	how do i install packages on arch linux
+pacman	upgrade arch linux
+apt	update debian packages
 tar	create a tar archive
 extract-tar	unpack tar.gz
 chmod	change file permissions
