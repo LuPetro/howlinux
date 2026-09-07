@@ -4,4 +4,5 @@ complete -c howlinux -l knowledge -r -a '(__fish_complete_directories)' -d 'Know
 complete -c howlinux -l limit -r -d 'Maximum number of results'
 complete -c howlinux -l explain -d 'Show ranking explanation'
 complete -c howlinux -l json -d 'Emit JSON'
+complete -c howlinux -l raw -d 'Show original Markdown'
 complete -c howlinux -n '__fish_use_subcommand' -a 'search list show validate'

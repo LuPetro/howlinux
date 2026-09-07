@@ -138,6 +138,15 @@ inline code, and fenced code blocks. A useful order is:
 5. Common mistakes, prerequisites, and safety warnings
 6. Related entries
 
+The terminal renderer supports ATX headings (`#` through `######`), simple
+emphasis, inline code, inline links, quotes, lists, and backtick or tilde code
+fences. Use blank lines between blocks. Shell examples inside fences remain
+literal and receive four spaces of display indentation. A leading level-one
+heading identical to the metadata title is displayed only once. Unsupported
+Markdown constructs are best avoided; this is not a full CommonMark renderer.
+Check `howlinux show ENTRY_ID` as well as `howlinux --raw show ENTRY_ID`.
+JSON always contains the original Markdown body.
+
 Example:
 
 ````markdown

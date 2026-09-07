@@ -18,6 +18,7 @@ keywords:
   - sigkill
 
 related:
+  - shell-job-control
   - manage-processes
   - ps
 

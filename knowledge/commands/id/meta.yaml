@@ -1,0 +1,21 @@
+id: "id"
+title: "id - inspect user and group identities"
+type: "command"
+command: "id"
+aliases:
+  - "id"
+  - "show my uid and gid"
+  - "inspect account identity"
+keywords:
+  - "id"
+  - "uid"
+  - "gid"
+  - "supplementary groups"
+related:
+  - "permission-denied"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

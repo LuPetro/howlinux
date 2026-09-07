@@ -1,0 +1,21 @@
+id: "stat"
+title: "stat - inspect file metadata"
+type: "command"
+command: "stat"
+aliases:
+  - "stat"
+  - "show file timestamps"
+  - "inspect inode metadata"
+keywords:
+  - "stat"
+  - "inode"
+  - "timestamps"
+  - "ownership"
+  - "mode"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

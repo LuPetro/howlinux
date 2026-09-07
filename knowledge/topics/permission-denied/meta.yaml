@@ -1,0 +1,23 @@
+id: "permission-denied"
+title: "Diagnose a permission denied error"
+type: "howto"
+aliases:
+  - "why permission denied"
+  - "cannot access a file"
+  - "debug directory access permissions"
+keywords:
+  - "permission denied"
+  - "directory traversal"
+  - "ownership"
+  - "access control"
+related:
+  - "chmod"
+  - "chown"
+  - "id"
+  - "findmnt"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

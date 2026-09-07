@@ -1,0 +1,20 @@
+id: "umask"
+title: "umask - control default creation permissions"
+type: "command"
+command: "umask"
+aliases:
+  - "umask"
+  - "set default file permissions"
+  - "explain umask 027"
+keywords:
+  - "umask"
+  - "creation mask"
+  - "027"
+  - "default permissions"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

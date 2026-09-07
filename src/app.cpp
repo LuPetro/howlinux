@@ -155,7 +155,7 @@ int runApplication(const std::vector<std::string>& arguments,
         if (options.json) {
             Renderer::entryJson(output, *entry, knowledge);
         } else {
-            Renderer::entry(output, *entry, knowledge);
+            Renderer::entry(output, *entry, knowledge, options.raw);
         }
         return kSuccess;
     }
@@ -168,7 +168,7 @@ int runApplication(const std::vector<std::string>& arguments,
     if (options.json) {
         Renderer::searchJson(output, response, decision, options.limit, options.explain);
     } else if (decision.status == ResultStatus::confident) {
-        Renderer::entry(output, *decision.selected->entry, knowledge);
+        Renderer::entry(output, *decision.selected->entry, knowledge, options.raw);
         if (options.explain) {
             Renderer::explain(output, response, options.limit);
         }

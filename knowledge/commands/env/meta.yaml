@@ -1,0 +1,21 @@
+id: "env"
+title: "env - inspect or change a child environment"
+type: "command"
+command: "env"
+aliases:
+  - "env"
+  - "run with a temporary environment variable"
+  - "start with an empty environment"
+keywords:
+  - "env"
+  - "environment"
+  - "child process"
+  - "variable removal"
+related:
+  - "environment-path"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

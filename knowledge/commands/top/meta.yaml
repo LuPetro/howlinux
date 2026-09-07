@@ -1,0 +1,22 @@
+id: "top"
+title: "top - monitor processes interactively"
+type: "command"
+command: "top"
+aliases:
+  - "top"
+  - "watch cpu usage by process"
+  - "interactive process monitor"
+keywords:
+  - "top"
+  - "cpu usage"
+  - "resident memory"
+  - "process monitor"
+related:
+  - "memory-pressure"
+  - "high-cpu"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

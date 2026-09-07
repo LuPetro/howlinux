@@ -1,0 +1,21 @@
+id: "uniq"
+title: "uniq - report adjacent duplicate lines"
+type: "command"
+command: "uniq"
+aliases:
+  - "uniq"
+  - "count repeated lines"
+  - "remove adjacent duplicates"
+keywords:
+  - "uniq"
+  - "duplicate lines"
+  - "frequency"
+  - "adjacent"
+related:
+  - "shell-pipelines"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

@@ -1,0 +1,22 @@
+id: "port-in-use"
+title: "Find what is listening on a port"
+type: "howto"
+aliases:
+  - "address already in use"
+  - "which process uses port 8080"
+  - "troubleshoot a port conflict"
+keywords:
+  - "port conflict"
+  - "address already in use"
+  - "listener"
+  - "8080"
+related:
+  - "ss"
+  - "lsof"
+  - "systemctl"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

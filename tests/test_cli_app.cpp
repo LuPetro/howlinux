@@ -209,11 +209,20 @@ HL_TEST(app_confident_markdown_and_json_search_are_clean) {
         {"--knowledge", pathString(root), "rename", "folder"}, executable, cwd);
     HL_REQUIRE_EQ(markdown.exit_code, 0);
     HL_REQUIRE_CONTAINS(markdown.output, "Rename");
-    HL_REQUIRE_CONTAINS(markdown.output, "## Rename safely");
-    HL_REQUIRE_CONTAINS(markdown.output, "```bash");
+    HL_REQUIRE_CONTAINS(markdown.output, "Rename safely\n-------------");
+    HL_REQUIRE(markdown.output.find("```bash") == std::string::npos);
     HL_REQUIRE_CONTAINS(markdown.output, "mv OLD_NAME NEW_NAME");
     HL_REQUIRE_CONTAINS(markdown.output, "Größe");
     HL_REQUIRE(markdown.error.empty());
+
+    const auto raw = run(
+        {"--knowledge", pathString(root), "--raw", "show", "rename-folder"},
+        executable, cwd);
+    HL_REQUIRE_EQ(raw.exit_code, 0);
+    HL_REQUIRE_CONTAINS(raw.output, "## Rename safely");
+    HL_REQUIRE_CONTAINS(raw.output, "```bash");
+    HL_REQUIRE(parseCommandLine({"--raw", "rename", "folder"}).options.raw);
+    HL_REQUIRE(!parseCommandLine({"--raw", "--json", "rename", "folder"}).ok);
 
     const auto json = run(
         {"--knowledge", pathString(root), "--json", "--explain", "rename",

@@ -233,7 +233,7 @@ howlinux [options] validate [path]
 ```
 
 The CLI supports `--help`, `--version`, `--knowledge`, `--limit`, `--explain`,
-`--json`, and `--`. Both `--option value` and documented `--option=value`
+`--json`, `--raw`, and `--`. Both `--option value` and documented `--option=value`
 forms must behave consistently. `show` accepts an exact loaded ID and never a
 filesystem path.
 
@@ -250,6 +250,12 @@ contain no ANSI escapes, remain structurally stable, and keep diagnostics out
 of a normal search payload. `validate --json` intentionally embeds structured
 diagnostics and a `lint` object containing whether lint ran and how many
 entries, aliases, keywords, and concepts were checked.
+
+Normal entry output renders the documented Markdown subset. Code fences and
+language labels are presentation syntax, while code contents remain literal.
+Interactive output may use ANSI styles; redirected output, `TERM=dumb`, and
+nonempty `NO_COLOR` must not. `--raw` retains the original Markdown body and
+cannot be combined with `--json`. Neither rendering mode executes content.
 
 Exit codes:
 

@@ -1,0 +1,20 @@
+id: "realpath"
+title: "realpath - resolve absolute canonical paths"
+type: "command"
+command: "realpath"
+aliases:
+  - "realpath"
+  - "resolve an absolute path"
+  - "canonicalize a filename"
+keywords:
+  - "realpath"
+  - "absolute path"
+  - "canonicalization"
+  - "symlinks"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

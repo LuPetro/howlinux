@@ -1,0 +1,22 @@
+id: "deleted-open-files"
+title: "Understand space held by deleted open files"
+type: "howto"
+aliases:
+  - "deleted file did not free space"
+  - "df and du disagree"
+  - "reclaim space from an open deleted log"
+keywords:
+  - "deleted open file"
+  - "space discrepancy"
+  - "link count"
+  - "open log"
+related:
+  - "lsof"
+  - "disk-space"
+  - "manage-service"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

@@ -1,0 +1,20 @@
+id: "gzip"
+title: "gzip - compress and inspect gzip files"
+type: "command"
+command: "gzip"
+aliases:
+  - "gzip"
+  - "compress a file keeping the original"
+  - "test gzip integrity"
+keywords:
+  - "gzip"
+  - "gunzip"
+  - "compression"
+  - "gz"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

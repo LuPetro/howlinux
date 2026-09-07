@@ -14,7 +14,8 @@ class Renderer {
 public:
     static void entry(std::ostream& output,
                       const KnowledgeEntry& value,
-                      const KnowledgeBase& knowledge);
+                      const KnowledgeBase& knowledge,
+                      bool raw = false);
     static void suggestions(std::ostream& output,
                             const SearchResponse& response,
                             std::size_t limit,

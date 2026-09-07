@@ -18,7 +18,8 @@ keywords:
   - link
   - network
 
-related: []
+related:
+  - network-troubleshooting
 
 intent:
   - explain

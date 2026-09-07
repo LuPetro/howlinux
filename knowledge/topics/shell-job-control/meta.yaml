@@ -1,0 +1,23 @@
+id: "shell-job-control"
+title: "Pause resume and manage shell jobs"
+type: "howto"
+aliases:
+  - "resume a suspended command"
+  - "send a job to background"
+  - "explain ctrl z and fg"
+keywords:
+  - "job control"
+  - "suspended job"
+  - "foreground"
+  - "background"
+  - "fg"
+  - "bg"
+related:
+  - "ps"
+  - "kill"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

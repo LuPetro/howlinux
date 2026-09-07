@@ -1,0 +1,21 @@
+id: "backup-directory"
+title: "Back up a directory and verify restoration"
+type: "howto"
+aliases:
+  - "back up a directory with rsync"
+  - "verify a directory backup"
+  - "make an incremental folder backup"
+keywords:
+  - "backup"
+  - "restore test"
+  - "rsync preview"
+  - "separate storage"
+related:
+  - "rsync"
+  - "sha256sum"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

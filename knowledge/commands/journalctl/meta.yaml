@@ -18,6 +18,7 @@ keywords:
   - boot
 
 related:
+  - memory-pressure
   - manage-service
   - read-logs
   - systemctl

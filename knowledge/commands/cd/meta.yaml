@@ -1,0 +1,21 @@
+id: "cd"
+title: "cd - change the shell directory"
+type: "command"
+command: "cd"
+aliases:
+  - "cd"
+  - "go to parent directory"
+  - "switch working directory"
+keywords:
+  - "cd"
+  - "parent directory"
+  - "home directory"
+  - "navigation"
+related:
+  - "shell-quoting"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

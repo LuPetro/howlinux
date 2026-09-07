@@ -2,7 +2,7 @@
 
 `howlinux` is a fast, local command-line search tool for curated Linux
 knowledge. It selects the best entry from a YAML and Markdown knowledge base
-and prints the reviewed content verbatim.
+and renders the reviewed content for the terminal.
 
 The program works entirely offline. It does not generate answers, call cloud
 services, send telemetry, execute searches, or run any shell command shown in
@@ -22,8 +22,11 @@ an answer.
   intent, titles, tokens, and limited typo correction
 - Conservative confident, uncertain, and no-match result policy
 - `search`, `list`, `show`, `validate`, `--explain`, and ANSI-free JSON output
-- 39 reviewed command references and task-oriented guides covering files,
-  text search, storage, processes, networking, services, logs, and packages
+- Terminal Markdown rendering with readable headings, indented code blocks,
+  lists, emphasis, and links; automatic color and a `--raw` Markdown option
+- 110 command references and task-oriented guides covering files, shell
+  scripting, text processing, storage, backups, processes, networking, DNS,
+  SSH, services, logs, permissions, and packages
 - Debug and release builds, automated tests, installation rules, shell
   completions, and a man page
 - Ubuntu, Debian, and Arch Linux source installation, with Arch package
@@ -166,7 +169,7 @@ linkage requires that distribution's compatible `yaml-cpp` runtime package.
 ./build/howlinux "install arch linux package"
 ```
 
-A confident match prints the complete, unchanged `content.md` entry. If the
+A confident match renders the complete reviewed `content.md` answer. If the
 score or the lead over the second result is too small, howlinux prints
 suggestions instead. An unrelated query never produces invented text.
 
@@ -188,10 +191,29 @@ howlinux [options] validate [path]
 | `--limit <n>` | Return 1 to 100 search results; default: 5 |
 | `--explain` | Include query type, concepts, score components, and match reasons |
 | `--json` | Emit stable, machine-readable, ANSI-free JSON |
+| `--raw` | Display original Markdown instead of terminal rendering |
 | `--` | Stop option parsing and treat the rest as query text |
 
 `list` prints all valid entries in deterministic ID order. `show <entry-id>`
 only accepts an already loaded ID and never interprets it as a path.
+
+Normal answers format headings, lists, emphasis, links, and code without
+displaying Markdown code fences such as ` ```bash `. Shell code stays literal
+and is indented for copying. Color is enabled only on a supported interactive
+terminal; pipes, `TERM=dumb`, and nonempty `NO_COLOR` use plain text.
+`--raw` displays the original Markdown body, while `--json` always preserves
+that body in `content`. These two options cannot be combined.
+
+```bash
+howlinux show shell-quoting
+howlinux "list listening ports"
+howlinux "why is ram full"
+howlinux --raw show rsync
+NO_COLOR=1 howlinux show awk
+```
+
+Browse the [knowledge catalog](docs/knowledge-catalog.md) for all 110 entries.
+
 `validate [path]` uses the runtime loader to check entries, field types, IDs,
 references, and concepts. It then lints normalized aliases and keywords,
 concept usage, reciprocal relationships, Markdown code fences, and local link
@@ -280,7 +302,9 @@ intent:
 
 `id`, `title`, `type`, and a readable, non-empty regular `content.md` file are
 required. Symlinks are rejected. The Markdown content may contain headings,
-lists, inline code, and fenced code blocks; howlinux does not rewrite it.
+lists, inline code, and fenced code blocks. Terminal rendering changes their
+presentation while preserving the answer and literal shell examples; JSON and
+`--raw` retain the original Markdown body.
 
 No rebuild is needed after adding an entry:
 
@@ -299,7 +323,10 @@ review checklist, read [docs/knowledge-authoring.md](docs/knowledge-authoring.md
 At startup, howlinux builds an in-memory index from metadata. Rare tokens carry
 more weight than common tokens. Ranking combines exact aliases and phrases,
 commands, weighted keywords, concepts, intent, titles, token overlap, and a
-limited fuzzy fallback. `--explain` exposes each component. Ties are resolved
+limited fuzzy fallback. IDF weighting is bounded so isolated rare words do not
+become confident answers as the catalog grows. Single-word aliases only earn
+the exact-alias bonus for a complete match, and command bonuses require a
+leading command token. `--explain` exposes each component. Ties are resolved
 deterministically.
 
 Search JSON always contains `status` (`confident`, `uncertain`, or `no_match`),

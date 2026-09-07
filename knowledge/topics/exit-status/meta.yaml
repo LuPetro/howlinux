@@ -1,0 +1,22 @@
+id: "exit-status"
+title: "Understand exit status and conditional commands"
+type: "howto"
+aliases:
+  - "explain command exit codes"
+  - "run a command only after success"
+  - "difference between and and or in bash"
+keywords:
+  - "exit status"
+  - "exit code"
+  - "conditional"
+  - "success"
+  - "failure"
+related:
+  - "shell-pipelines"
+  - "diff"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

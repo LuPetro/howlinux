@@ -1,0 +1,23 @@
+id: "shell-pipelines"
+title: "Connect commands with shell pipelines"
+type: "howto"
+aliases:
+  - "explain shell pipes"
+  - "connect command output to input"
+  - "detect a failed pipeline"
+keywords:
+  - "pipeline"
+  - "pipefail"
+  - "stdin"
+  - "pipe operator"
+related:
+  - "sort"
+  - "uniq"
+  - "shell-redirection"
+  - "exit-status"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

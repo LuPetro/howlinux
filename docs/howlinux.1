@@ -32,6 +32,16 @@ Show query processing and ranking details.
 .TP
 .B --json
 Use stable machine-readable JSON output.
+.TP
+.B --raw
+Display the original Markdown body without terminal rendering. Cannot be
+combined with --json.
+.SH RENDERING
+Normal answers format Markdown headings, lists, emphasis, links, and code
+blocks for the terminal. Code fences and their language labels are hidden;
+shell examples remain literal and are indented. JSON retains the original
+Markdown body. Color is automatic for interactive terminals and disabled
+when output is redirected, TERM is dumb, or NO_COLOR is nonempty.
 .SH EXAMPLES
 .nf
 howlinux "rename a folder"

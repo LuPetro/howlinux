@@ -1,0 +1,20 @@
+id: "zip"
+title: "zip - create ZIP archives"
+type: "command"
+command: "zip"
+aliases:
+  - "zip"
+  - "create a zip archive"
+  - "zip a directory recursively"
+keywords:
+  - "zip"
+  - "zip archive"
+  - "recursive compression"
+  - "archive creation"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

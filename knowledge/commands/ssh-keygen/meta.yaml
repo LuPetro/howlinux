@@ -1,0 +1,22 @@
+id: "ssh-keygen"
+title: "ssh-keygen - create and inspect SSH keys"
+type: "command"
+command: "ssh-keygen"
+aliases:
+  - "ssh-keygen"
+  - "generate an ed25519 key"
+  - "show ssh key fingerprint"
+keywords:
+  - "ssh-keygen"
+  - "ed25519"
+  - "public key"
+  - "fingerprint"
+  - "passphrase"
+related:
+  - "ssh-key-login"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

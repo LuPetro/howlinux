@@ -19,6 +19,7 @@ keywords:
   - systemctl
 
 related:
+  - deleted-open-files
   - systemctl
   - journalctl
   - read-logs

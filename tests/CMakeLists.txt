@@ -3,6 +3,7 @@ add_executable(howlinux_tests
     test_query_concepts.cpp
     test_knowledge_search.cpp
     test_cli_app.cpp
+    test_markdown.cpp
 )
 
 target_link_libraries(howlinux_tests PRIVATE howlinux_core)

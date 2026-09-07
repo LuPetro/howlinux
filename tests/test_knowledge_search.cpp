@@ -390,6 +390,43 @@ HL_TEST(ranking_intent_ties_repetition_and_irrelevant_queries_are_stable) {
     HL_REQUIRE_EQ(tied.results[1].entry->id, "beta");
 }
 
+HL_TEST(larger_catalog_does_not_promote_isolated_rare_words_or_command_homonyms) {
+    hltest::TemporaryDirectory temporary;
+    const auto root = temporary.path() / "knowledge";
+    auto file = hltest::entrySpec("file", "file - identify data", "command");
+    file.command = "file";
+    file.aliases = {"file", "identify file format"};
+    file.keywords = {"file", "format"};
+    hltest::writeEntry(root, "commands/file", file);
+    auto cat = hltest::entrySpec("cat", "Display text contents", "command");
+    cat.command = "cat";
+    cat.aliases = {"cat"};
+    cat.keywords = {"print", "file", "contents"};
+    hltest::writeEntry(root, "commands/cat", cat);
+    auto rare = hltest::entrySpec("rare", "Recover widget records");
+    rare.keywords = {"widget"};
+    rare.intents = {"general", "explain"};
+    hltest::writeEntry(root, "topics/rare", rare);
+    for (int index = 0; index < 150; ++index) {
+        const auto id = "filler-" + std::to_string(index);
+        hltest::writeEntry(root, "topics/" + id,
+                           hltest::entrySpec(id, "Unrelated filler"));
+    }
+    KnowledgeBase knowledge;
+    HL_REQUIRE_EQ(knowledge.load(root).loaded_entries, std::size_t{153});
+    ConceptDictionary concepts;
+    SearchEngine search(knowledge, concepts);
+    const auto natural = search.search("print file contents");
+    HL_REQUIRE(!natural.results.empty());
+    HL_REQUIRE_EQ(natural.results.front().entry->id, "cat");
+    const auto command = search.search("file");
+    HL_REQUIRE_EQ(command.results.front().entry->id, "file");
+    HL_REQUIRE(ResultPolicy{}.decide(command.results).status == ResultStatus::confident);
+    const auto unrelated = search.search("explain widget astronomy");
+    HL_REQUIRE(!unrelated.results.empty());
+    HL_REQUIRE(ResultPolicy{}.decide(unrelated.results).status != ResultStatus::confident);
+}
+
 HL_TEST(result_policy_requires_both_score_and_margin) {
     KnowledgeEntry alpha;
     alpha.id = "alpha";

@@ -1,0 +1,22 @@
+id: "network-troubleshooting"
+title: "Diagnose a network connection step by step"
+type: "howto"
+aliases:
+  - "troubleshoot internet connection"
+  - "network connection is not working"
+  - "diagnose unreachable website"
+keywords:
+  - "network troubleshooting"
+  - "default route"
+  - "link state"
+  - "connectivity"
+related:
+  - "ip"
+  - "curl"
+  - "dns-troubleshooting"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

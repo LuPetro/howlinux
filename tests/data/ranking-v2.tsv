@@ -110,3 +110,147 @@ read-logs	folow servce logs
 -	mount a network share
 -	partition a disk
 -	create a docker container
+
+# Expanded catalog: exact command/task and a distinct natural query per entry
+awk	awk
+awk	sum a column
+cd	cd
+cd	go to parent directory
+chown	chown
+chown	change file owner
+cut	cut
+cut	extract delimited columns
+diff	diff
+diff	compare two text files
+dig	dig
+dig	query dns records
+env	env
+env	run with a temporary environment variable
+export	export
+export	make a variable available to programs
+file	file
+file	identify a file type
+findmnt	findmnt
+findmnt	which filesystem contains a path
+free	free
+free	show available ram
+getent	getent
+getent	resolve hostname like an application
+groups	groups
+groups	which groups am i in
+gzip	gzip
+gzip	compress a file keeping the original
+history	history
+history	search previous terminal commands
+hostnamectl	hostnamectl
+hostnamectl	show system hostname
+id	id
+id	show my uid and gid
+lsblk	lsblk
+lsblk	list disks and partitions
+lsof	lsof
+lsof	which process has a file open
+man	man
+man	open a command manual
+nice	nice
+nice	run a task with lower priority
+pgrep	pgrep
+pgrep	find pid by process name
+ping	ping
+ping	test host reachability
+printf	printf
+printf	print formatted output
+pwd	pwd
+pwd	where am i in the terminal
+readlink	readlink
+readlink	read a symlink target
+realpath	realpath
+realpath	resolve an absolute path
+rsync	rsync
+rsync	preview file synchronization
+scp	scp
+scp	copy a file to a server
+sed	sed
+sed	replace text in a stream
+sftp	sftp
+sftp	browse remote files over ssh
+sha256sum	sha256sum
+sha256sum	verify a sha256 checksum
+sort	sort
+sort	sort lines alphabetically
+ss	ss
+ss	list listening ports
+ssh-keygen	ssh-keygen
+ssh-keygen	generate an ed25519 key
+stat	stat
+stat	show file timestamps
+tee	tee
+tee	save output while displaying it
+timeout	timeout
+timeout	stop a command after a time limit
+top	top
+top	watch cpu usage by process
+tr	tr
+tr	convert text to uppercase
+type	type
+type	is a command an alias or builtin
+umask	umask
+umask	set default file permissions
+uname	uname
+uname	show kernel version
+uniq	uniq
+uniq	count repeated lines
+unzip	unzip
+unzip	extract a zip file
+uptime	uptime
+uptime	how long has the system been running
+watch	watch
+watch	refresh a command every two seconds
+wc	wc
+wc	count lines in a file
+whoami	whoami
+whoami	which user runs this shell
+xargs	xargs
+xargs	pass null separated filenames
+zip	zip
+zip	create a zip archive
+archive-project	archive a project directory
+archive-project	create a compressed folder backup
+backup-directory	back up a directory with rsync
+backup-directory	verify a directory backup
+deleted-open-files	deleted file did not free space
+deleted-open-files	df and du disagree
+disk-inodes	no space left but disk has free bytes
+disk-inodes	check inode usage
+dns-troubleshooting	troubleshoot dns resolution
+dns-troubleshooting	hostname does not resolve
+environment-path	add a directory to path
+environment-path	why executable is not found
+exit-status	explain command exit codes
+exit-status	run a command only after success
+high-cpu	why is cpu usage high
+high-cpu	find a cpu heavy process
+memory-pressure	why is ram full
+memory-pressure	diagnose memory pressure
+network-troubleshooting	troubleshoot internet connection
+network-troubleshooting	network connection is not working
+permission-denied	why permission denied
+permission-denied	cannot access a file
+port-in-use	address already in use
+port-in-use	which process uses port 8080
+run-shell-script	run a bash script
+run-shell-script	check shell script syntax
+safe-filename-loops	loop over filenames with spaces
+safe-filename-loops	avoid parsing ls output
+shell-job-control	resume a suspended command
+shell-job-control	send a job to background
+shell-pipelines	explain shell pipes
+shell-pipelines	connect command output to input
+shell-quoting	quote filenames with spaces
+shell-quoting	explain single and double quotes
+shell-redirection	redirect stdout and stderr
+shell-redirection	explain two greater than
+ssh-key-login	set up ssh public key login
+ssh-key-login	install my public key on a server
+system-information	check linux distribution and hardware
+system-information	collect system information

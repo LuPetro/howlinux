@@ -1,0 +1,21 @@
+id: "sort"
+title: "sort - order lines of text"
+type: "command"
+command: "sort"
+aliases:
+  - "sort"
+  - "sort lines alphabetically"
+  - "sort numbers in a file"
+keywords:
+  - "sort"
+  - "numeric order"
+  - "locale"
+  - "sort key"
+related:
+  - "shell-pipelines"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

@@ -17,7 +17,7 @@ _howlinux_complete() {
         return
     fi
 
-    COMPREPLY=( $(compgen -W '--help --version --knowledge --limit --explain --json search list show validate' -- "$current") )
+    COMPREPLY=( $(compgen -W '--help --version --knowledge --limit --explain --json --raw search list show validate' -- "$current") )
 }
 
 complete -F _howlinux_complete howlinux

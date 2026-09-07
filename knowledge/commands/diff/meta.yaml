@@ -1,0 +1,21 @@
+id: "diff"
+title: "diff - compare text files"
+type: "command"
+command: "diff"
+aliases:
+  - "diff"
+  - "compare two text files"
+  - "show unified differences"
+keywords:
+  - "diff"
+  - "unified diff"
+  - "comparison"
+  - "patch"
+related:
+  - "exit-status"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

@@ -1,0 +1,22 @@
+id: "sha256sum"
+title: "sha256sum - compute and verify file checksums"
+type: "command"
+command: "sha256sum"
+aliases:
+  - "sha256sum"
+  - "verify a sha256 checksum"
+  - "calculate a file hash"
+keywords:
+  - "sha256sum"
+  - "sha256"
+  - "checksum"
+  - "integrity"
+related:
+  - "backup-directory"
+  - "archive-project"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

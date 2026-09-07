@@ -89,6 +89,10 @@ CliParseResult parseCommandLine(const std::vector<std::string>& arguments) {
             result.options.json = true;
             continue;
         }
+        if (parse_options && argument == "--raw") {
+            result.options.raw = true;
+            continue;
+        }
 
         if (parse_options &&
             (argument == "--knowledge" || argument.rfind("--knowledge=", 0) == 0)) {
@@ -145,6 +149,11 @@ CliParseResult parseCommandLine(const std::vector<std::string>& arguments) {
 
     if (positional.empty()) {
         result.error = "missing query or command";
+        return result;
+    }
+
+    if (result.options.raw && result.options.json) {
+        result.error = "--raw and --json cannot be combined";
         return result;
     }
 
@@ -248,6 +257,7 @@ void printHelp(std::ostream& output) {
            << "      --limit <n>         Return at most n results (1-100, default 5)\n"
            << "      --explain           Show ranking components and match reasons\n"
            << "      --json              Emit stable, ANSI-free JSON\n"
+           << "      --raw               Show original Markdown without rendering\n"
            << "      --                  Treat all following arguments as query text\n\n"
            << "Examples:\n"
            << "  howlinux rename folder\n"

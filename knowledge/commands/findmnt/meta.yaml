@@ -1,0 +1,21 @@
+id: "findmnt"
+title: "findmnt - inspect mounted filesystems"
+type: "command"
+command: "findmnt"
+aliases:
+  - "findmnt"
+  - "which filesystem contains a path"
+  - "show mount options"
+keywords:
+  - "findmnt"
+  - "mount table"
+  - "filesystem source"
+  - "mount options"
+related:
+  - "permission-denied"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

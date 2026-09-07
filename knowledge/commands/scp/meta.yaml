@@ -1,0 +1,20 @@
+id: "scp"
+title: "scp - copy files over SSH"
+type: "command"
+command: "scp"
+aliases:
+  - "scp"
+  - "copy a file to a server"
+  - "download a file over ssh"
+keywords:
+  - "scp"
+  - "ssh file transfer"
+  - "remote copy"
+  - "port"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

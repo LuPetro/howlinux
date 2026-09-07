@@ -24,6 +24,7 @@ struct CliOptions {
     std::size_t limit{5};
     bool explain{false};
     bool json{false};
+    bool raw{false};
     std::string query;
     std::string entry_id;
 };

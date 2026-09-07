@@ -1,0 +1,22 @@
+id: "type"
+title: "type - explain how the shell resolves a command"
+type: "command"
+command: "type"
+aliases:
+  - "type"
+  - "is a command an alias or builtin"
+  - "find all command definitions"
+keywords:
+  - "type"
+  - "command resolution"
+  - "alias"
+  - "builtin"
+  - "path lookup"
+related:
+  - "environment-path"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

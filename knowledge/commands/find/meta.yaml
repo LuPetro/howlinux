@@ -18,6 +18,7 @@ keywords:
   - exec
 
 related:
+  - safe-filename-loops
   - find-files
   - grep
   - ls

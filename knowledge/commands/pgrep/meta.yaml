@@ -1,0 +1,20 @@
+id: "pgrep"
+title: "pgrep - find process IDs by name"
+type: "command"
+command: "pgrep"
+aliases:
+  - "pgrep"
+  - "find pid by process name"
+  - "match full process command line"
+keywords:
+  - "pgrep"
+  - "process name"
+  - "pid lookup"
+  - "full command line"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

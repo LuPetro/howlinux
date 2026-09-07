@@ -8,6 +8,13 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Terminal Markdown rendering for headings, lists, emphasis, links, quotes,
+  and literal code blocks, with automatic color and `NO_COLOR` support.
+- `--raw` for original Markdown output, documented in help, manuals, and
+  shell completions. JSON retains the original content.
+- 71 new knowledge entries (51 commands and 20 practical guides), expanding
+  the catalog to 110 entries with upstream references and related guides.
+- Renderer regression tests and search coverage for the expanded catalog.
 - Arch Linux installation instructions and Debug/Release CI with installation,
   archive relocation, installer, and shared-library checks.
 - A reviewed `pacman` reference with full-upgrade guidance and Arch-specific
@@ -15,6 +22,8 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Bound IDF contributions and avoid treating single command words embedded in
+  prose as task phrases, preserving search quality as the catalog grows.
 - Source builds select static `yaml-cpp` when available and otherwise use the
   installed package target, allowing builds with Arch's shared-only package.
 - `HOWLINUX_STATIC_YAML_CPP` accepts `AUTO` (default), `ON` (required static),

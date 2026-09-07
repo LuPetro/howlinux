@@ -9,8 +9,9 @@ grep -RIn -- 'PATTERN' DIRECTORY
 ```
 
 `-n` includes line numbers, `-i` ignores case, and `-R` searches recursively
-while following symbolic links named on the command line. Use `-r` instead for
-a recursive search that does not follow those links.
+while following all symbolic links. Use `-r` to skip symbolic links discovered
+inside the directory tree; links explicitly named on the command line are
+still followed.
 
 Basic regular expressions are enabled by default. Use `-F` when the pattern
 must be treated as literal text, or `-E` for extended regular expressions.
