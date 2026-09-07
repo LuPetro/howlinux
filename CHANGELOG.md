@@ -4,7 +4,7 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and releases use
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0] - Unreleased
+## [Unreleased]
 
 ### Added
 
@@ -15,6 +15,16 @@ All notable changes to this project are documented here. The format follows
 - 71 new knowledge entries (51 commands and 20 practical guides), expanding
   the catalog to 110 entries with upstream references and related guides.
 - Renderer regression tests and search coverage for the expanded catalog.
+
+### Changed
+
+- Bound IDF contributions and avoid treating single command words embedded in
+  prose as task phrases, preserving search quality as the catalog grows.
+
+## [1.2.0]
+
+### Added
+
 - Arch Linux installation instructions and Debug/Release CI with installation,
   archive relocation, installer, and shared-library checks.
 - A reviewed `pacman` reference with full-upgrade guidance and Arch-specific
@@ -22,8 +32,6 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
-- Bound IDF contributions and avoid treating single command words embedded in
-  prose as task phrases, preserving search quality as the catalog grows.
 - Source builds select static `yaml-cpp` when available and otherwise use the
   installed package target, allowing builds with Arch's shared-only package.
 - `HOWLINUX_STATIC_YAML_CPP` accepts `AUTO` (default), `ON` (required static),
