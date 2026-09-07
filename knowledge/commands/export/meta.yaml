@@ -1,0 +1,21 @@
+id: "export"
+title: "export - pass shell variables to child processes"
+type: "command"
+command: "export"
+aliases:
+  - "export"
+  - "make a variable available to programs"
+  - "set an environment variable in bash"
+keywords:
+  - "export"
+  - "shell variable"
+  - "environment variable"
+  - "inheritance"
+related:
+  - "environment-path"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

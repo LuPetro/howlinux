@@ -1,0 +1,19 @@
+id: "pwd"
+title: "pwd - print the current directory"
+type: "command"
+command: "pwd"
+aliases:
+  - "pwd"
+  - "where am i in the terminal"
+  - "print working directory"
+keywords:
+  - "pwd"
+  - "working directory"
+  - "physical path"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

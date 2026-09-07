@@ -1,0 +1,21 @@
+id: "getent"
+title: "getent - query configured name service databases"
+type: "command"
+command: "getent"
+aliases:
+  - "getent"
+  - "resolve hostname like an application"
+  - "look up an account database record"
+keywords:
+  - "getent"
+  - "nss"
+  - "hosts lookup"
+  - "passwd database"
+related:
+  - "dns-troubleshooting"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

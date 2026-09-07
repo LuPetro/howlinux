@@ -1,0 +1,22 @@
+id: "disk-inodes"
+title: "Diagnose exhausted filesystem inodes"
+type: "howto"
+aliases:
+  - "no space left but disk has free bytes"
+  - "check inode usage"
+  - "filesystem ran out of inodes"
+keywords:
+  - "inodes"
+  - "inode exhaustion"
+  - "no space left"
+  - "small files"
+related:
+  - "df"
+  - "du"
+  - "disk-space"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

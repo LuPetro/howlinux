@@ -1,0 +1,21 @@
+id: "rsync"
+title: "rsync - synchronize files with a preview"
+type: "command"
+command: "rsync"
+aliases:
+  - "rsync"
+  - "preview file synchronization"
+  - "copy only changed files"
+keywords:
+  - "rsync"
+  - "synchronization"
+  - "dry run"
+  - "archive mode"
+related:
+  - "backup-directory"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

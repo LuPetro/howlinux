@@ -1,0 +1,23 @@
+id: "dig"
+title: "dig - inspect DNS records"
+type: "command"
+command: "dig"
+aliases:
+  - "dig"
+  - "query dns records"
+  - "look up mx records"
+keywords:
+  - "dig"
+  - "dns records"
+  - "a record"
+  - "aaaa"
+  - "mx"
+  - "nameserver"
+related:
+  - "dns-troubleshooting"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

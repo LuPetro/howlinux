@@ -1,0 +1,21 @@
+id: "xargs"
+title: "xargs - build argument lists from input"
+type: "command"
+command: "xargs"
+aliases:
+  - "xargs"
+  - "pass null separated filenames"
+  - "batch arguments from a pipe"
+keywords:
+  - "xargs"
+  - "null delimiter"
+  - "argument list"
+  - "batch"
+related:
+  - "safe-filename-loops"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

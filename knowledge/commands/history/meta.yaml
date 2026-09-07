@@ -1,0 +1,20 @@
+id: "history"
+title: "history - inspect Bash command history"
+type: "command"
+command: "history"
+aliases:
+  - "history"
+  - "search previous terminal commands"
+  - "show recent shell history"
+keywords:
+  - "history"
+  - "bash history"
+  - "reverse search"
+  - "previous commands"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

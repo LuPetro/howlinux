@@ -1,0 +1,21 @@
+id: "tr"
+title: "tr - translate or remove characters"
+type: "command"
+command: "tr"
+aliases:
+  - "tr"
+  - "convert text to uppercase"
+  - "squeeze repeated spaces"
+keywords:
+  - "tr"
+  - "character translation"
+  - "uppercase"
+  - "lowercase"
+  - "squeeze"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

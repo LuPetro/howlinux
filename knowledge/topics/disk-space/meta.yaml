@@ -18,6 +18,8 @@ keywords:
   - du
 
 related:
+  - deleted-open-files
+  - disk-inodes
   - df
   - du
 

@@ -18,6 +18,7 @@ keywords:
   - restart
 
 related:
+  - port-in-use
   - manage-service
   - journalctl
   - read-logs

@@ -1,0 +1,19 @@
+id: "readlink"
+title: "readlink - inspect symbolic link targets"
+type: "command"
+command: "readlink"
+aliases:
+  - "readlink"
+  - "read a symlink target"
+  - "follow a link chain"
+keywords:
+  - "readlink"
+  - "symlink target"
+  - "canonical path"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

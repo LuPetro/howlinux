@@ -1,0 +1,20 @@
+id: "timeout"
+title: "timeout - limit how long a command runs"
+type: "command"
+command: "timeout"
+aliases:
+  - "timeout"
+  - "stop a command after a time limit"
+  - "set command execution deadline"
+keywords:
+  - "timeout"
+  - "deadline"
+  - "duration"
+  - "termination"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

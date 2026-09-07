@@ -18,6 +18,7 @@ keywords:
   - identity
 
 related:
+  - ssh-key-login
   - remote-login
 
 intent:

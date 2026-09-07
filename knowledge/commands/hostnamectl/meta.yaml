@@ -1,0 +1,21 @@
+id: "hostnamectl"
+title: "hostnamectl - inspect system identity"
+type: "command"
+command: "hostnamectl"
+aliases:
+  - "hostnamectl"
+  - "show system hostname"
+  - "inspect operating system identity"
+keywords:
+  - "hostnamectl"
+  - "hostname"
+  - "system identity"
+  - "virtualization"
+related:
+  - "system-information"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

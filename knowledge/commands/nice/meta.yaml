@@ -1,0 +1,21 @@
+id: "nice"
+title: "nice - launch a command at lower CPU priority"
+type: "command"
+command: "nice"
+aliases:
+  - "nice"
+  - "run a task with lower priority"
+  - "explain niceness"
+keywords:
+  - "nice"
+  - "niceness"
+  - "cpu scheduling"
+  - "priority"
+related:
+  - "high-cpu"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

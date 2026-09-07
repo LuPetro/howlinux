@@ -1,0 +1,22 @@
+id: "ssh-key-login"
+title: "Set up SSH public key login carefully"
+type: "howto"
+aliases:
+  - "set up ssh public key login"
+  - "install my public key on a server"
+  - "use a key to authenticate to ssh"
+keywords:
+  - "public key login"
+  - "authorized_keys"
+  - "ssh authentication"
+  - "key installation"
+related:
+  - "ssh-keygen"
+  - "ssh"
+  - "remote-login"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

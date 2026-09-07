@@ -1,0 +1,23 @@
+id: "system-information"
+title: "Collect useful Linux system information"
+type: "howto"
+aliases:
+  - "check linux distribution and hardware"
+  - "collect system information"
+  - "which linux version is installed"
+keywords:
+  - "distribution version"
+  - "system inventory"
+  - "kernel architecture"
+  - "hardware"
+related:
+  - "uname"
+  - "hostnamectl"
+  - "free"
+  - "lsblk"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

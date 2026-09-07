@@ -17,6 +17,7 @@ keywords:
   - capacity
 
 related:
+  - disk-inodes
   - disk-space
   - du
 

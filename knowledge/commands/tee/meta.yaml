@@ -1,0 +1,21 @@
+id: "tee"
+title: "tee - display output and save a copy"
+type: "command"
+command: "tee"
+aliases:
+  - "tee"
+  - "save output while displaying it"
+  - "append pipeline output to a log"
+keywords:
+  - "tee"
+  - "stdout"
+  - "append"
+  - "pipeline log"
+related:
+  - "shell-redirection"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

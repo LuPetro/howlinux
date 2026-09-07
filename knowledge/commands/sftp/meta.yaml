@@ -1,0 +1,20 @@
+id: "sftp"
+title: "sftp - transfer files interactively over SSH"
+type: "command"
+command: "sftp"
+aliases:
+  - "sftp"
+  - "browse remote files over ssh"
+  - "interactive secure file transfer"
+keywords:
+  - "sftp"
+  - "remote directory"
+  - "upload"
+  - "download"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

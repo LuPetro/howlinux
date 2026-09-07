@@ -1,0 +1,21 @@
+id: "printf"
+title: "printf - print formatted text reliably"
+type: "command"
+command: "printf"
+aliases:
+  - "printf"
+  - "print formatted output"
+  - "output text without newline"
+keywords:
+  - "printf"
+  - "format string"
+  - "newline"
+  - "stdout"
+related:
+  - "shell-quoting"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

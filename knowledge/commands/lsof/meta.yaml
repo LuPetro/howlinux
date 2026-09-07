@@ -1,0 +1,22 @@
+id: "lsof"
+title: "lsof - inspect open files and sockets"
+type: "command"
+command: "lsof"
+aliases:
+  - "lsof"
+  - "which process has a file open"
+  - "find deleted files still open"
+keywords:
+  - "lsof"
+  - "open files"
+  - "deleted open"
+  - "file descriptors"
+related:
+  - "port-in-use"
+  - "deleted-open-files"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

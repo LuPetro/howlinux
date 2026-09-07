@@ -1,0 +1,22 @@
+id: "free"
+title: "free - inspect memory and swap usage"
+type: "command"
+command: "free"
+aliases:
+  - "free"
+  - "show available ram"
+  - "check memory and swap totals"
+keywords:
+  - "free"
+  - "ram"
+  - "available memory"
+  - "swap"
+related:
+  - "memory-pressure"
+  - "system-information"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

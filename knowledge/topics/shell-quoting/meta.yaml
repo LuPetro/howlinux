@@ -1,0 +1,23 @@
+id: "shell-quoting"
+title: "Quote shell arguments and filenames safely"
+type: "howto"
+aliases:
+  - "quote filenames with spaces"
+  - "explain single and double quotes"
+  - "prevent shell word splitting"
+keywords:
+  - "quoting"
+  - "word splitting"
+  - "single quotes"
+  - "double quotes"
+  - "glob"
+related:
+  - "printf"
+  - "cd"
+  - "safe-filename-loops"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

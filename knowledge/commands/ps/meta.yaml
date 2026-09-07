@@ -17,6 +17,9 @@ keywords:
   - status
 
 related:
+  - high-cpu
+  - memory-pressure
+  - shell-job-control
   - manage-processes
   - kill
 

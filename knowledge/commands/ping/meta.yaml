@@ -1,0 +1,20 @@
+id: "ping"
+title: "ping - test ICMP reachability"
+type: "command"
+command: "ping"
+aliases:
+  - "ping"
+  - "test host reachability"
+  - "measure network round trip time"
+keywords:
+  - "ping"
+  - "icmp"
+  - "round trip"
+  - "packet loss"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

@@ -1,0 +1,20 @@
+id: "cut"
+title: "cut - select fields or characters"
+type: "command"
+command: "cut"
+aliases:
+  - "cut"
+  - "extract delimited columns"
+  - "select characters from lines"
+keywords:
+  - "cut"
+  - "delimiter"
+  - "fields"
+  - "columns"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

@@ -1,0 +1,21 @@
+id: "uptime"
+title: "uptime - inspect runtime and system load"
+type: "command"
+command: "uptime"
+aliases:
+  - "uptime"
+  - "how long has the system been running"
+  - "show load averages"
+keywords:
+  - "uptime"
+  - "load average"
+  - "boot time"
+  - "running time"
+related:
+  - "high-cpu"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

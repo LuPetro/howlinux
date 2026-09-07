@@ -50,6 +50,7 @@ add_library(howlinux_core
     src/concepts.cpp
     src/index.cpp
     src/knowledge.cpp
+    src/markdown.cpp
     src/query.cpp
     src/render.cpp
     src/search.cpp

@@ -36,7 +36,7 @@ void addReason(std::vector<std::string>& reasons,
 double idfWeighted(double base_score, double idf) {
     // IDF remains a meaningful rarity signal without allowing one isolated
     // rare token to cross the confidence threshold by itself.
-    return base_score * (0.5 + 0.5 * idf);
+    return base_score * (0.5 + 0.5 * std::min(idf, 2.5));
 }
 
 }  // namespace
@@ -111,7 +111,10 @@ SearchResult SearchEngine::score(std::size_t entry_index,
         result.breakdown.exact_alias = config_.exact_alias_score;
     } else {
         for (const auto& alias : document.aliases_normalized) {
-            if (containsNormalizedPhrase(query.normalized_query, alias)) {
+            // A bare command alias such as "file" or "watch" is also an
+            // ordinary English word. It is not a matching task phrase.
+            if (alias.find(' ') != std::string::npos &&
+                containsNormalizedPhrase(query.normalized_query, alias)) {
                 result.breakdown.phrase = config_.phrase_score;
                 break;
             }
@@ -129,11 +132,9 @@ SearchResult SearchEngine::score(std::size_t entry_index,
         result.breakdown.phrase = config_.phrase_score;
     }
 
-    for (const auto& token : query.tokens) {
-        if (document.command_tokens.contains(token)) {
-            result.breakdown.command = config_.command_score;
-            break;
-        }
+    if (!query.tokens.empty() &&
+        document.command_tokens.contains(query.tokens.front())) {
+        result.breakdown.command = config_.command_score;
     }
 
     for (const auto& token : query.tokens) {

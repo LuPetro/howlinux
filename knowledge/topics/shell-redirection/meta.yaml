@@ -1,0 +1,23 @@
+id: "shell-redirection"
+title: "Redirect standard output and errors"
+type: "howto"
+aliases:
+  - "redirect stdout and stderr"
+  - "explain two greater than"
+  - "append output to a file"
+keywords:
+  - "redirection"
+  - "stdout"
+  - "stderr"
+  - "2>"
+  - "append"
+  - "file descriptor"
+related:
+  - "tee"
+  - "shell-pipelines"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

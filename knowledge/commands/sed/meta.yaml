@@ -1,0 +1,20 @@
+id: "sed"
+title: "sed - transform text with a stream editor"
+type: "command"
+command: "sed"
+aliases:
+  - "sed"
+  - "replace text in a stream"
+  - "print a range of lines"
+keywords:
+  - "sed"
+  - "substitution"
+  - "stream editor"
+  - "line range"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

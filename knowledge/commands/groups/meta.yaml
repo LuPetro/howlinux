@@ -1,0 +1,20 @@
+id: "groups"
+title: "groups - show group memberships"
+type: "command"
+command: "groups"
+aliases:
+  - "groups"
+  - "which groups am i in"
+  - "list account groups"
+keywords:
+  - "groups"
+  - "membership"
+  - "supplementary"
+  - "account groups"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

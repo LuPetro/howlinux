@@ -1,0 +1,23 @@
+id: "memory-pressure"
+title: "Investigate high memory usage"
+type: "howto"
+aliases:
+  - "why is ram full"
+  - "diagnose memory pressure"
+  - "system is swapping heavily"
+keywords:
+  - "memory pressure"
+  - "available ram"
+  - "swap activity"
+  - "out of memory"
+related:
+  - "free"
+  - "top"
+  - "ps"
+  - "journalctl"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

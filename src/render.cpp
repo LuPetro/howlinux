@@ -1,4 +1,5 @@
 #include "render.hpp"
+#include "markdown.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -8,6 +9,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace howlinux {
@@ -472,15 +474,31 @@ std::string escapeJson(const std::string& value) {
 
 void Renderer::entry(std::ostream& output,
                      const KnowledgeEntry& value,
-                     const KnowledgeBase& knowledge) {
+                     const KnowledgeBase& knowledge,
+                     bool raw) {
+    const bool color = !raw && terminalColorEnabled(output);
+    if (color) output << "\x1b[1;36m";
     output << humanSafe(value.title) << '\n';
+    if (color) output << "\x1b[0m";
     output << "ID: " << humanSafe(value.id) << "\n\n";
 
-    if (!value.content.empty()) {
+    if (raw && !value.content.empty()) {
         output.write(value.content.data(),
                      static_cast<std::streamsize>(value.content.size()));
+    } else if (!raw) {
+        std::string_view content = value.content;
+        const auto first_newline = content.find('\n');
+        auto first_line = content.substr(0, first_newline);
+        if (!first_line.empty() && first_line.back() == '\r') first_line.remove_suffix(1);
+        if (first_line == "# " + value.title) {
+            content = first_newline == std::string_view::npos
+                ? std::string_view{} : content.substr(first_newline + 1);
+            if (content.starts_with("\r\n")) content.remove_prefix(2);
+            else if (content.starts_with("\n")) content.remove_prefix(1);
+        }
+        renderMarkdown(output, content, color);
     }
-    if (value.content.empty() || value.content.back() != '\n') {
+    if (value.content.empty() || (raw && value.content.back() != '\n')) {
         output << '\n';
     }
 

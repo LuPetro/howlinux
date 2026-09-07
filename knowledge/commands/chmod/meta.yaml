@@ -17,6 +17,8 @@ keywords:
   - mode
 
 related:
+  - permission-denied
+  - run-shell-script
   - chmod-755
 
 intent:

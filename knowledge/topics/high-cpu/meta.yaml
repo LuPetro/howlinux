@@ -1,0 +1,23 @@
+id: "high-cpu"
+title: "Investigate high CPU usage and load"
+type: "howto"
+aliases:
+  - "why is cpu usage high"
+  - "find a cpu heavy process"
+  - "diagnose high system load"
+keywords:
+  - "high cpu"
+  - "system load"
+  - "cpu bottleneck"
+  - "scheduling"
+related:
+  - "top"
+  - "uptime"
+  - "nice"
+  - "ps"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

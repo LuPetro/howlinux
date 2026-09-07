@@ -1,0 +1,20 @@
+id: "watch"
+title: "watch - repeat a command on screen"
+type: "command"
+command: "watch"
+aliases:
+  - "watch"
+  - "refresh a command every two seconds"
+  - "highlight changing command output"
+keywords:
+  - "watch"
+  - "refresh interval"
+  - "repeat"
+  - "differences"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

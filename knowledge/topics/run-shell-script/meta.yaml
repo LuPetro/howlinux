@@ -1,0 +1,21 @@
+id: "run-shell-script"
+title: "Inspect and run a Bash script"
+type: "howto"
+aliases:
+  - "run a bash script"
+  - "check shell script syntax"
+  - "execute a sh file"
+keywords:
+  - "bash script"
+  - "shebang"
+  - "syntax check"
+  - "executable bit"
+related:
+  - "chmod"
+  - "less"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

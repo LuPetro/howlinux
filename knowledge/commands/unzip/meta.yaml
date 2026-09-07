@@ -1,0 +1,20 @@
+id: "unzip"
+title: "unzip - inspect and extract ZIP archives"
+type: "command"
+command: "unzip"
+aliases:
+  - "unzip"
+  - "extract a zip file"
+  - "list zip archive contents"
+keywords:
+  - "unzip"
+  - "zip extraction"
+  - "archive inspection"
+  - "no overwrite"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

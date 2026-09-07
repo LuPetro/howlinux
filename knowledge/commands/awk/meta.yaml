@@ -1,0 +1,20 @@
+id: "awk"
+title: "awk - process text fields and records"
+type: "command"
+command: "awk"
+aliases:
+  - "awk"
+  - "sum a column"
+  - "filter rows by numeric value"
+keywords:
+  - "awk"
+  - "fields"
+  - "records"
+  - "column sum"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

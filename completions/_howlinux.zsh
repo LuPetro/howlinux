@@ -8,6 +8,7 @@ _howlinux() {
     '--limit=[maximum results]:number:' \
     '--explain[show ranking explanation]' \
     '--json[emit JSON]' \
+    '--raw[show original Markdown]' \
     '1:command:(search list show validate)' \
     '*:query:_message "query"'
 }

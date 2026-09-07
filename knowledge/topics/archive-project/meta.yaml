@@ -1,0 +1,22 @@
+id: "archive-project"
+title: "Create and inspect a project archive"
+type: "howto"
+aliases:
+  - "archive a project directory"
+  - "create a compressed folder backup"
+  - "inspect a tarball before sharing"
+keywords:
+  - "project archive"
+  - "tar.gz"
+  - "archive listing"
+  - "compression"
+related:
+  - "tar"
+  - "extract-tar"
+  - "sha256sum"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

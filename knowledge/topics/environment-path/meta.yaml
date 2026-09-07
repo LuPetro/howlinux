@@ -1,0 +1,22 @@
+id: "environment-path"
+title: "Understand PATH and persistent environment settings"
+type: "howto"
+aliases:
+  - "add a directory to path"
+  - "why executable is not found"
+  - "explain path environment variable"
+keywords:
+  - "PATH"
+  - "executable lookup"
+  - "shell startup"
+  - "environment"
+related:
+  - "export"
+  - "type"
+  - "env"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

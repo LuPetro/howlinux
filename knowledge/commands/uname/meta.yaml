@@ -1,0 +1,21 @@
+id: "uname"
+title: "uname - inspect kernel and machine information"
+type: "command"
+command: "uname"
+aliases:
+  - "uname"
+  - "show kernel version"
+  - "check machine architecture"
+keywords:
+  - "uname"
+  - "kernel release"
+  - "architecture"
+  - "machine"
+related:
+  - "system-information"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

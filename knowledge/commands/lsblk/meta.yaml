@@ -1,0 +1,22 @@
+id: "lsblk"
+title: "lsblk - list block devices and filesystems"
+type: "command"
+command: "lsblk"
+aliases:
+  - "lsblk"
+  - "list disks and partitions"
+  - "show filesystem labels and uuids"
+keywords:
+  - "lsblk"
+  - "block devices"
+  - "partitions"
+  - "uuid"
+  - "filesystem labels"
+related:
+  - "system-information"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

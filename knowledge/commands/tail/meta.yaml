@@ -8,6 +8,7 @@ aliases:
   - tail
   - show last lines
   - follow a log file
+  - watch log updates
 
 keywords:
   - tail

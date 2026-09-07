@@ -1,0 +1,19 @@
+id: "whoami"
+title: "whoami - print the effective username"
+type: "command"
+command: "whoami"
+aliases:
+  - "whoami"
+  - "which user runs this shell"
+  - "print effective username"
+keywords:
+  - "whoami"
+  - "effective user"
+  - "username"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

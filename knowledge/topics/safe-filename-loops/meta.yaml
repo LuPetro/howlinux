@@ -1,0 +1,22 @@
+id: "safe-filename-loops"
+title: "Process filenames safely in shell loops"
+type: "howto"
+aliases:
+  - "loop over filenames with spaces"
+  - "avoid parsing ls output"
+  - "handle newlines in filenames"
+keywords:
+  - "filename loop"
+  - "null separated"
+  - "read -r"
+  - "process substitution"
+related:
+  - "find"
+  - "xargs"
+  - "shell-quoting"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

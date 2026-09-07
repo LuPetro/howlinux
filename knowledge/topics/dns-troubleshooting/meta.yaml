@@ -1,0 +1,22 @@
+id: "dns-troubleshooting"
+title: "Diagnose hostname and DNS resolution problems"
+type: "howto"
+aliases:
+  - "troubleshoot dns resolution"
+  - "hostname does not resolve"
+  - "debug name resolution failure"
+keywords:
+  - "dns troubleshooting"
+  - "name resolution"
+  - "resolver"
+  - "NXDOMAIN"
+related:
+  - "dig"
+  - "getent"
+  - "network-troubleshooting"
+intent:
+  - "how_to"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

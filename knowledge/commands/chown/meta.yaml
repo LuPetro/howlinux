@@ -1,0 +1,21 @@
+id: "chown"
+title: "chown - change file ownership"
+type: "command"
+command: "chown"
+aliases:
+  - "chown"
+  - "change file owner"
+  - "set owner and group"
+keywords:
+  - "chown"
+  - "owner"
+  - "group ownership"
+  - "uid"
+related:
+  - "permission-denied"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

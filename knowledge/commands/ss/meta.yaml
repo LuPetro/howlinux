@@ -1,0 +1,22 @@
+id: "ss"
+title: "ss - inspect network sockets and listeners"
+type: "command"
+command: "ss"
+aliases:
+  - "ss"
+  - "list listening ports"
+  - "show tcp connections"
+keywords:
+  - "ss"
+  - "sockets"
+  - "listening ports"
+  - "tcp"
+  - "udp"
+related:
+  - "port-in-use"
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

@@ -1,0 +1,20 @@
+id: "file"
+title: "file - identify file contents"
+type: "command"
+command: "file"
+aliases:
+  - "file"
+  - "identify a file type"
+  - "inspect mime type"
+keywords:
+  - "file"
+  - "mime"
+  - "magic bytes"
+  - "file format"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"

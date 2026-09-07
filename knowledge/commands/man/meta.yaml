@@ -1,0 +1,20 @@
+id: "man"
+title: "man - read local reference manuals"
+type: "command"
+command: "man"
+aliases:
+  - "man"
+  - "open a command manual"
+  - "search manual page descriptions"
+keywords:
+  - "man"
+  - "manual page"
+  - "apropos"
+  - "manual section"
+related: []
+intent:
+  - "command"
+  - "explain"
+difficulty: "beginner"
+platforms:
+  - "linux"
